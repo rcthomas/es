@@ -1,0 +1,42 @@
+---
+config:
+   min_spec_wl    :  3000.0
+   max_spec_wl    :  10000.0
+   wl_step        :  10
+   bin_step       :  1.001
+   v_size         :  100
+   v_outer_max    :  30.0
+   line_dir       :  /Users/rthomas/data/lines
+   ref_file       :  /Users/rthomas/data/refs.dat
+   form           :  exp
+   v_ref          :  10.0
+   log_tau_min    :  -2.0
+   mu_size        :  10
+   p_size         :  100
+setups:
+   -  a0          :  1.0
+      a1          :  0.0
+      a2          :  0.0
+      v_phot      :  10.0
+      v_outer     :  30.0
+      t_phot      :  10.0
+      ions        :  [  100 ]
+      active      :  [  Yes ]
+      log_tau     :  [  1.0 ]
+      v_min       :  [ 10.0 ]
+      v_max       :  [ 30.0 ]
+      aux         :  [  1.0 ]
+      temp        :  [ 10.0 ]
+   -  a0          :  1.0
+      a1          :  0.0
+      a2          :  0.0
+      v_phot      :  10.0
+      v_outer     :  30.0
+      t_phot      :  0.0
+      ions        :  [  100 ]
+      active      :  [  Yes ]
+      log_tau     :  [  1.0 ]
+      v_min       :  [ 10.0 ]
+      v_max       :  [ 30.0 ]
+      aux         :  [  1.0 ]
+      temp        :  [ 10.0 ]
