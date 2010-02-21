@@ -5,10 +5,17 @@
 #- Creator : Rollin C. Thomas (RCT) - rcthomas@lbl.gov
 #- 
 
-CFITSIO_BASE=/opt/local
-YAML_BASE=${HOME}/local
+# CPP = g++-mp-4.3 -O3 -fopenmp
+# CFITSIO_BASE=/opt/local
+# YAML_BASE=${HOME}/local
 
-CPP = g++-mp-4.3 -O3 -fopenmp
+# CPP = CC -O3 -fopenmp
+# CFITSIO_BASE=/project/projectdirs/cmb/modules/hopper/gnu/cmb/2.4.1/cfitsio_3.0.6-2.4.1
+# YAML_BASE=${HOME}/local/hopper
+
+CPP=CC --no_warnings -fastsse -mp=nonuma --exceptions -Minfo=mp -DMPICH_IGNORE_CXX_SEEK
+CFITSIO_BASE=/project/projectdirs/cmb/modules/franklin/pgi/cmb/2.4.1/cfitsio_3.0.6-2.4.1
+YAML_BASE=${HOME}/local/franklin
 
 CFITSIO_INCL=-I$(CFITSIO_BASE)/include
 CFITSIO_LINK=-L$(CFITSIO_BASE)/lib
@@ -18,7 +25,25 @@ YAML_INCL=-I$(YAML_BASE)/include
 YAML_LINK=-L$(YAML_BASE)/lib
 YAML_LIBS=-lyaml-cpp
 
-OBJ =                      \
+# OBJ =                      \
+#    ES_Accelerator.o        \
+#    ES_Blackbody.o          \
+#    ES_Spectrum.o           \
+#    ES_LineManager.o        \
+#    ES_Synow_Grid.o         \
+#    ES_Synow_Opacity.o      \
+#    ES_Synow_Source.o       \
+#    ES_Synow_VectorSource.o \
+#    ES_Synow_Spectrum.o     \
+#    ES_Synow_Setup.o        \
+#    syn++.o
+# 
+# all : syn++
+# 
+# syn++ : $(OBJ)
+# 	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ) $(CFITSIO_LIBS) $(YAML_LIBS)
+
+OBJ_S =                    \
    ES_Accelerator.o        \
    ES_Blackbody.o          \
    ES_Spectrum.o           \
@@ -28,12 +53,27 @@ OBJ =                      \
    ES_Synow_Source.o       \
    ES_Synow_Spectrum.o     \
    ES_Synow_Setup.o        \
-   syn++.o
+   syn_s++.o
 
-all : syn++
+OBJ_V =                    \
+   ES_Accelerator.o        \
+   ES_Blackbody.o          \
+   ES_Spectrum.o           \
+   ES_LineManager.o        \
+   ES_Synow_Grid.o         \
+   ES_Synow_Opacity.o      \
+   ES_Synow_VectorSource.o \
+   ES_Synow_Spectrum.o     \
+   ES_Synow_Setup.o        \
+   syn_v++.o
 
-syn++ : $(OBJ)
-	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ) $(CFITSIO_LIBS) $(YAML_LIBS)
+all : syn_s++ syn_v++
+
+syn_s++ : $(OBJ_S)
+	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ_S) $(CFITSIO_LIBS) $(YAML_LIBS)
+
+syn_v++ : $(OBJ_V)
+	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ_V) $(CFITSIO_LIBS) $(YAML_LIBS)
 
 .cc.o :
 	$(CPP) $(CFITSIO_INCL) $(YAML_INCL) -c -o $@ $<
@@ -42,4 +82,4 @@ clean :
 	rm -rf *.o
 
 realclean : clean
-	rm -rf syn++
+	rm -rf syn++ syn_s++ syn_v++

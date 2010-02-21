@@ -6,8 +6,8 @@ config:
    bin_step       :  1.001
    v_size         :  100
    v_outer_max    :  30.0
-   line_dir       :  /Users/rthomas/data/lines
-   ref_file       :  /Users/rthomas/data/refs.dat
+   line_dir       :  /global/homes/r/rthomas/data/lines
+   ref_file       :  /global/homes/r/rthomas/data/refs.dat
    form           :  exp
    v_ref          :  10.0
    log_tau_min    :  -2.0
