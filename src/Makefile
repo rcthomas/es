@@ -25,25 +25,7 @@ YAML_INCL=-I$(YAML_BASE)/include
 YAML_LINK=-L$(YAML_BASE)/lib
 YAML_LIBS=-lyaml-cpp
 
-# OBJ =                      \
-#    ES_Accelerator.o        \
-#    ES_Blackbody.o          \
-#    ES_Spectrum.o           \
-#    ES_LineManager.o        \
-#    ES_Synow_Grid.o         \
-#    ES_Synow_Opacity.o      \
-#    ES_Synow_Source.o       \
-#    ES_Synow_VectorSource.o \
-#    ES_Synow_Spectrum.o     \
-#    ES_Synow_Setup.o        \
-#    syn++.o
-# 
-# all : syn++
-# 
-# syn++ : $(OBJ)
-# 	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ) $(CFITSIO_LIBS) $(YAML_LIBS)
-
-OBJ_S =                    \
+OBJ =                      \
    ES_Accelerator.o        \
    ES_Blackbody.o          \
    ES_Spectrum.o           \
@@ -51,29 +33,15 @@ OBJ_S =                    \
    ES_Synow_Grid.o         \
    ES_Synow_Opacity.o      \
    ES_Synow_Source.o       \
-   ES_Synow_Spectrum.o     \
-   ES_Synow_Setup.o        \
-   syn_s++.o
-
-OBJ_V =                    \
-   ES_Accelerator.o        \
-   ES_Blackbody.o          \
-   ES_Spectrum.o           \
-   ES_LineManager.o        \
-   ES_Synow_Grid.o         \
-   ES_Synow_Opacity.o      \
    ES_Synow_VectorSource.o \
    ES_Synow_Spectrum.o     \
    ES_Synow_Setup.o        \
-   syn_v++.o
+   syn++.o
 
-all : syn_s++ syn_v++
+all : syn++
 
-syn_s++ : $(OBJ_S)
-	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ_S) $(CFITSIO_LIBS) $(YAML_LIBS)
-
-syn_v++ : $(OBJ_V)
-	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ_V) $(CFITSIO_LIBS) $(YAML_LIBS)
+syn++ : $(OBJ)
+	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ) $(CFITSIO_LIBS) $(YAML_LIBS)
 
 .cc.o :
 	$(CPP) $(CFITSIO_INCL) $(YAML_INCL) -c -o $@ $<
@@ -82,4 +50,4 @@ clean :
 	rm -rf *.o
 
 realclean : clean
-	rm -rf syn++ syn_s++ syn_v++
+	rm -rf syn++
