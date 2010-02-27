@@ -1,22 +1,18 @@
 ---
-output :
-   min_wl         : 3000.0
-   max_wl         : 10000.0
-   wl_step        : 5.0
-grid :
-   bin_width      : 0.3
-   v_size         : 100
-   v_outer_max    : 30.0
-opacity :
-   line_dir       : /global/homes/r/rthomas/data/lines
-   ref_file       : /global/homes/r/rthomas/data/refs.dat
-   form           : exp
-   v_ref          : 10.0
-   log_tau_min    : -2.0
-source :
-   mu_size        : 10
-spectrum :
-   p_size         : 60
+config:
+   min_spec_wl    :  3000.0
+   max_spec_wl    :  10000.0
+   wl_step        :  10
+   bin_step       :  1.001
+   v_size         :  100
+   v_outer_max    :  30.0
+   line_dir       :  /global/homes/r/rthomas/data/lines
+   ref_file       :  /global/homes/r/rthomas/data/refs.dat
+   form           :  exp
+   v_ref          :  10.0
+   log_tau_min    :  -2.0
+   mu_size        :  10
+   p_size         :  100
 setups:
    -  a0          :  1.0
       a1          :  0.0

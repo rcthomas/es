@@ -36,13 +36,6 @@ namespace ES
 
             bool operator() ( const std::vector< double >& x );
 
-            /// Settings from Lua state, allows update of ions.
-
-//          bool operator() ( lua::state& lua );
-
-            /// Stringification.
-//          std::ostream& lua_stream( std::ostream& stream ) const;
-
             std::vector< int  > ions;        ///< Ion code table.
             std::vector< bool > active;      ///< Masks ions on or off.
 

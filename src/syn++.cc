@@ -5,12 +5,7 @@
 // Authors : Rollin C. Thomas (RCT) - rcthomas@lbl.gov
 //  
 
-#include "ES_Spectrum.hh"
-#include "ES_Synow_Grid.hh"
-#include "ES_Synow_Opacity.hh"
-#include "ES_Synow_Source.hh"
-#include "ES_Synow_Spectrum.hh"
-#include "ES_Synow_Setup.hh"
+#include "ES_Synow.hh"
 
 #include <yaml-cpp/yaml.h>
 
@@ -52,37 +47,37 @@ int main( int argc, char* argv[] )
    // ES::Spectrum.
 
    ES::Spectrum output = ES::Spectrum::create_from_range_and_step(
-         yaml[ "config" ][ "min_spec_wl" ],
-         yaml[ "config" ][ "max_spec_wl" ],
-         yaml[ "config" ][ "wl_step"     ] );
+         yaml[ "output" ][ "min_wl"  ],
+         yaml[ "output" ][ "max_wl"  ],
+         yaml[ "output" ][ "wl_step" ] );
 
    // Grid object.
    
    ES::Synow::Grid grid = ES::Synow::Grid::create( 
-         yaml[ "config" ][ "min_spec_wl"  ],
-         yaml[ "config" ][ "max_spec_wl"  ],
-         yaml[ "config" ][ "bin_step"     ], 
-         yaml[ "config" ][ "v_size"       ],
-         yaml[ "config" ][ "v_outer_max"  ] );
+         yaml[ "output" ][ "min_wl"      ],
+         yaml[ "output" ][ "max_wl"      ],
+         yaml[ "grid"   ][ "bin_width"   ], 
+         yaml[ "grid"   ][ "v_size"      ],
+         yaml[ "grid"   ][ "v_outer_max" ] );
 
    // Opacity operator.
 
    ES::Synow::Opacity opacity( grid,
-         yaml[ "config" ][ "line_dir"    ],
-         yaml[ "config" ][ "ref_file"    ],
-         yaml[ "config" ][ "form"        ],
-         yaml[ "config" ][ "v_ref"       ],
-         yaml[ "config" ][ "log_tau_min" ] );
+         yaml[ "opacity" ][ "line_dir"    ],
+         yaml[ "opacity" ][ "ref_file"    ],
+         yaml[ "opacity" ][ "form"        ],
+         yaml[ "opacity" ][ "v_ref"       ],
+         yaml[ "opacity" ][ "log_tau_min" ] );
 
    // Source operator.
 
    ES::Synow::Source source( grid,
-         yaml[ "config" ][ "mu_size" ] );
+         yaml[ "source" ][ "mu_size" ] );
 
    // Spectrum operator.
 
    ES::Synow::Spectrum spectrum( grid, output,
-         yaml[ "config" ][ "p_size" ] );
+         yaml[ "spectrum" ][ "p_size" ] );
 
    // Attach setups one by one.
 

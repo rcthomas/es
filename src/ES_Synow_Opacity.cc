@@ -70,8 +70,9 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
    // Initialize the first bin limits, and step the line 
    // iterator up to the first line in the bin.
 
+   double factor = 1.0 + _grid->bin_width / 299.792;
    double min_wl = _grid->min_wl;
-   double max_wl = min_wl * _grid->bin_step;
+   double max_wl = min_wl * factor;
    int    offset = 0;
 
    std::vector< ES::Line >::iterator line = _lines.begin();
@@ -112,7 +113,7 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
             for( int iv = 0; iv < _grid->v_size; ++ iv ) _grid->tau[ offset + iv ] = 0.0;
          }
          min_wl = max_wl;
-         max_wl *= _grid->bin_step;
+         max_wl *= factor;
       }
    }
 

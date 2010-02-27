@@ -68,6 +68,13 @@ namespace ES
 
          static Spectrum create_from_ascii_file( const char* file );
 
+         /// Constructor taking a path to a FITS spectrum file.  The 
+         /// file contents are parsed and used to initialize a spectrum 
+         /// which is returned.  May not work with every kind of spectrum.
+         /// (I hate including this method.)
+
+         static Spectrum create_from_fits_file( const char* file );
+
          /// Constructor taking another spectrum, from which a zeroed out
          /// spectrum of the same size and wavelength axis is initialized.
 

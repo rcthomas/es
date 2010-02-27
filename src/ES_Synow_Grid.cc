@@ -16,19 +16,19 @@
 #define R_MARGIN_FACTOR 1
 #define C_KKMS          299.792
 
-ES::Synow::Grid ES::Synow::Grid::create( double const min_spec_wl, double const max_spec_wl, double const bin_step, 
+ES::Synow::Grid ES::Synow::Grid::create( double const min_output_wl, double const max_output_wl, double const bin_width, 
       int const v_size, double const v_outer_max )
 {
-   double min_wl = min_spec_wl / ( 1.0 + B_MARGIN_FACTOR * v_outer_max / C_KKMS );
-   double max_wl = max_spec_wl * ( 1.0 + R_MARGIN_FACTOR * v_outer_max / C_KKMS );
-   ES::Synow::Grid grid( min_wl, max_wl, bin_step, v_size );
+   double min_wl = min_output_wl / ( 1.0 + B_MARGIN_FACTOR * v_outer_max / C_KKMS );
+   double max_wl = max_output_wl * ( 1.0 + R_MARGIN_FACTOR * v_outer_max / C_KKMS );
+   ES::Synow::Grid grid( min_wl, max_wl, bin_width, v_size );
    return grid;
 }
 
-ES::Synow::Grid::Grid( double const min_wl_, double const max_wl_, double const bin_step_, int const v_size_ ) :
-   min_wl( min_wl_ ), max_wl( max_wl_ ), bin_step( bin_step_ ), v_size( v_size_ ) 
+ES::Synow::Grid::Grid( double const min_wl_, double const max_wl_, double const bin_width_, int const v_size_ ) :
+   min_wl( min_wl_ ), max_wl( max_wl_ ), bin_width( bin_width_ ), v_size( v_size_ ) 
 {
-   wl_size = int( log( max_wl / min_wl ) / log( bin_step ) + 0.5 );
+   wl_size = int( log( max_wl / min_wl ) / log( 1.0 + bin_width / 299.792 ) + 0.5 );
    wl  = new double[ wl_size ];
    v   = new double[  v_size ];
    tau = new double[ wl_size * v_size ];

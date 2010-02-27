@@ -6,7 +6,11 @@
 //  
 
 #include "ES_Spectrum.hh"
+#include "ES_Exception.hh"
 
+#include "fitsio.h"
+
+#include <cmath>
 #include <limits>
 #include <string>
 #include <sstream>
@@ -46,6 +50,75 @@ ES::Spectrum ES::Spectrum::create_from_ascii_file( const char* file )
    stream.open( file );
    stream >> spectrum;
    stream.close();
+   return spectrum;
+}
+
+ES::Spectrum ES::Spectrum::create_from_fits_file( const char* file )
+{
+
+   ES::Spectrum spectrum;
+
+   // Open fits file, if possible.
+
+   fitsfile* fits;
+   int status = 0;
+   fits_open_file( &fits, file, 0, &status );
+   if( status != 0 ) throw ES::Exception( "Unable to open spectrum file: '" + std::string( file ) + "'" );
+
+   // Primary HDU parameters.
+
+   int  bitpix = 0;
+   int  naxis  = 0;
+   long naxes[ 1 ];
+
+   fits_get_img_param( fits, 1, &bitpix, &naxis, naxes, &status );
+   if( status != 0 ) throw ES::Exception( "Unable to read primary HDU in spectrum file: '" + std::string( file ) + "'" );
+
+   // Wavelength axis.
+
+   double crval1 = 0.0;
+   fits_read_key( fits, TDOUBLE, "CRVAL1", &crval1, NULL, &status );
+   if( status != 0 ) throw ES::Exception( "Unable to read CRVAL1 in spectrum file: '" + std::string( file ) + "'" );
+
+   double cdelt1 = 0.0;
+   fits_read_key( fits, TDOUBLE, "CDELT1", &cdelt1, NULL, &status );
+   if( status != 0 ) throw ES::Exception( "Unable to read CDELT1 in spectrum file: '" + std::string( file ) + "'" );
+
+   // Begin setting up spectrum.
+
+   spectrum.resize( naxes[ 0 ] );
+   for( int i = 0; i < spectrum.size(); ++ i ) spectrum.wl( i ) = crval1 + i * cdelt1;
+
+   double* buffer = new double [ spectrum.size() ];
+
+   // Fluxes.
+
+   long      fpixel[ 1 ] = { 1 };
+   long long nelements = naxes[ 0 ];
+
+   int anynul = 0;
+   fits_read_pix( fits, TDOUBLE, fpixel, nelements, 0, buffer, &anynul, &status );
+   if( status != 0 ) throw ES::Exception( "Unable to read fluxes in spectrum file: '" + std::string( file ) + "'" );
+
+   for( int i = 0; i < spectrum.size(); ++ i ) spectrum.flux( i ) = buffer[ i ];
+
+   // Move forward one HDU.
+   
+   int hdutype;
+   fits_movrel_hdu( fits, 1, &hdutype, &status );
+   if( status != 0 ) throw ES::Exception( "Unable to find variance HDU in spectrum file: '" + std::string( file ) + "'" );
+
+   // Flux errors.
+
+   fits_read_pix( fits, TDOUBLE, fpixel, nelements, 0, buffer, &anynul, &status );
+   if( status != 0 ) throw ES::Exception( "Unable to read variance in spectrum file: '" + std::string( file ) + "'" );
+
+   for( int i = 0; i < spectrum.size(); ++ i ) spectrum.flux_error( i ) = sqrt( buffer[ i ] );
+
+   // Clean up.
+
+   delete [] buffer;
+
    return spectrum;
 }
 
