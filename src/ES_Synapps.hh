@@ -8,11 +8,7 @@
 #ifndef ES__SYNAPPS
 #define ES__SYNAPPS
 
-namespace ES
-{
-
-   /// @class Synapps
-   /// @
-}
+#include "ES_Synapps_Config.hh"
+#include "ES_Synapps_Evaluator.hh"
 
 #endif

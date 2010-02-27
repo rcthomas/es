@@ -5,8 +5,7 @@
 // Authors : Rollin C. Thomas (RCT) - rcthomas@lbl.gov
 // 
 
-#include "ES_Synapps_Evaluator.hh"
-#include "ES_Synapps_Config.hh"
+#include "ES_Synapps.hh"
 #include "ES_Synow.hh"
 
 #include "APPSPACK_GCI.hpp"                  // APPSPACK's interface to MPI.
