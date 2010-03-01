@@ -41,6 +41,8 @@ OBJ =                      \
    ES_Synow_Spectrum.o     \
    ES_Synow_Setup.o
 
+OBJ_SNPREP=ES_Spectrum.o snprep.o
+
 OBJ_SYNPP=$(OBJ) syn++.o
 
 OBJ_SYNAPPS=$(OBJ)        \
@@ -48,7 +50,7 @@ OBJ_SYNAPPS=$(OBJ)        \
    ES_Synapps_Evaluator.o \
    synapps.o
 
-all : syn++ synapps
+all : syn++ synapps snprep
 
 syn++ : $(OBJ_SYNPP)
 	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) -o $@ $(OBJ_SYNPP) $(CFITSIO_LIBS) $(YAML_LIBS)
@@ -56,11 +58,14 @@ syn++ : $(OBJ_SYNPP)
 synapps : $(OBJ_SYNAPPS)
 	$(CPP) $(CFITSIO_LINK) $(YAML_LINK) $(APPS_LINK) -o $@ $(OBJ_SYNAPPS) $(CFITSIO_LIBS) $(YAML_LIBS) $(APPS_LIBS)
 
+snprep : $(OBJ_SNPREP)
+	$(CPP) $(CFITSIO_LINK) -o $@ $(OBJ_SNPREP) $(CFITSIO_LIBS)
+
 .cc.o :
 	$(CPP) $(CFITSIO_INCL) $(YAML_INCL) $(APPS_INCL) -c -o $@ $<
 
 clean :
-	rm -rf *.o
+	rm -rf *.o core
 
 realclean : clean
-	rm -rf syn++ synapps
+	rm -rf syn++ synapps snprep

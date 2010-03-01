@@ -15,6 +15,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 
 ES::Spectrum ES::Spectrum::create_from_size( int const size )
 {
@@ -153,6 +154,20 @@ void ES::Spectrum::zero_out()
       _wl[ i ] = 0.0;
       _flux[ i ] = 0.0;
       _flux_error[ i ] = 0.0;
+   }
+}
+
+void ES::Spectrum::rescale_median_flux( double const median )
+{
+   std::vector< double > flux( _flux );
+   std::sort( flux.begin(), flux.end() );
+   int middle = size() / 2;
+   double old_median = size() & 2 == 0 ? 0.5 * ( flux[ middle ] + flux[ middle + 1 ] ) : flux[ middle ];
+   double factor = median / old_median;
+   for( int i = 0; i < size(); ++ i )
+   {
+      _flux[ i ] *= factor;
+      _flux_error[ i ] *= factor;
    }
 }
 

@@ -25,7 +25,10 @@ namespace ES
 
       class Grid;
 
+      class Setup;
+
    }
+
 
    namespace Synapps
    {
@@ -44,8 +47,7 @@ namespace ES
 
             /// Constructor.
 
-            Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, double const vector_norm ) :
-               _grid( &grid ), _target( &target ), _output( &output ), _vector_norm( vector_norm ) {}
+            Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, const std::vector< int >& ions, double const vector_norm );
 
             /// Do the function evaluation for the input point and fill in the result.
 
@@ -55,9 +57,10 @@ namespace ES
 
          private :
 
-            ES::Synow::Grid*  _grid;
-            ES::Spectrum*     _target;
-            ES::Spectrum*     _output;
+            ES::Synow::Setup*  _setup;
+            ES::Synow::Grid*   _grid;
+            ES::Spectrum*      _target;
+            ES::Spectrum*      _output;
 
             double   _vector_norm;
 

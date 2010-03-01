@@ -37,6 +37,8 @@ namespace ES
 
             Config( const YAML::Node& yaml );
 
+            std::string fit_file;
+
             APPSPACK::Parameter::List params; ///< APPSPACK parameter list.
 
       };

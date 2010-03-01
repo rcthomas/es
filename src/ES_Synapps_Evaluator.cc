@@ -12,12 +12,23 @@
 
 #include <cmath>
 
+ES::Synapps::Evaluator:: Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, const std::vector< int >& ions, 
+      double const vector_norm ) :
+   _grid( &grid ), _target( &target ), _output( &output ), _vector_norm( vector_norm )
+{
+   _setup = new ES::Synow::Setup();
+   _setup->resize( ions.size() );
+   for( int i = 0; i < ions.size(); ++ i )
+   {
+      _setup->ions  [ i ] = ions[ i ];
+      _setup->active[ i ] = true;
+   }
+}
+
 void ES::Synapps::Evaluator::operator() ( int tag, const APPSPACK::Vector& x, APPSPACK::Vector& f, std::string& msg )
 {
-   ES::Synow::Setup setup;
-
-   setup( x.getStlVector() );
-   (*_grid)( setup );
+   (*_setup)( x.getStlVector() );
+   (*_grid)( *_setup );
 
    double score = 0.0;
    for( int i = 0; i < _output->size(); ++ i )

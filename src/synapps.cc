@@ -45,14 +45,16 @@ int main( int argc, char* argv[] )
    // at the same wavelengths as the target spectrum.
 
    std::string target_file = yaml[ "evaluator" ][ "target_file" ];
-   ES::Spectrum target = ES::Spectrum::create_from_fits_file( target_file.c_str() );
+   ES::Spectrum target = ES::Spectrum::create_from_ascii_file( target_file.c_str() );
    ES::Spectrum output = ES::Spectrum::create_from_spectrum( target );
+
+   target.rescale_median_flux();
 
    // Grid object.
    
    ES::Synow::Grid grid = ES::Synow::Grid::create( 
-         yaml[ "output" ][ "min_wl"      ],
-         yaml[ "output" ][ "max_wl"      ],
+         target.min_wl(),
+         target.max_wl(),
          yaml[ "grid"   ][ "bin_width"   ], 
          yaml[ "grid"   ][ "v_size"      ],
          yaml[ "grid"   ][ "v_outer_max" ] );
@@ -76,9 +78,16 @@ int main( int argc, char* argv[] )
    ES::Synow::Spectrum spectrum( grid, output,
          yaml[ "spectrum" ][ "p_size" ] );
 
-   // Evaluator...
+   // Evaluator.
 
-   ES::Synapps::Evaluator evaluator( grid, target, output,
+   std::vector< int > ions;
+   for( int i = 0; i < yaml[ "config" ][ "active" ].size(); ++ i )
+   {
+      if( ! yaml[ "config" ][ "active" ][ i ] ) continue;
+      ions.push_back( yaml[ "config" ][ "ions" ][ i ] );
+   }
+
+   ES::Synapps::Evaluator evaluator( grid, target, output, ions,
          yaml[ "evaluator" ][ "vector_norm" ] );
 
    // Master section.
@@ -101,7 +110,22 @@ int main( int argc, char* argv[] )
       APPSPACK::GCI::pack( 1 );
       for( int i = 0; i < workers; ++ i ) APPSPACK::GCI::send( APPSPACK::Executor::MPI::Terminate, i + 1 );
 
-      // would do other things here.
+      // Best spectrum.
+
+      int tag;
+      APPSPACK::Vector x;
+      APPSPACK::Vector f;
+      std::string msg;
+
+      x = solver.getBestX();
+      f = solver.getBestF();
+
+      evaluator( tag, x, f, msg );
+
+      std::ofstream stream;
+      stream.open( config.fit_file.c_str() );
+      stream << std::setprecision( 6 ) << output;
+      stream.close();
 
    }
 

@@ -105,6 +105,11 @@ namespace ES
 
          void zero_out();
 
+         /// Rescale the fluxes and flux errors so that the median is 
+         /// set to the desired value.
+
+         void rescale_median_flux( double const median = 1.0 );
+
          /// @name Wavelength Methods
          /// Methods for accessing wavelength values, probably in units of 
          /// AA.
