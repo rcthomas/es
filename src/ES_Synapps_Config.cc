@@ -26,9 +26,6 @@ ES::Synapps::Config::Config( const YAML::Node& config )
    params.sublist( "Solver" ).setParameter( "Precision"            , 2    );
    params.sublist( "Solver" ).setParameter( "Use Random Order"     , true );
    params.sublist( "Solver" ).setParameter( "Use Projected Compass", true );
-   params.sublist( "Solver" ).setParameter( "Step Tolerance"       , 0.001 );
-   params.sublist( "Solver" ).setParameter( "Contraction Factor"   , 0.9 );
-   params.sublist( "Solver" ).setParameter( "Sufficient Decrease Factor"   , 0.1 );
 
    int num_ions = 0;
    for( int i = 0; i < config[ "active" ].size(); ++ i )

@@ -7,8 +7,8 @@ grid :
    v_size      : 100
    v_outer_max : 30.0
 opacity :
-   line_dir    : /global/homes/r/rthomas/data/lines
-   ref_file    : /global/homes/r/rthomas/data/refs.dat
+   line_dir    : /Users/rthomas/data/lines
+   ref_file    : /Users/rthomas/data/refs.dat
    form        : exp
    v_ref       : 10.0
    log_tau_min : -2.0
@@ -25,10 +25,10 @@ config :
    a2          :  { fixed:  No, start:  0, lower: -5, upper:  5, scale: 1 }
    v_phot      :  { fixed:  No, start: 10, lower:  5, upper: 15, scale: 1 }
    v_outer     :  { fixed: Yes, start: 30, lower: 15, upper: 30, scale: 1 }
-   t_phot      :  { fixed:  No, start:  9, lower:  5, upper: 20, scale: 1 }
+   t_phot      :  { fixed:  No, start: 10, lower:  5, upper: 20, scale: 1 }
 
    ions        :  [ 1401, 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
-   active      :  [  Yes,   No,   No,   No,   No,   No,   No,   No,   No,   No ]
+   active      :  [  Yes,  Yes,   No,   No,   No,   No,   No,   No,   No,   No ]
    detach      :  [   No,   No,   No,   No,   No,   No,   No,   No,   No,   No ] 
                           
    log_tau     :          
@@ -52,7 +52,7 @@ config :
    aux         :          
       fixed    :  [   No,   No,   No,   No,   No,   No,   No,   No,   No,   No ]
       start    :  [    3,    3,    3,    3,    3,    3,    3,    3,    3,    3 ]
-      lower    :  [    1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
+      lower    :  [  0.1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
       upper    :  [    5,    5,    5,    5,    5,    5,    5,    5,    5,    5 ]
       scale    :  [    1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
    temp        :          
