@@ -36,8 +36,6 @@ namespace ES
 
       /// @class Evaluator
       /// @brief Synow-style APPSPACK evaluator implementation.
-      ///
-      /// TODO
 
       class Evaluator : APPSPACK::Evaluator::Interface
       {
