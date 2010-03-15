@@ -1,8 +1,23 @@
 // 
 // File    : ES_Synapps_Evaluator.hh
 // ---------------------------------
-// Created : Tue Feb 23 16:13:54 2010
-// Authors : Rollin C. Thomas (RCT) - rcthomas@lbl.gov
+//
+// Copyright (C) 2010 Rollin C. Thomas <rcthomas@lbl.gov>
+// 
+// This file is part of ES.
+// 
+// ES is free software: you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+// 
+// ES is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+// 
+// You should have received a copy of the GNU General Public License along
+// with ES.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
 #ifndef ES__SYNAPPS__EVALUATOR
@@ -46,6 +61,14 @@ namespace ES
 
             Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, 
                     const std::vector< int >& ions, double const vector_norm );
+
+//          Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, 
+//                  const std::vector< int >& ions, double const vector_norm,
+//                  double const std::vector< double >& region_weight,
+//                  double const std::vector< double >& region_lower ,
+//                  double const std::vector< double >& region_upper
+//                  );
+
 
             /// Do the function evaluation for the input point and fill in the result.
 

@@ -1,7 +1,22 @@
+#-
+#- Copyright (C) 2010 Rollin C. Thomas <rcthomas@lbl.gov>
+#- 
+#- This file is part of ES.
+#- 
+#- ES is free software: you can redistribute it and/or modify it under the
+#- terms of the GNU General Public License as published by the Free
+#- Software Foundation, either version 3 of the License, or (at your
+#- option) any later version.
+#- 
+#- ES is distributed in the hope that it will be useful, but WITHOUT ANY
+#- WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#- for more details.
+#- 
+#- You should have received a copy of the GNU General Public License along
+#- with ES.  If not, see <http://www.gnu.org/licenses/>.
+#- 
 ---
-evaluator :
-   target_file : "SNF20080514-002_P000000_S_drr.dat"
-   vector_norm : 1
 grid :
    bin_width   : 0.3
    v_size      : 100
@@ -16,6 +31,13 @@ source :
    mu_size     : 10
 spectrum :
    p_size      : 60
+evaluator :
+   target_file : "SNF20080514-002_P000000_S_drr.dat"
+   vector_norm : 1
+   regions     :
+      weight : [     0,    1,    1 ]
+      lower  : [     0, 3900, 5800 ]
+      upper  : [ 10000, 4100, 6500 ]
 config :
    fit_file    : "SNF20080514-002_P000000_S_drr.fit"
    cache_file  : "SNF20080514-002_P000000_S_drr.cache"
