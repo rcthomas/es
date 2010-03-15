@@ -29,14 +29,13 @@ namespace ES
 
    }
 
-
    namespace Synapps
    {
 
       class Grid;
 
       /// @class Evaluator
-      /// @brief TODO
+      /// @brief Synow-style APPSPACK evaluator implementation.
       ///
       /// TODO
 
@@ -47,22 +46,28 @@ namespace ES
 
             /// Constructor.
 
-            Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, const std::vector< int >& ions, double const vector_norm );
+            Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, 
+                    const std::vector< int >& ions, double const vector_norm );
 
             /// Do the function evaluation for the input point and fill in the result.
 
             virtual void operator() ( int tag, const APPSPACK::Vector& x, APPSPACK::Vector& f, std::string& msg );
 
-//          virtual void print() const;
+            /// Prints information about the evaluator object.
+
+            virtual void print() const
+            {
+               std::cout << "Hello" << std::endl;
+            }
 
          private :
 
-            ES::Synow::Setup*  _setup;
-            ES::Synow::Grid*   _grid;
-            ES::Spectrum*      _target;
-            ES::Spectrum*      _output;
+            ES::Synow::Setup*  _setup;      ///< Elementary supernova setup.
+            ES::Synow::Grid*   _grid;       ///< Elementary supernova grid.
+            ES::Spectrum*      _target;     ///< Target spectrum to be fit.
+            ES::Spectrum*      _output;     ///< Synthesized spectrum fit to the target.
 
-            double   _vector_norm;
+            double   _vector_norm;          ///< Norm between observed and synthesized spectrum.
 
       };
 

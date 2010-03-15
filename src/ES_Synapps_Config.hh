@@ -22,11 +22,14 @@ namespace ES
    {
 
       /// @class Config
-      /// @brief TBD
+      /// @brief Configuration management for Synapps.
       ///
-      /// TBD
-      /// Thing for turning problem spec in YAML into something APPSPACK wants.
-      /// TODO 
+      /// This class is responsible for managing the configuration of a
+      /// Synapps calculation.  This means managing the APPSPACK solver
+      /// initialization, as well as the appropriate bounds, linear 
+      /// inequality, and linear equality constraints for our ES type
+      /// of calculation.  The main interface is through passing a 
+      /// YAML file.
 
       class Config
       {
@@ -37,7 +40,7 @@ namespace ES
 
             Config( const YAML::Node& yaml );
 
-            std::string fit_file;
+            std::string fit_file;             ///< Document me.
 
             APPSPACK::Parameter::List params; ///< APPSPACK parameter list.
 

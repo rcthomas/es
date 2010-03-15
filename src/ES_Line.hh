@@ -15,7 +15,8 @@ namespace ES
    /// @brief Atomic line transition.
    ///
    /// A very basic atomic line transition class, contains the basics
-   /// needed for a simple LTE-type calculation.
+   /// needed for a simple LTE-type calculation.  Therefore, its 
+   /// general utility is open to debate.
    
    class Line
    {

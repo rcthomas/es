@@ -21,12 +21,12 @@ namespace ES
       ///
       /// When instantiated, this template provides a base Grid class
       /// that developers should inherit from to construct collections
-      /// of related classes in an elementary supernova (ES)
+      /// of related classes in an elementary supernova (ES) style
       /// calculation.  Collections typically include concrete Grid,
       /// Operator, and Setup classes.  
       ///
       /// Grid objects contain physical quantities needed for performing
-      /// elementary supernova calculations.  Examples of quantities
+      /// ES calculations.  Examples of quantities
       /// potentially stored in Grid objects are cached Sobolev
       /// opacities, measurements of mean intensity or line source
       /// functions, escape probabilities, thermalization parameters, and
@@ -48,8 +48,8 @@ namespace ES
       /// of with the Grid object.  The list of members that a Grid is
       /// responsible for should tend towards those that are needed or
       /// modified by more than one Operator.  But, this is just a
-      /// guideline --- avoid sacrificing performance or clarity over
-      /// principles.
+      /// guideline --- avoid sacrificing performance and clarity in favor
+      /// of programming dogma.
 
       template< typename O, typename S >
       class Grid

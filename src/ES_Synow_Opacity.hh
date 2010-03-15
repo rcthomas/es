@@ -27,7 +27,12 @@ namespace ES
       /// @class Opacity
       /// @brief Synow Sobolev opacity operator.
       ///
-      /// TBD
+      /// Manages a list of atomic lines and uses the same reference line
+      /// scheme as Synow for parameterizing optical depth profiles.  That
+      /// is, 1D spatial functions are use to describe the dependence of
+      /// Sobolev optical depth in a reference line; opacity in other lines
+      /// of the same ion is scaled relative to that through a temperature,
+      /// akin to thermal equilibrium.
 
       class Opacity : public ES::Synow::Operator, public ES::LineManager
       {

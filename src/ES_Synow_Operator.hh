@@ -20,6 +20,9 @@ namespace ES
 
       class Setup;
 
+      /// @var   Operator
+      /// @brief Abstract base class for Synow-style calculations.
+
       typedef ES::Generic::Operator< ES::Synow::Grid, ES::Synow::Setup > Operator;
 
    }

@@ -19,9 +19,11 @@ namespace ES
    {
 
       /// @class Setup
-      /// @brief Object controlling an ES calculation.
+      /// @brief Controls an ES calculation.
       ///
-      /// TODO document.
+      /// This class carries problem specifications to a Grid, to be
+      /// passed in succession to the operators bound to the Grid.  
+      /// The end result should be a Spectrum.
 
       class Setup
       {

@@ -16,7 +16,7 @@ namespace ES
 {
 
    /// @class Blackbody
-   /// @brief Planck function.
+   /// @brief Blackbody spectral energy distribution.
 
    class Blackbody : public ES::Accelerator
    {
@@ -29,13 +29,13 @@ namespace ES
             ES::Accelerator( tolerance ) {}
 
          /// @name temp
-         /// Accessor for temperature in kK.
+         /// Temperature in kK.
          ///@{
          double& temp()       { clear(); return _temp; }
          double  temp() const { return _temp; }
          ///@}
 
-         /// Returns the Planck function at this input in AA.
+         /// Returns the blackbody responses (F-lambda units) at the given wavelength in AA.
 
          virtual double evaluate( double const wl ) const;
 
