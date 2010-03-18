@@ -34,166 +34,166 @@
 int main( int argc, char* argv[] )
 {
 
-   // Initialize MPI, 2 or more processors.
+    // Initialize MPI, 2 or more processors.
 
-   int rank = APPSPACK::GCI::init( argc, argv );
-   int workers = APPSPACK::GCI::getNumProcs() - 1;
-   if( workers < 1 )
-   {
-      std::cerr << "ERROR: Program requires at least 2 processors." << std::endl;
-      APPSPACK::GCI::exit();
-      return 137;
-   }
+    int rank = APPSPACK::GCI::init( argc, argv );
+    int workers = APPSPACK::GCI::getNumProcs() - 1;
+    if( workers < 1 )
+    {
+        std::cerr << "ERROR: Program requires at least 2 processors." << std::endl;
+        APPSPACK::GCI::exit();
+        return 137;
+    }
 
-   // Configuration in this application comes from a YAML file.
+    // Configuration in this application comes from a YAML file.
 
-   YAML::Node yaml;
+    YAML::Node yaml;
 
-   {
-      std::ifstream  stream( argv[ 1 ] );
-      YAML::Parser   parser( stream );
-      parser.GetNextDocument( yaml );
-      stream.close();
-   }
+    {
+        std::ifstream  stream( argv[ 1 ] );
+        YAML::Parser   parser( stream );
+        parser.GetNextDocument( yaml );
+        stream.close();
+    }
 
-   // Target and output spectra.  The output spectrum is sampled 
-   // at the same wavelengths as the target spectrum.
+    // Target and output spectra.  The output spectrum is sampled 
+    // at the same wavelengths as the target spectrum.
 
-   std::string target_file = yaml[ "evaluator" ][ "target_file" ];
-   ES::Spectrum target = ES::Spectrum::create_from_ascii_file( target_file.c_str() );
-   ES::Spectrum output = ES::Spectrum::create_from_spectrum( target );
+    std::string target_file = yaml[ "evaluator" ][ "target_file" ];
+    ES::Spectrum target = ES::Spectrum::create_from_ascii_file( target_file.c_str() );
+    ES::Spectrum output = ES::Spectrum::create_from_spectrum( target );
 
-   target.rescale_median_flux();
+    target.rescale_median_flux();
 
-   // Grid object.
-   
-   ES::Synow::Grid grid = ES::Synow::Grid::create( 
-         target.min_wl(),
-         target.max_wl(),
-         yaml[ "grid"   ][ "bin_width"   ], 
-         yaml[ "grid"   ][ "v_size"      ],
-         yaml[ "grid"   ][ "v_outer_max" ] );
+    // Grid object.
 
-   // Opacity operator.
+    ES::Synow::Grid grid = ES::Synow::Grid::create( 
+            target.min_wl(),
+            target.max_wl(),
+            yaml[ "grid"   ][ "bin_width"   ], 
+            yaml[ "grid"   ][ "v_size"      ],
+            yaml[ "grid"   ][ "v_outer_max" ] );
 
-   ES::Synow::Opacity opacity( grid,
-         yaml[ "opacity" ][ "line_dir"    ],
-         yaml[ "opacity" ][ "ref_file"    ],
-         yaml[ "opacity" ][ "form"        ],
-         yaml[ "opacity" ][ "v_ref"       ],
-         yaml[ "opacity" ][ "log_tau_min" ] );
+    // Opacity operator.
 
-   // Source operator.
+    ES::Synow::Opacity opacity( grid,
+            yaml[ "opacity" ][ "line_dir"    ],
+            yaml[ "opacity" ][ "ref_file"    ],
+            yaml[ "opacity" ][ "form"        ],
+            yaml[ "opacity" ][ "v_ref"       ],
+            yaml[ "opacity" ][ "log_tau_min" ] );
 
-   ES::Synow::Source source( grid,
-         yaml[ "source" ][ "mu_size" ] );
+    // Source operator.
 
-   // Spectrum operator.
+    ES::Synow::Source source( grid,
+            yaml[ "source" ][ "mu_size" ] );
 
-   ES::Synow::Spectrum spectrum( grid, output,
-         yaml[ "spectrum" ][ "p_size"  ],
-         yaml[ "spectrum" ][ "flatten" ] );
+    // Spectrum operator.
 
-   // Evaluator.
+    ES::Synow::Spectrum spectrum( grid, output,
+            yaml[ "spectrum" ][ "p_size"  ],
+            yaml[ "spectrum" ][ "flatten" ] );
 
-   std::vector< int > ions;
-   for( int i = 0; i < yaml[ "config" ][ "active" ].size(); ++ i )
-   {
-      if( ! yaml[ "config" ][ "active" ][ i ] ) continue;
-      ions.push_back( yaml[ "config" ][ "ions" ][ i ] );
-   }
+    // Evaluator.
 
-   ES::Synapps::Evaluator evaluator( grid, target, output, ions,
-         yaml[ "evaluator" ][ "vector_norm" ] );
+    std::vector< int > ions;
+    for( int i = 0; i < yaml[ "config" ][ "active" ].size(); ++ i )
+    {
+        if( ! yaml[ "config" ][ "active" ][ i ] ) continue;
+        ions.push_back( yaml[ "config" ][ "ions" ][ i ] );
+    }
 
-   // Master section.
+    ES::Synapps::Evaluator evaluator( grid, target, output, ions,
+            yaml[ "evaluator" ][ "vector_norm" ] );
 
-   if( rank == 0 )
-   {
+    // Master section.
 
-      ES::Synapps::Config config( yaml[ "config" ] );
+    if( rank == 0 )
+    {
 
-      // Executor, constraints, solver, solve.
+        ES::Synapps::Config config( yaml[ "config" ] );
 
-      APPSPACK::Executor::MPI       executor;
-      APPSPACK::Constraints::Linear linear( config.params.sublist( "Linear" ) );
-      APPSPACK::Solver              solver( config.params.sublist( "Solver" ), executor, linear );
-      APPSPACK::Solver::State       stat = solver.solve();
+        // Executor, constraints, solver, solve.
 
-      // Problem solved, terminate workers.
+        APPSPACK::Executor::MPI       executor;
+        APPSPACK::Constraints::Linear linear( config.params.sublist( "Linear" ) );
+        APPSPACK::Solver              solver( config.params.sublist( "Solver" ), executor, linear );
+        APPSPACK::Solver::State       stat = solver.solve();
 
-      APPSPACK::GCI::initSend();
-      APPSPACK::GCI::pack( 1 );
-      for( int i = 0; i < workers; ++ i ) APPSPACK::GCI::send( APPSPACK::Executor::MPI::Terminate, i + 1 );
+        // Problem solved, terminate workers.
 
-      // Best spectrum.
+        APPSPACK::GCI::initSend();
+        APPSPACK::GCI::pack( 1 );
+        for( int i = 0; i < workers; ++ i ) APPSPACK::GCI::send( APPSPACK::Executor::MPI::Terminate, i + 1 );
 
-      int tag;
-      APPSPACK::Vector x;
-      APPSPACK::Vector f;
-      std::string msg;
+        // Best spectrum.
 
-      x = solver.getBestX();
-      f = solver.getBestF();
+        int tag;
+        APPSPACK::Vector x;
+        APPSPACK::Vector f;
+        std::string msg;
 
-      evaluator( tag, x, f, msg );
+        x = solver.getBestX();
+        f = solver.getBestF();
 
-      std::ofstream stream;
-      stream.open( config.fit_file.c_str() );
-      stream << std::setprecision( 6 ) << output;
-      stream.close();
+        evaluator( tag, x, f, msg );
 
-   }
+        std::ofstream stream;
+        stream.open( config.fit_file.c_str() );
+        stream << std::setprecision( 6 ) << output;
+        stream.close();
 
-   // Worker section.
+    }
 
-   if( rank != 0 )
-   {
+    // Worker section.
 
-      while( true )
-      {
+    if( rank != 0 )
+    {
 
-         // Blocking receive.
+        while( true )
+        {
 
-         int msg_tag, junk;
-         APPSPACK::GCI::recv();
-         APPSPACK::GCI::bufinfo( msg_tag, junk );
+            // Blocking receive.
 
-         // Check for termination.
+            int msg_tag, junk;
+            APPSPACK::GCI::recv();
+            APPSPACK::GCI::bufinfo( msg_tag, junk );
 
-         if( msg_tag == APPSPACK::Executor::MPI::Terminate ) break;
+            // Check for termination.
 
-         // Local workspace.
+            if( msg_tag == APPSPACK::Executor::MPI::Terminate ) break;
 
-         int tag;
-         APPSPACK::Vector x;
-         APPSPACK::Vector f;
-         std::string msg;
+            // Local workspace.
 
-         // Unpack latest message -- must be done just like this.
+            int tag;
+            APPSPACK::Vector x;
+            APPSPACK::Vector f;
+            std::string msg;
 
-         APPSPACK::GCI::unpack( tag );
-         APPSPACK::GCI::unpack( x   );
+            // Unpack latest message -- must be done just like this.
 
-         // Evaluate the function.
+            APPSPACK::GCI::unpack( tag );
+            APPSPACK::GCI::unpack( x   );
 
-         evaluator( tag, x, f, msg );
+            // Evaluate the function.
 
-         // Send reply -- must be done just like this.
+            evaluator( tag, x, f, msg );
 
-         APPSPACK::GCI::initSend();
-         APPSPACK::GCI::pack( tag );
-         APPSPACK::GCI::pack( f   );
-         APPSPACK::GCI::pack( msg );
-         APPSPACK::GCI::send( APPSPACK::Executor::MPI::Feval, 0 );
+            // Send reply -- must be done just like this.
 
-      }
+            APPSPACK::GCI::initSend();
+            APPSPACK::GCI::pack( tag );
+            APPSPACK::GCI::pack( f   );
+            APPSPACK::GCI::pack( msg );
+            APPSPACK::GCI::send( APPSPACK::Executor::MPI::Feval, 0 );
 
-   }
+        }
 
-   // Done.
+    }
 
-   APPSPACK::GCI::exit();
+    // Done.
 
-   return 0;
+    APPSPACK::GCI::exit();
+
+    return 0;
 }

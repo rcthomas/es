@@ -30,41 +30,41 @@
 namespace ES
 {
 
-   /// @class Blackbody
-   /// @brief Blackbody spectral energy distribution.
-   ///
-   /// Normalized to an intensity of approximately 1 at peak, in F-nu units.
+    /// @class Blackbody
+    /// @brief Blackbody spectral energy distribution.
+    ///
+    /// Normalized to an intensity of approximately 1 at peak, in F-nu units.
 
-   class Blackbody : public ES::Accelerator
-   {
+    class Blackbody : public ES::Accelerator
+    {
 
-      public :
+        public :
 
-         /// Constructor.
+            /// Constructor.
 
-         Blackbody( double const tolerance = 0.001 ) :
-            ES::Accelerator( tolerance ) {}
+            Blackbody( double const tolerance = 0.001 ) :
+                ES::Accelerator( tolerance ) {}
 
-         /// @name temp
-         /// Temperature in kK.
-         ///@{
-         double& temp()       { clear(); return _temp; }
-         double  temp() const { return _temp; }
-         ///@}
+            /// @name temp
+            /// Temperature in kK.
+            ///@{
+            double& temp()       { clear(); return _temp; }
+            double  temp() const { return _temp; }
+            ///@}
 
-         /// Returns the wavelength at the maximum intensity in AA.
+            /// Returns the wavelength at the maximum intensity in AA.
 
-         double wl_peak() const;
+            double wl_peak() const;
 
-         /// Returns the blackbody responses (F-nu units) at the given wavelength in AA.
+            /// Returns the blackbody responses (F-nu units) at the given wavelength in AA.
 
-         virtual double evaluate( double const wl ) const;
+            virtual double evaluate( double const wl ) const;
 
-      private :
+        private :
 
-         double _temp; ///< Temperature in kK.
+            double _temp; ///< Temperature in kK.
 
-   };
+    };
 
 }
 

@@ -27,72 +27,72 @@
 
 namespace APPSPACK
 {
-   class Vector;
+    class Vector;
 }
 
 namespace ES
 {
 
-   class Spectrum;
+    class Spectrum;
 
-   namespace Synow
-   {
+    namespace Synow
+    {
 
-      class Grid;
+        class Grid;
 
-      class Setup;
+        class Setup;
 
-   }
+    }
 
-   namespace Synapps
-   {
+    namespace Synapps
+    {
 
-      class Grid;
+        class Grid;
 
-      /// @class Evaluator
-      /// @brief Synow-style APPSPACK evaluator implementation.
+        /// @class Evaluator
+        /// @brief Synow-style APPSPACK evaluator implementation.
 
-      class Evaluator : APPSPACK::Evaluator::Interface
-      {
+        class Evaluator : APPSPACK::Evaluator::Interface
+        {
 
-         public :
+            public :
 
-            /// Constructor.
+                /// Constructor.
 
-            Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, 
-                    const std::vector< int >& ions, double const vector_norm );
+                Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, 
+                        const std::vector< int >& ions, double const vector_norm );
 
-//          Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, 
-//                  const std::vector< int >& ions, double const vector_norm,
-//                  double const std::vector< double >& region_weight,
-//                  double const std::vector< double >& region_lower ,
-//                  double const std::vector< double >& region_upper
-//                  );
+                //          Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, 
+                //                  const std::vector< int >& ions, double const vector_norm,
+                //                  double const std::vector< double >& region_weight,
+                //                  double const std::vector< double >& region_lower ,
+                //                  double const std::vector< double >& region_upper
+                //                  );
 
 
-            /// Do the function evaluation for the input point and fill in the result.
+                /// Do the function evaluation for the input point and fill in the result.
 
-            virtual void operator() ( int tag, const APPSPACK::Vector& x, APPSPACK::Vector& f, std::string& msg );
+                virtual void operator() ( int tag, const APPSPACK::Vector& x, APPSPACK::Vector& f, std::string& msg );
 
-            /// Prints information about the evaluator object.
+                /// Prints information about the evaluator object.
 
-            virtual void print() const
-            {
-               std::cout << "Hello" << std::endl;
-            }
+                virtual void print() const
+                {
+                    std::cout << "Hello" << std::endl;
+                }
 
-         private :
+            private :
 
-            ES::Synow::Setup*  _setup;      ///< Elementary supernova setup.
-            ES::Synow::Grid*   _grid;       ///< Elementary supernova grid.
-            ES::Spectrum*      _target;     ///< Target spectrum to be fit.
-            ES::Spectrum*      _output;     ///< Synthesized spectrum fit to the target.
+                ES::Synow::Setup*  _setup;      ///< Elementary supernova setup.
+                ES::Synow::Grid*   _grid;       ///< Elementary supernova grid.
+                ES::Spectrum*      _target;     ///< Target spectrum to be fit.
+                ES::Spectrum*      _output;     ///< Synthesized spectrum fit to the target.
 
-            double   _vector_norm;          ///< Norm between observed and synthesized spectrum.
+                double   _vector_norm;          ///< Norm between observed and synthesized spectrum.
 
-      };
+        };
 
-   }
+    }
 
 }
 

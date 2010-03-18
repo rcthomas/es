@@ -26,11 +26,11 @@
 
 double ES::Blackbody::wl_peak() const
 {
-   return 50994.364 / _temp;
+    return 50994.364 / _temp;
 }
 
 double ES::Blackbody::evaluate( double const wl ) const
 {
-   double owl = 50994.364 / wl / _temp;
-   return owl * owl * owl * ( exp( 2.82143937212 ) - 1.0 ) / ( exp( 2.82143937212 * owl ) - 1.0 );
+    double owl = 50994.364 / wl / _temp;
+    return owl * owl * owl * ( exp( 2.82143937212 ) - 1.0 ) / ( exp( 2.82143937212 * owl ) - 1.0 );
 }

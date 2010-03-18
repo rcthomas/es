@@ -24,32 +24,32 @@
 
 void ES::Synow::Setup::resize( int const num_ions )
 {
-   ions.resize   ( num_ions );
-   active.resize ( num_ions );
-   log_tau.resize( num_ions );
-   v_min.resize  ( num_ions );
-   v_max.resize  ( num_ions );
-   aux.resize    ( num_ions );
-   temp.resize   ( num_ions );
+    ions.resize   ( num_ions );
+    active.resize ( num_ions );
+    log_tau.resize( num_ions );
+    v_min.resize  ( num_ions );
+    v_max.resize  ( num_ions );
+    aux.resize    ( num_ions );
+    temp.resize   ( num_ions );
 }
 
 bool ES::Synow::Setup::operator() ( const std::vector< double >& x )
 {
-   a0       = x[ 0 ];
-   a1       = x[ 1 ];
-   a2       = x[ 2 ];
-   v_phot   = x[ 3 ];
-   v_outer  = x[ 4 ];
-   t_phot   = x[ 5 ];
-   for( size_t i = 0; i < ions.size(); ++ i )
-   {
-      log_tau[ i ] = x[ 6 + 0 * ions.size() + i ];
-      v_min  [ i ] = x[ 6 + 1 * ions.size() + i ];
-      v_max  [ i ] = x[ 6 + 2 * ions.size() + i ];
-      aux    [ i ] = x[ 6 + 3 * ions.size() + i ];
-      temp   [ i ] = x[ 6 + 4 * ions.size() + i ];
-   }
-   return false;
+    a0       = x[ 0 ];
+    a1       = x[ 1 ];
+    a2       = x[ 2 ];
+    v_phot   = x[ 3 ];
+    v_outer  = x[ 4 ];
+    t_phot   = x[ 5 ];
+    for( size_t i = 0; i < ions.size(); ++ i )
+    {
+        log_tau[ i ] = x[ 6 + 0 * ions.size() + i ];
+        v_min  [ i ] = x[ 6 + 1 * ions.size() + i ];
+        v_max  [ i ] = x[ 6 + 2 * ions.size() + i ];
+        aux    [ i ] = x[ 6 + 3 * ions.size() + i ];
+        temp   [ i ] = x[ 6 + 4 * ions.size() + i ];
+    }
+    return false;
 }
 
 // bool ES::Setup::operator() ( lua::state& lua )

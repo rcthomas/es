@@ -44,25 +44,25 @@ APPS_INCL=-I$(APPS_BASE)/include/appspack
 APPS_LINK=-L$(APPS_BASE)/lib
 APPS_LIBS=-lappspack -lcdd -llapack -lblas
 
-OBJ =                      \
-   ES_Accelerator.o        \
-   ES_Blackbody.o          \
-   ES_Spectrum.o           \
-   ES_LineManager.o        \
-   ES_Synow_Grid.o         \
-   ES_Synow_Opacity.o      \
-   ES_Synow_Source.o       \
-   ES_Synow_Spectrum.o     \
-   ES_Synow_Setup.o
+OBJ =                       \
+    ES_Accelerator.o        \
+    ES_Blackbody.o          \
+    ES_Spectrum.o           \
+    ES_LineManager.o        \
+    ES_Synow_Grid.o         \
+    ES_Synow_Opacity.o      \
+    ES_Synow_Source.o       \
+    ES_Synow_Spectrum.o     \
+    ES_Synow_Setup.o
 
 OBJ_SNPREP=ES_Spectrum.o snprep.o
 
 OBJ_SYNPP=$(OBJ) syn++.o
 
-OBJ_SYNAPPS=$(OBJ)        \
-   ES_Synapps_Config.o    \
-   ES_Synapps_Evaluator.o \
-   synapps.o
+OBJ_SYNAPPS=$(OBJ)         \
+    ES_Synapps_Config.o    \
+    ES_Synapps_Evaluator.o \
+    synapps.o
 
 all : syn++ synapps snprep
 

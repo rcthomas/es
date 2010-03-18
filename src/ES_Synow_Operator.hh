@@ -28,19 +28,19 @@
 namespace ES
 {
 
-   namespace Synow
-   {
+    namespace Synow
+    {
 
-      class Grid;
+        class Grid;
 
-      class Setup;
+        class Setup;
 
-      /// @var   Operator
-      /// @brief Abstract base class for Synow-style calculations.
+        /// @var   Operator
+        /// @brief Abstract base class for Synow-style calculations.
 
-      typedef ES::Generic::Operator< ES::Synow::Grid, ES::Synow::Setup > Operator;
+        typedef ES::Generic::Operator< ES::Synow::Grid, ES::Synow::Setup > Operator;
 
-   }
+    }
 
 }
 

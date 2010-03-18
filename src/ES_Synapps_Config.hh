@@ -27,41 +27,41 @@
 
 namespace YAML
 {
-   class Node;
+    class Node;
 }
 
 namespace ES
 {
 
-   namespace Synapps
-   {
+    namespace Synapps
+    {
 
-      /// @class Config
-      /// @brief Configuration management for Synapps.
-      ///
-      /// This class is responsible for managing the configuration of a
-      /// Synapps calculation.  This means managing the APPSPACK solver
-      /// initialization, as well as the appropriate bounds, linear 
-      /// inequality, and linear equality constraints for our ES type
-      /// of calculation.  The main interface is through passing a 
-      /// YAML file.
+        /// @class Config
+        /// @brief Configuration management for Synapps.
+        ///
+        /// This class is responsible for managing the configuration of a
+        /// Synapps calculation.  This means managing the APPSPACK solver
+        /// initialization, as well as the appropriate bounds, linear 
+        /// inequality, and linear equality constraints for our ES type
+        /// of calculation.  The main interface is through passing a 
+        /// YAML file.
 
-      class Config
-      {
+        class Config
+        {
 
-         public :
+            public :
 
-            /// Constructor.
+                /// Constructor.
 
-            Config( const YAML::Node& yaml );
+                Config( const YAML::Node& yaml );
 
-            std::string fit_file;             ///< Document me.
+                std::string fit_file;             ///< Document me.
 
-            APPSPACK::Parameter::List params; ///< APPSPACK parameter list.
+                APPSPACK::Parameter::List params; ///< APPSPACK parameter list.
 
-      };
+        };
 
-   }
+    }
 
 }
 

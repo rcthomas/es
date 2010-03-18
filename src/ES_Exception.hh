@@ -28,20 +28,20 @@
 namespace ES
 {
 
-   /// @class Exception
-   /// @brief Run of the mill exception class.
+    /// @class Exception
+    /// @brief Run of the mill exception class.
 
-   class Exception : public std::runtime_error
-   {
+    class Exception : public std::runtime_error
+    {
 
-      public :
+        public :
 
-         /// Constructor.
+            /// Constructor.
 
-         Exception( const std::string& message ) : 
-            std::runtime_error( message ) {}
+            Exception( const std::string& message ) : 
+                std::runtime_error( message ) {}
 
-   };
+    };
 
 }
 
