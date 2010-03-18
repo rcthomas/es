@@ -32,6 +32,8 @@ namespace ES
 
    /// @class Blackbody
    /// @brief Blackbody spectral energy distribution.
+   ///
+   /// Normalized to an intensity of approximately 1 at peak, in F-nu units.
 
    class Blackbody : public ES::Accelerator
    {
@@ -50,7 +52,11 @@ namespace ES
          double  temp() const { return _temp; }
          ///@}
 
-         /// Returns the blackbody responses (F-lambda units) at the given wavelength in AA.
+         /// Returns the wavelength at the maximum intensity in AA.
+
+         double wl_peak() const;
+
+         /// Returns the blackbody responses (F-nu units) at the given wavelength in AA.
 
          virtual double evaluate( double const wl ) const;
 

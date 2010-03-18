@@ -92,7 +92,8 @@ int main( int argc, char* argv[] )
    // Spectrum operator.
 
    ES::Synow::Spectrum spectrum( grid, output,
-         yaml[ "spectrum" ][ "p_size" ] );
+         yaml[ "spectrum" ][ "p_size"  ],
+         yaml[ "spectrum" ][ "flatten" ] );
 
    // Attach setups one by one.
 

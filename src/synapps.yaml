@@ -31,6 +31,7 @@ source :
    mu_size     : 10
 spectrum :
    p_size      : 60
+   flatten     : No
 evaluator :
    target_file : "SNF20080514-002_P000000_S_drr.dat"
    vector_norm : 1

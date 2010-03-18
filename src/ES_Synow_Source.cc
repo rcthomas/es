@@ -142,7 +142,7 @@ void ES::Synow::Source::operator() ( const ES::Synow::Setup& setup )
                et = cl * _grid->tau[ ib * v_size + il ] + cu * _grid->tau[ ib * v_size + iu ];
                ss = cl * _grid->src[ ib * v_size + il ] + cu * _grid->src[ ib * v_size + iu ];
                et = exp( - et );
-               in = in * et + ss * ( 1.0 - et );
+               in = in * et + ss * ( 1.0 - et ); // * pow( _grid->wl[ ib ] / _grid->wl[ iw ], 3 );
             }
             _grid->src[ iw * v_size + iv ] += in * _dmu[ i ];
          }

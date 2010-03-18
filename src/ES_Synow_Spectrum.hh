@@ -53,7 +53,7 @@ namespace ES
 
             /// Constructor.
 
-            Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, int const p_size );
+            Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, int const p_size, bool const flatten );
 
             /// Destructor.
 
@@ -66,6 +66,8 @@ namespace ES
          private :
 
             ES::Spectrum*  _output;     ///< Synthetic spectrum object.
+
+            bool _flatten;              ///< If true, "flatten" the spectrum.
 
             int      _p_size;           ///< Number of impact parameters subtending photosphere.
             int      _p_total;          ///< Total number of impact parameters subtending line-forming region.

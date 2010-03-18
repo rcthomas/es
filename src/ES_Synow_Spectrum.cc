@@ -29,10 +29,11 @@
 #include <cmath>
 #include <algorithm>
 
-ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, int const p_size ) :
+ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, int const p_size, bool const flatten ) :
    ES::Synow::Operator( grid ),
    _output( &output ),
    _p_size( p_size ), 
+   _flatten( flatten ),
    _p_total( 5 * p_size )
 {
    _alloc( false );
@@ -108,6 +109,16 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
       _output->flux( iw ) = 0.0;
       for( int ip = 0; ip < p_outer; ++ ip ) _output->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
       _output->flux( iw ) *= norm;
+   }
+
+   // Convert to F-lambda and apply polynomial warp.
+
+   for( int iw = 0; iw < _output->size(); ++ iw )
+   {
+      double ww = _output->wl( iw ) / 6500.0;
+      _output->flux( iw ) /= ww * ww;
+      ww -= 1.0;
+      _output->flux( iw ) *= setup.a0 + ww * ( setup.a1 + ww * setup.a2 );
    }
 
 }
