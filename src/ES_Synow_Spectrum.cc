@@ -87,10 +87,22 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
     {
         int start = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _min_shift[ _p_size ] ) - _grid->wl;
         int stop  = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _max_shift[ 0       ] ) - _grid->wl;
-        for( int ip = 0; ip < p_outer; ++ ip ) _in[ ip ] = ip < _p_size ? (*_grid->bb)( _output->wl( iw ) * ( 1.0 + sqrt( v_phot * v_phot - _p[ ip ] * _p[ ip ] ) / 299.792 ) ) : 0.0;
+
         _reference->flux( iw ) = 0.0;
-        for( int ip = 0; ip < p_outer; ++ ip ) _reference->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
+        for( int ip = 0; ip < p_outer; ++ ip ) 
+        {
+            if( ip < _p_size )
+            {
+                _in[ ip ] = (*_grid->bb)( _output->wl( iw ) * _min_shift[ ip ] ) * pow( _min_shift[ ip ], 3 );
+                _reference->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
+            }
+            else
+            {
+                _in[ ip ] = 0.0;
+            }
+        }
         _reference->flux( iw ) *= norm;
+
         for( int ib = start; ib < stop; ++ ib )
         {
             double zs = _grid->wl[ ib ] / _output->wl( iw );
@@ -108,12 +120,14 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
                 double et = cl * _grid->tau[ offset + il ] + cu * _grid->tau[ offset + iu ];
                 double ss = cl * _grid->src[ offset + il ] + cu * _grid->src[ offset + iu ];
                 et = exp( - et );
-                _in[ ip ] = _in[ ip ] * et + ss * ( 1.0 - et );
+                _in[ ip ] = _in[ ip ] * et + ss * ( 1.0 - et ) * pow( zs, 3 );
             }
         }
+
         _output->flux( iw ) = 0.0;
         for( int ip = 0; ip < p_outer; ++ ip ) _output->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
         _output->flux( iw ) *= norm;
+
     }
 
     // Conversion to F-lambda, application of warp, or flattening.
