@@ -53,7 +53,7 @@ namespace ES
 
                 /// Constructor.
 
-                Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, int const p_size, bool const flatten );
+                Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::Spectrum& reference, int const p_size, bool const flatten );
 
                 /// Destructor.
 
@@ -66,6 +66,7 @@ namespace ES
             private :
 
                 ES::Spectrum*  _output;     ///< Synthetic spectrum object.
+                ES::Spectrum*  _reference;  ///< Reference pseudo-continuum for flattening.
 
                 bool _flatten;              ///< If true, "flatten" the spectrum.
 

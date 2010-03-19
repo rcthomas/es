@@ -66,6 +66,8 @@ int main( int argc, char* argv[] )
             yaml[ "output" ][ "max_wl"  ],
             yaml[ "output" ][ "wl_step" ] );
 
+    ES::Spectrum reference = ES::Spectrum::create_from_spectrum( output );
+
     // Grid object.
 
     ES::Synow::Grid grid = ES::Synow::Grid::create( 
@@ -91,7 +93,7 @@ int main( int argc, char* argv[] )
 
     // Spectrum operator.
 
-    ES::Synow::Spectrum spectrum( grid, output,
+    ES::Synow::Spectrum spectrum( grid, output, reference,
             yaml[ "spectrum" ][ "p_size"  ],
             yaml[ "spectrum" ][ "flatten" ] );
 

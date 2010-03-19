@@ -60,8 +60,9 @@ int main( int argc, char* argv[] )
     // at the same wavelengths as the target spectrum.
 
     std::string target_file = yaml[ "evaluator" ][ "target_file" ];
-    ES::Spectrum target = ES::Spectrum::create_from_ascii_file( target_file.c_str() );
-    ES::Spectrum output = ES::Spectrum::create_from_spectrum( target );
+    ES::Spectrum target    = ES::Spectrum::create_from_ascii_file( target_file.c_str() );
+    ES::Spectrum output    = ES::Spectrum::create_from_spectrum( target );
+    ES::Spectrum reference = ES::Spectrum::create_from_spectrum( target );
 
     target.rescale_median_flux();
 
@@ -90,7 +91,7 @@ int main( int argc, char* argv[] )
 
     // Spectrum operator.
 
-    ES::Synow::Spectrum spectrum( grid, output,
+    ES::Synow::Spectrum spectrum( grid, output, reference,
             yaml[ "spectrum" ][ "p_size"  ],
             yaml[ "spectrum" ][ "flatten" ] );
 

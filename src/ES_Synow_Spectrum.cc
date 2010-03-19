@@ -29,9 +29,11 @@
 #include <cmath>
 #include <algorithm>
 
-ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, int const p_size, bool const flatten ) :
+ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::Spectrum& reference, 
+        int const p_size, bool const flatten ) :
     ES::Synow::Operator( grid ),
     _output( &output ),
+    _reference( &reference ),
     _p_size( p_size ), 
     _flatten( flatten ),
     _p_total( 5 * p_size )
@@ -86,6 +88,9 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
         int start = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _min_shift[ _p_size ] ) - _grid->wl;
         int stop  = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _max_shift[ 0       ] ) - _grid->wl;
         for( int ip = 0; ip < p_outer; ++ ip ) _in[ ip ] = ip < _p_size ? (*_grid->bb)( _output->wl( iw ) * ( 1.0 + sqrt( v_phot * v_phot - _p[ ip ] * _p[ ip ] ) / 299.792 ) ) : 0.0;
+        _reference->flux( iw ) = 0.0;
+        for( int ip = 0; ip < p_outer; ++ ip ) _reference->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
+        _reference->flux( iw ) *= norm;
         for( int ib = start; ib < stop; ++ ib )
         {
             double zs = _grid->wl[ ib ] / _output->wl( iw );
@@ -111,14 +116,21 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
         _output->flux( iw ) *= norm;
     }
 
-    // Convert to F-lambda and apply polynomial warp.
+    // Conversion to F-lambda, application of warp, or flattening.
 
     for( int iw = 0; iw < _output->size(); ++ iw )
     {
-        double ww = _output->wl( iw ) / 6500.0;
-        _output->flux( iw ) /= ww * ww;
-        ww -= 1.0;
-        _output->flux( iw ) *= setup.a0 + ww * ( setup.a1 + ww * setup.a2 );
+        if( _flatten )
+        {
+            _output->flux( iw ) /= _reference->flux( iw );
+        }
+        else
+        {
+            double ww = _output->wl( iw ) / 6500.0;
+            _output->flux( iw ) /= ww * ww;
+            ww -= 1.0;
+            _output->flux( iw ) *= setup.a0 + ww * ( setup.a1 + ww * setup.a2 );
+        }
     }
 
 }
