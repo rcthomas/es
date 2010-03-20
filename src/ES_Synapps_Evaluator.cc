@@ -27,7 +27,8 @@
 
 #include <cmath>
 
-ES::Synapps::Evaluator:: Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, const std::vector< int >& ions, 
+ES::Synapps::Evaluator::Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, ES::Spectrum& output, const std::vector< int >& ions, 
+        const std::vector< double >& region_weight, const std::vector< double >& region_lower, const std::vector< double >& region_upper, 
         double const vector_norm ) :
     _grid( &grid ), _target( &target ), _output( &output ), _vector_norm( vector_norm )
 {
@@ -38,6 +39,27 @@ ES::Synapps::Evaluator:: Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target,
         _setup->ions  [ i ] = ions[ i ];
         _setup->active[ i ] = true;
     }
+
+    // Apply additional weight-factor to target spectrum.
+
+    if( region_weight.empty() ) return;
+
+    std::vector< double > weight( _target->size(), 0.0 );
+    for( int ir = 0; ir < region_weight.size(); ++ ir )
+    {
+        for( int iw = 0; iw < _target->size(); ++ iw )
+        {
+            if( _target->wl( iw ) < region_lower[ ir ] ) continue;
+            if( _target->wl( iw ) > region_upper[ ir ] ) break;
+            weight[ iw ] = region_weight[ ir ];
+        }
+    }
+
+    for( int i = 0; i < _target->size(); ++ i )
+    {
+        _target->flux_error( i ) = weight[ i ] <= 0 ? -1.0 : _target->flux_error( i ) / weight[ i ];
+    }
+
 }
 
 void ES::Synapps::Evaluator::operator() ( int tag, const APPSPACK::Vector& x, APPSPACK::Vector& f, std::string& msg )
@@ -48,6 +70,7 @@ void ES::Synapps::Evaluator::operator() ( int tag, const APPSPACK::Vector& x, AP
     double score = 0.0;
     for( int i = 0; i < _output->size(); ++ i )
     {
+        if( _target->flux_error( i ) <= 0.0 ) continue;
         double term = fabs( ( _output->flux( i ) - _target->flux( i ) ) / _target->flux_error( i ) );
         score += pow( term, _vector_norm );
     }

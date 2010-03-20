@@ -104,7 +104,18 @@ int main( int argc, char* argv[] )
         ions.push_back( yaml[ "config" ][ "ions" ][ i ] );
     }
 
-    ES::Synapps::Evaluator evaluator( grid, target, output, ions,
+    std::vector< double > region_weight;
+    std::vector< double > region_lower;
+    std::vector< double > region_upper;
+    for( int i = 0; i < yaml[ "evaluator" ][ "regions" ][ "apply" ].size(); ++ i )
+    {
+        if( ! yaml[ "evaluator" ][ "regions" ][ "apply" ][ i ] ) continue;
+        region_weight.push_back( yaml[ "evaluator" ][ "regions" ][ "weight" ][ i ] );
+        region_lower.push_back ( yaml[ "evaluator" ][ "regions" ][ "lower"  ][ i ] );
+        region_upper.push_back ( yaml[ "evaluator" ][ "regions" ][ "upper"  ][ i ] );
+    }
+
+    ES::Synapps::Evaluator evaluator( grid, target, output, ions, region_weight, region_lower, region_upper,
             yaml[ "evaluator" ][ "vector_norm" ] );
 
     // Master section.

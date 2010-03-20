@@ -34,11 +34,12 @@ spectrum :
     flatten     : No
 evaluator :
     target_file : "SNF20080514-002_P000000_S_drr.dat"
-    vector_norm : 1
+    vector_norm : 2
     regions     :
+        apply   : [   Yes,   No,  Yes ]
         weight  : [     0,    1,    1 ]
-        lower   : [     0, 3900, 5800 ]
-        upper   : [ 10000, 4100, 6500 ]
+        lower   : [     0, 3900, 5600 ]
+        upper   : [ 10000, 4100, 6400 ]
 config :
     fit_file    : "SNF20080514-002_P000000_S_drr.fit"
     cache_file  : "SNF20080514-002_P000000_S_drr.cache"
@@ -50,37 +51,37 @@ config :
     v_outer     :  { fixed: Yes, start: 30, lower: 15, upper: 30, scale: 1 }
     t_phot      :  { fixed:  No, start: 10, lower:  5, upper: 20, scale: 1 }
 
-    ions        :  [ 1401, 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
-    active      :  [  Yes,  Yes,   No,   No,   No,   No,   No,   No,   No,   No ]
-    detach      :  [   No,   No,   No,   No,   No,   No,   No,   No,   No,   No ] 
-                           
-    log_tau     :          
-        fixed   :  [   No,   No,   No,   No,   No,   No,   No,   No,   No,   No ]
-        start   :  [    0,    0,    0,    0,    0,    0,    0,    0,    0,    0 ]
-        lower   :  [   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2 ]
-        upper   :  [    2,    2,    2,    2,    2,    2,    2,    2,    2,    2 ]
-        scale   :  [    1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
-    v_min       :          
-        fixed   :  [   No,   No,   No,   No,   No,   No,   No,   No,   No,   No ]
-        start   :  [   10,   10,   10,   10,   10,   10,   10,   10,   10,   10 ]
-        lower   :  [    5,    5,    5,    5,    5,    5,    5,    5,    5,    5 ]
-        upper   :  [   15,   15,   15,   15,   15,   15,   15,   15,   15,   15 ]
-        scale   :  [    1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
-    v_max       :          
-        fixed   :  [  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes ]
-        start   :  [   30,   30,   30,   30,   30,   30,   30,   30,   30,   30 ]
-        lower   :  [   15,   15,   15,   15,   15,   15,   15,   15,   15,   15 ]
-        upper   :  [   30,   30,   30,   30,   30,   30,   30,   30,   30,   30 ]
-        scale   :  [    1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
-    aux         :          
-        fixed   :  [   No,   No,   No,   No,   No,   No,   No,   No,   No,   No ]
-        start   :  [    3,    3,    3,    3,    3,    3,    3,    3,    3,    3 ]
-        lower   :  [  0.1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
-        upper   :  [    5,    5,    5,    5,    5,    5,    5,    5,    5,    5 ]
-        scale   :  [    1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
-    temp        :          
-        fixed   :  [   No,   No,   No,   No,   No,   No,   No,   No,   No,   No ]
-        start   :  [   10,   10,   10,   10,   10,   10,   10,   10,   10,   10 ]
-        lower   :  [    5,    5,    5,    5,    5,    5,    5,    5,    5,    5 ]
-        upper   :  [   15,   15,   15,   15,   15,   15,   15,   15,   15,   15 ]
-        scale   :  [    1,    1,    1,    1,    1,    1,    1,    1,    1,    1 ]
+    ions        :  [ 1401, 1100, ]
+    active      :  [  Yes,   No, ]
+    detach      :  [   No,   No, ] 
+                                
+    log_tau     :               
+        fixed   :  [   No,   No, ]
+        start   :  [    1,    0, ]
+        lower   :  [   -2,   -2, ]
+        upper   :  [    2,    2, ]
+        scale   :  [    1,    1, ]
+    v_min       :               
+        fixed   :  [   No,   No, ]
+        start   :  [   10,   10, ]
+        lower   :  [    5,    5, ]
+        upper   :  [   15,   15, ]
+        scale   :  [    1,    1, ]
+    v_max       :               
+        fixed   :  [  Yes,  Yes, ]
+        start   :  [   30,   30, ]
+        lower   :  [   15,   15, ]
+        upper   :  [   30,   30, ]
+        scale   :  [    1,    1, ]
+    aux         :               
+        fixed   :  [   No,   No, ]
+        start   :  [  1.6,  1.6, ]
+        lower   :  [  0.1,  0.1, ]
+        upper   :  [    5,    5, ]
+        scale   :  [    1,    1, ]
+    temp        :               
+        fixed   :  [   No,   No, ]
+        start   :  [   10,   10, ]
+        lower   :  [    5,    5, ]
+        upper   :  [   25,   25, ]
+        scale   :  [    1,    1, ]
