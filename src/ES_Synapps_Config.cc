@@ -36,7 +36,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     config[ "fit_file" ] >> fit_file;
     std::string cache_file = config[ "cache_file" ];
 
-    params.sublist( "Solver" ).setParameter( "Debug"                , 4 );
+//  params.sublist( "Solver" ).setParameter( "Debug"                , 4 );
     params.sublist( "Solver" ).setParameter( "Cache Input File"     , cache_file );
     params.sublist( "Solver" ).setParameter( "Cache Output File"    , cache_file );
     params.sublist( "Solver" ).setParameter( "Precision"            , 2    );

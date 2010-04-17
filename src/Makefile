@@ -22,15 +22,15 @@
 
 ### REQUIRE_USING_NAMESPACE_STD for APPSPACK
 
-CPP=mpicxx -DREQUIRE_USING_NAMESPACE_STD
-CFITSIO_BASE=/opt/local
-YAML_BASE=${HOME}/local
-APPS_BASE=${HOME}/local
+# CPP=mpicxx -DREQUIRE_USING_NAMESPACE_STD
+# CFITSIO_BASE=/opt/local
+# YAML_BASE=${HOME}/local
+# APPS_BASE=${HOME}/local
 
-# CPP=CC --no_warnings -fastsse -mp=nonuma --exceptions -Minfo=mp -DMPICH_IGNORE_CXX_SEEK
-# CFITSIO_BASE=/project/projectdirs/cmb/modules/franklin/pgi/cmb/2.4.1/cfitsio_3.0.6-2.4.1
-# YAML_BASE=${HOME}/local/franklin
-# APPS_BASE=${HOME}/local/franklin
+CPP=CC --no_warnings -fastsse -mp=nonuma --exceptions -Minfo=mp -DMPICH_IGNORE_CXX_SEEK
+CFITSIO_BASE=/project/projectdirs/cmb/modules/franklin/pgi/cmb/2.4.1/cfitsio_3.0.6-2.4.1
+YAML_BASE=${HOME}/local/franklin
+APPS_BASE=${HOME}/local/franklin
 
 CFITSIO_INCL=-I$(CFITSIO_BASE)/include
 CFITSIO_LINK=-L$(CFITSIO_BASE)/lib

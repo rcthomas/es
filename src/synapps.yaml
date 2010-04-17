@@ -22,8 +22,8 @@ grid :
     v_size      : 100
     v_outer_max : 30.0
 opacity :
-    line_dir    : /Users/rthomas/data/lines
-    ref_file    : /Users/rthomas/data/refs.dat
+    line_dir    : /global/u1/r/rthomas/data/lines
+    ref_file    : /global/u1/r/rthomas/data/refs.dat
     form        : exp
     v_ref       : 10.0
     log_tau_min : -2.0
@@ -44,12 +44,12 @@ config :
     fit_file    : "SNF20080514-002_P000000_S_drr.fit"
     cache_file  : "SNF20080514-002_P000000_S_drr.cache"
 
-    a0          :  { fixed:  No, start:  1, lower:  0, upper: 10, scale: 1 }
-    a1          :  { fixed:  No, start:  0, lower: -5, upper:  5, scale: 1 }
-    a2          :  { fixed:  No, start:  0, lower: -5, upper:  5, scale: 1 }
-    v_phot      :  { fixed:  No, start: 10, lower:  5, upper: 15, scale: 1 }
-    v_outer     :  { fixed: Yes, start: 30, lower: 15, upper: 30, scale: 1 }
-    t_phot      :  { fixed:  No, start: 10, lower:  5, upper: 20, scale: 1 }
+    a0          :  { fixed:  No, start:    1, lower:   0, upper: 10, scale: 10 }
+    a1          :  { fixed:  No, start: -2.6, lower: -10, upper: 10, scale: 20 }
+    a2          :  { fixed:  No, start: -5.0, lower: -10, upper: 10, scale: 20 }
+    v_phot      :  { fixed:  No, start: 10.7, lower:   5, upper: 15, scale: 10 }
+    v_outer     :  { fixed: Yes, start:   30, lower:  15, upper: 30, scale:  1 }
+    t_phot      :  { fixed:  No, start: 11.4, lower:   5, upper: 25, scale: 20 }
 
     ions        :  [ 1401, 1100, ]
     active      :  [  Yes,   No, ]
@@ -57,13 +57,13 @@ config :
                                 
     log_tau     :               
         fixed   :  [   No,   No, ]
-        start   :  [    1,    0, ]
+        start   :  [ 1.14,    0, ]
         lower   :  [   -2,   -2, ]
         upper   :  [    2,    2, ]
         scale   :  [    1,    1, ]
     v_min       :               
         fixed   :  [   No,   No, ]
-        start   :  [   10,   10, ]
+        start   :  [ 10.7,   10, ]
         lower   :  [    5,    5, ]
         upper   :  [   15,   15, ]
         scale   :  [    1,    1, ]
@@ -75,13 +75,13 @@ config :
         scale   :  [    1,    1, ]
     aux         :               
         fixed   :  [   No,   No, ]
-        start   :  [  1.6,  1.6, ]
+        start   :  [ 1.35,  1.6, ]
         lower   :  [  0.1,  0.1, ]
         upper   :  [    5,    5, ]
         scale   :  [    1,    1, ]
     temp        :               
         fixed   :  [   No,   No, ]
-        start   :  [   10,   10, ]
+        start   :  [ 20.2,   10, ]
         lower   :  [    5,    5, ]
         upper   :  [   25,   25, ]
         scale   :  [    1,    1, ]
