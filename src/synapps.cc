@@ -98,7 +98,7 @@ int main( int argc, char* argv[] )
     // Evaluator.
 
     std::vector< int > ions;
-    for( int i = 0; i < yaml[ "config" ][ "active" ].size(); ++ i )
+    for( size_t i = 0; i < yaml[ "config" ][ "active" ].size(); ++ i )
     {
         if( ! yaml[ "config" ][ "active" ][ i ] ) continue;
         ions.push_back( yaml[ "config" ][ "ions" ][ i ] );
@@ -107,7 +107,7 @@ int main( int argc, char* argv[] )
     std::vector< double > region_weight;
     std::vector< double > region_lower;
     std::vector< double > region_upper;
-    for( int i = 0; i < yaml[ "evaluator" ][ "regions" ][ "apply" ].size(); ++ i )
+    for( size_t i = 0; i < yaml[ "evaluator" ][ "regions" ][ "apply" ].size(); ++ i )
     {
         if( ! yaml[ "evaluator" ][ "regions" ][ "apply" ][ i ] ) continue;
         region_weight.push_back( yaml[ "evaluator" ][ "regions" ][ "weight" ][ i ] );
@@ -130,7 +130,7 @@ int main( int argc, char* argv[] )
         APPSPACK::Executor::MPI       executor;
         APPSPACK::Constraints::Linear linear( config.params.sublist( "Linear" ) );
         APPSPACK::Solver              solver( config.params.sublist( "Solver" ), executor, linear );
-        APPSPACK::Solver::State       stat = solver.solve();
+        APPSPACK::Solver::State       state = solver.solve();
 
         // Problem solved, terminate workers.
 

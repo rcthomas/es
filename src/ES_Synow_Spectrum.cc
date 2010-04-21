@@ -34,8 +34,8 @@ ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::
     ES::Synow::Operator( grid ),
     _output( &output ),
     _reference( &reference ),
-    _p_size( p_size ), 
     _flatten( flatten ),
+    _p_size( p_size ), 
     _p_total( 5 * p_size )
 {
     _alloc( false );
@@ -83,7 +83,7 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
     for( int ip = 0; ip < _p_size; ++ ip ) norm += _p[ ip ] * p_step;
     norm = 1.0 / norm;
 
-    for( int iw = 0; iw < _output->size(); ++ iw )
+    for( size_t iw = 0; iw < _output->size(); ++ iw )
     {
         int start = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _min_shift[ _p_size ] ) - _grid->wl;
         int stop  = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _max_shift[ 0       ] ) - _grid->wl;
@@ -132,7 +132,7 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
 
     // Conversion to F-lambda, application of warp, or flattening.
 
-    for( int iw = 0; iw < _output->size(); ++ iw )
+    for( size_t iw = 0; iw < _output->size(); ++ iw )
     {
         if( _flatten )
         {

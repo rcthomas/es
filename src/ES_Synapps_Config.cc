@@ -44,7 +44,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     params.sublist( "Solver" ).setParameter( "Use Projected Compass", true );
 
     int num_ions = 0;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         num_ions += config[ "active" ][ i ] ? 1 : 0;
     }
@@ -67,7 +67,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     buffer[ 5 ] = config[ "t_phot"  ][ "start" ];
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "start" ][ i ];
@@ -90,7 +90,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     buffer[ 5 ] = config[ "t_phot"  ][ "lower" ];
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "lower" ][ i ];
@@ -113,7 +113,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     buffer[ 5 ] = config[ "t_phot"  ][ "upper" ];
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "upper" ][ i ];
@@ -136,7 +136,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     buffer[ 5 ] = config[ "t_phot"  ][ "scale" ];
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "scale" ][ i ];
@@ -159,7 +159,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     // Inequality bounds constraints: v_phot <= v_min.
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         buffer.zero();
@@ -172,7 +172,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     // Inequality bounds constraints: v_min <= v_max.
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         buffer.zero();
@@ -185,7 +185,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     // Inequality bounds constraints: v_max <= v_outer.
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         buffer.zero();
@@ -204,7 +204,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     // Equality constraints: Detached/attached ions (attached: v_phot == v_min ).
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         if( ! config[ "detach" ][ i ] )
@@ -223,14 +223,14 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     std::set< int > done;
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         if( done.find( config[ "ions" ][ i ] ) == done.end() )
         {
             int ion = config[ "ions" ][ i ];
             int jj = 6;
-            for( int ii = 0; ii < config[ "active" ].size(); ++ ii )
+            for( size_t ii = 0; ii < config[ "active" ].size(); ++ ii )
             {
                 if( ! config[ "active" ][ ii ] ) continue;
                 if( ii > i && config[ "ions" ][ ii ] == ion )
@@ -299,7 +299,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     }
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         if( config[ "log_tau" ][ "fixed" ][ i ] )
@@ -313,7 +313,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     }
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         if( config[ "v_min" ][ "fixed" ][ i ] )
@@ -327,7 +327,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     }
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         if( config[ "v_max" ][ "fixed" ][ i ] )
@@ -341,7 +341,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     }
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         if( config[ "aux" ][ "fixed" ][ i ] )
@@ -355,7 +355,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     }
 
     j = 6;
-    for( int i = 0; i < config[ "active" ].size(); ++ i )
+    for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
         if( config[ "temp" ][ "fixed" ][ i ] )

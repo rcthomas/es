@@ -83,7 +83,7 @@ namespace ES
                     void operator() ( S& setup ) 
                     { 
                         reset( setup );
-                        for( int i = 0; i < _oper.size(); ++ i ) (*(_oper[ i ] ))( setup ); 
+                        for( size_t i = 0; i < _oper.size(); ++ i ) (*(_oper[ i ] ))( setup ); 
                     }
 
                     /// Prepare the Grid for a new calculation, placing it in

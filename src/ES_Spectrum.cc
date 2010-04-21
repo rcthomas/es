@@ -32,7 +32,7 @@
 #include <fstream>
 #include <algorithm>
 
-ES::Spectrum ES::Spectrum::create_from_size( int const size )
+ES::Spectrum ES::Spectrum::create_from_size( size_t const size )
 {
     ES::Spectrum spectrum;
     spectrum.resize( size );
@@ -49,12 +49,12 @@ ES::Spectrum ES::Spectrum::create_from_range_and_step( double const min_wl, doub
     return spectrum;
 }
 
-ES::Spectrum ES::Spectrum::create_from_range_and_size( double const min_wl, double const max_wl, int const size )
+ES::Spectrum ES::Spectrum::create_from_range_and_size( double const min_wl, double const max_wl, size_t const size )
 {
     ES::Spectrum spectrum;
     double wl_step = ( max_wl - min_wl ) / double( size - 1 );
     spectrum.resize( size );
-    for( int i = 0; i < spectrum.size(); ++ i ) spectrum.wl( i ) = min_wl + i * wl_step;
+    for( size_t i = 0; i < spectrum.size(); ++ i ) spectrum.wl( i ) = min_wl + i * wl_step;
     spectrum.wl( size - 1 ) = max_wl;
     return spectrum;
 }
@@ -103,7 +103,7 @@ ES::Spectrum ES::Spectrum::create_from_fits_file( const char* file )
     // Begin setting up spectrum.
 
     spectrum.resize( naxes[ 0 ] );
-    for( int i = 0; i < spectrum.size(); ++ i ) spectrum.wl( i ) = crval1 + i * cdelt1;
+    for( size_t i = 0; i < spectrum.size(); ++ i ) spectrum.wl( i ) = crval1 + i * cdelt1;
 
     double* buffer = new double [ spectrum.size() ];
 
@@ -116,7 +116,7 @@ ES::Spectrum ES::Spectrum::create_from_fits_file( const char* file )
     fits_read_pix( fits, TDOUBLE, fpixel, nelements, 0, buffer, &anynul, &status );
     if( status != 0 ) throw ES::Exception( "Unable to read fluxes in spectrum file: '" + std::string( file ) + "'" );
 
-    for( int i = 0; i < spectrum.size(); ++ i ) spectrum.flux( i ) = buffer[ i ];
+    for( size_t i = 0; i < spectrum.size(); ++ i ) spectrum.flux( i ) = buffer[ i ];
 
     // Move forward one HDU.
 
@@ -129,7 +129,7 @@ ES::Spectrum ES::Spectrum::create_from_fits_file( const char* file )
     fits_read_pix( fits, TDOUBLE, fpixel, nelements, 0, buffer, &anynul, &status );
     if( status != 0 ) throw ES::Exception( "Unable to read variance in spectrum file: '" + std::string( file ) + "'" );
 
-    for( int i = 0; i < spectrum.size(); ++ i ) spectrum.flux_error( i ) = sqrt( buffer[ i ] );
+    for( size_t i = 0; i < spectrum.size(); ++ i ) spectrum.flux_error( i ) = sqrt( buffer[ i ] );
 
     // Clean up.
 
@@ -142,11 +142,11 @@ ES::Spectrum ES::Spectrum::create_from_spectrum( const ES::Spectrum& original )
 {
     ES::Spectrum spectrum;
     spectrum.resize( original.size() );
-    for( int i = 0; i < original.size(); ++ i ) spectrum.wl( i ) = original.wl( i );
+    for( size_t i = 0; i < original.size(); ++ i ) spectrum.wl( i ) = original.wl( i );
     return spectrum;
 }
 
-void ES::Spectrum::resize( int const size )
+void ES::Spectrum::resize( size_t const size )
 {
     clear();
     if( size <= 0 ) return;
@@ -164,7 +164,7 @@ void ES::Spectrum::clear()
 
 void ES::Spectrum::zero_out()
 {
-    for( int i = 0; i < size(); ++ i )
+    for( size_t i = 0; i < size(); ++ i )
     {
         _wl[ i ] = 0.0;
         _flux[ i ] = 0.0;
@@ -177,9 +177,9 @@ void ES::Spectrum::rescale_median_flux( double const median )
     std::vector< double > flux( _flux );
     std::sort( flux.begin(), flux.end() );
     int middle = size() / 2;
-    double old_median = size() & 2 == 0 ? 0.5 * ( flux[ middle ] + flux[ middle + 1 ] ) : flux[ middle ];
+    double old_median = size() % 2 == 0 ? 0.5 * ( flux[ middle ] + flux[ middle + 1 ] ) : flux[ middle ];
     double factor = median / old_median;
-    for( int i = 0; i < size(); ++ i )
+    for( size_t i = 0; i < size(); ++ i )
     {
         _flux[ i ] *= factor;
         _flux_error[ i ] *= factor;
@@ -189,14 +189,14 @@ void ES::Spectrum::rescale_median_flux( double const median )
 double ES::Spectrum::min_flux() const
 {
     double min = std::numeric_limits< double >::max();
-    for( int i = 0; i < size(); ++ i ) if( _flux[ i ] < min ) min = _flux[ i ];
+    for( size_t i = 0; i < size(); ++ i ) if( _flux[ i ] < min ) min = _flux[ i ];
     return min;
 }
 
 double ES::Spectrum::max_flux() const
 {
     double max = std::numeric_limits< double >::min();
-    for( int i = 0; i < size(); ++ i ) if( _flux[ i ] > max ) max = _flux[ i ];
+    for( size_t i = 0; i < size(); ++ i ) if( _flux[ i ] > max ) max = _flux[ i ];
     return max;
 }
 
@@ -221,7 +221,7 @@ namespace ES
             flux_error.push_back( tmp_flux_error );
         }
         spectrum.resize( wl.size() );
-        for( int i = 0; i < spectrum.size(); ++ i )
+        for( size_t i = 0; i < spectrum.size(); ++ i )
         {
             spectrum.wl( i ) = wl[ i ];
             spectrum.flux( i ) = flux[ i ];
@@ -232,7 +232,7 @@ namespace ES
 
     std::ostream& operator << ( std::ostream& stream, const ES::Spectrum& spectrum )
     {
-        for( int i = 0; i < spectrum.size(); ++ i )
+        for( size_t i = 0; i < spectrum.size(); ++ i )
         {
             stream << spectrum.wl( i )         << " ";
             stream << spectrum.flux( i )       << " ";

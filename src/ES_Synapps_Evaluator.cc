@@ -34,7 +34,7 @@ ES::Synapps::Evaluator::Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, 
 {
     _setup = new ES::Synow::Setup();
     _setup->resize( ions.size() );
-    for( int i = 0; i < ions.size(); ++ i )
+    for( size_t i = 0; i < ions.size(); ++ i )
     {
         _setup->ions  [ i ] = ions[ i ];
         _setup->active[ i ] = true;
@@ -45,9 +45,9 @@ ES::Synapps::Evaluator::Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, 
     if( region_weight.empty() ) return;
 
     std::vector< double > weight( _target->size(), 0.0 );
-    for( int ir = 0; ir < region_weight.size(); ++ ir )
+    for( size_t ir = 0; ir < region_weight.size(); ++ ir )
     {
-        for( int iw = 0; iw < _target->size(); ++ iw )
+        for( size_t iw = 0; iw < _target->size(); ++ iw )
         {
             if( _target->wl( iw ) < region_lower[ ir ] ) continue;
             if( _target->wl( iw ) > region_upper[ ir ] ) break;
@@ -55,7 +55,7 @@ ES::Synapps::Evaluator::Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, 
         }
     }
 
-    for( int i = 0; i < _target->size(); ++ i )
+    for( size_t i = 0; i < _target->size(); ++ i )
     {
         _target->flux_error( i ) = weight[ i ] <= 0 ? -1.0 : _target->flux_error( i ) / weight[ i ];
     }
@@ -68,7 +68,7 @@ void ES::Synapps::Evaluator::operator() ( int tag, const APPSPACK::Vector& x, AP
     (*_grid)( *_setup );
 
     double score = 0.0;
-    for( int i = 0; i < _output->size(); ++ i )
+    for( size_t i = 0; i < _output->size(); ++ i )
     {
         if( _target->flux_error( i ) <= 0.0 ) continue;
         double term = fabs( ( _output->flux( i ) - _target->flux( i ) ) / _target->flux_error( i ) );

@@ -58,7 +58,7 @@ namespace ES
             /// Constructor taking a size argument.  A zeroed-out spectrum
             /// (all tuples having 0 for all entries) is returned.
 
-            static Spectrum create_from_size( int const size );
+            static Spectrum create_from_size( size_t const size );
 
             /// Constructor taking wavelength range and step arguments, in
             /// Angstroms.  A spectrum is returned with flux and flux-error
@@ -75,7 +75,7 @@ namespace ES
             /// The first and last wavelength values are guaranteed to
             /// equal min_wl and max_wl respectively.
 
-            static Spectrum create_from_range_and_size( double const min_wl, double const max_wl, int const size );
+            static Spectrum create_from_range_and_size( double const min_wl, double const max_wl, size_t const size );
 
             /// Constructor taking a path to a multicolumn ASCII file.  The 
             /// file contents are parsed and used to initialize a spectrum 
@@ -97,14 +97,14 @@ namespace ES
 
             /// Number of (wavelength, flux, flux-error) tuples.
 
-            int size() const { return _wl.size(); }
+            size_t size() const { return _wl.size(); }
 
             /// Adjust spectrum size, adding or deleting tuples.  Note that 
             /// in lieu of trying to handle the addition of points to the 
             /// beginning, middle, or end of the spectrum, the spectrum is 
             /// zeroed-out.
 
-            void resize( int const size );
+            void resize( size_t const size );
 
             /// Set the size of the spectrum to zero.  Note that this is not
             /// the same operation as zero_out().
