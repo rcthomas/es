@@ -64,7 +64,7 @@ int main( int argc, char* argv[] )
     ES::Spectrum output    = ES::Spectrum::create_from_spectrum( target );
     ES::Spectrum reference = ES::Spectrum::create_from_spectrum( target );
 
-    target.rescale_median_flux();
+//  target.rescale_median_flux();
 
     // Grid object.
 

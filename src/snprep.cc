@@ -22,6 +22,7 @@
 
 #include "ES_Spectrum.hh"
 
+#include <cstdlib>
 #include <iostream>
 
 int main( int argc, char* argv[] )
