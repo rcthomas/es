@@ -22,10 +22,15 @@
 
 ### REQUIRE_USING_NAMESPACE_STD for APPSPACK
 
-CPP=mpicxx -DREQUIRE_USING_NAMESPACE_STD
-CFITSIO_BASE=/opt/local
+CPP=mpicxx -DREQUIRE_USING_NAMESPACE_STD -fopenmp -Wall
+CFITSIO_BASE=/usr/lib
 YAML_BASE=${HOME}/local
 APPS_BASE=${HOME}/local
+
+# CPP=mpicxx -DREQUIRE_USING_NAMESPACE_STD
+# CFITSIO_BASE=/opt/local
+# YAML_BASE=${HOME}/local
+# APPS_BASE=${HOME}/local
 
 # CPP=CC --no_warnings -fastsse -mp=nonuma --exceptions -Minfo=mp -DMPICH_IGNORE_CXX_SEEK
 # CFITSIO_BASE=/project/projectdirs/cmb/modules/franklin/pgi/cmb/2.4.1/cfitsio_3.0.6-2.4.1
@@ -42,7 +47,7 @@ YAML_LIBS=-lyaml-cpp
 
 APPS_INCL=-I$(APPS_BASE)/include/appspack
 APPS_LINK=-L$(APPS_BASE)/lib
-APPS_LIBS=-lappspack -lcdd -llapack -lblas
+APPS_LIBS=-lappspack -lcdd -llapack-3 -lcblas
 
 OBJ =                       \
     ES_Accelerator.o        \
