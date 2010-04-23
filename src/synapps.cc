@@ -30,6 +30,15 @@
 #include <yaml-cpp/yaml.h>
 
 #include <fstream>
+#include <csignal>
+#include <csetjmp>
+
+jmp_buf env;
+
+void signal_handler( int param )
+{
+    longjmp( env, 1 );
+}
 
 int main( int argc, char* argv[] )
 {
@@ -125,12 +134,32 @@ int main( int argc, char* argv[] )
 
         ES::Synapps::Config config( yaml[ "config" ] );
 
-        // Executor, constraints, solver, solve.
+        // Executor, constraints, solver.
 
         APPSPACK::Executor::MPI       executor;
         APPSPACK::Constraints::Linear linear( config.params.sublist( "Linear" ) );
         APPSPACK::Solver              solver( config.params.sublist( "Solver" ), executor, linear );
-        APPSPACK::Solver::State       state = solver.solve();
+//      APPSPACK::Solver::State       state = solver.solve();
+        APPSPACK::Solver::State       state;
+      
+        // Signal handler, wrapping solver.
+
+        signal( SIGTERM, signal_handler );
+
+        int terminated = setjmp( env );
+        if( ! terminated )
+        {
+            state = solver.solve();
+        }
+        else
+        {
+            std::cerr << std::endl;
+            std::cerr << "WARNING!" << std::endl;
+            std::cerr << "An abnormal exit condition has been reached, probably due to"  << std::endl;
+            std::cerr << "a TERM signal.  Attempting to write out the best fit found so" << std::endl;
+            std::cerr << "far, but be forewarned that we probably did not converge."     << std::endl;
+            std::cerr << std::endl;
+        }
 
         // Problem solved, terminate workers.
 
