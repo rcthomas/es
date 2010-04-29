@@ -25,6 +25,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include <fstream>
+#include <getopt.h>
 
 void operator >> ( const YAML::Node& node, ES::Synow::Setup& setup )
 {
@@ -43,15 +44,62 @@ void operator >> ( const YAML::Node& node, ES::Synow::Setup& setup )
     for( size_t i = 0; i < node[ "temp"    ].size(); ++ i ) setup.temp.push_back( node[ "temp" ][ i ] );
 }
 
+void usage( std::ostream& stream )
+{
+    stream << "usage: syn++ [--verbose] control.yaml" << std::endl;
+}
+
 int main( int argc, char* argv[] )
 {
+
+    // Command line.
+
+    int verbose = 0;
+
+    while( 1 )
+    {
+
+        static struct option long_options[] =
+        {
+            { "verbose" , no_argument, &verbose, 1   },
+            { "help"    , no_argument,        0, 'h' }
+        };
+
+        int option_index = 0;
+                 
+        int c = getopt_long( argc, argv, "h", long_options, &option_index );
+        if( c == -1 ) break;
+
+        switch( c )
+        {
+            case 0 :
+                break;
+            case 'h' :
+                usage( std::cout );
+                exit( 0 );
+            case '?' :
+                usage( std::cerr );
+                exit( 137 );
+            default :
+                usage( std::cerr );
+                exit( 137 );
+        }
+
+    }
+
+    if( ! ( optind < argc ) )
+    {
+        std::cerr << "syn++: missing control file" << std::endl;
+        usage( std::cerr );
+        exit( 137 );
+    }
 
     // Configuration in this application comes from a YAML file.
 
     YAML::Node yaml;
 
     {
-        std::ifstream  stream( argv[ 1 ] );
+        std::ifstream  stream( argv[ optind ++ ] );
         YAML::Parser   parser( stream );
         parser.GetNextDocument( yaml );
         stream.close();
@@ -99,9 +147,13 @@ int main( int argc, char* argv[] )
 
     // Attach setups one by one.
 
+    int count = 0;
+
     const YAML::Node& setups = yaml[ "setups" ];
     for( YAML::Iterator iter = setups.begin(); iter != setups.end(); ++ iter )
     {
+        ++ count;
+        if( verbose ) std::cerr << "computing spectrum " << count << " of " << setups.size() << std::endl;
         ES::Synow::Setup setup;
         *iter >> setup;
         grid( setup );
