@@ -6,16 +6,45 @@ AC_INIT([ES], [0.95], [rcthomas@lbl.gov])
 AC_CONFIG_SRCDIR([src/ES_Accelerator.cc])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([-Wall -Werror])
+#AM_INIT_AUTOMAKE([-Wall -Werror])
+AM_INIT_AUTOMAKE
 AC_LANG(C++)
+AC_CANONICAL_HOST
 
 # Checks for programs.
 AC_PROG_AWK
 AC_PROG_CXX
 AC_PROG_INSTALL
+AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
+
+# Set default optimization to '-O3' instead of the default '-g -O2'
+if test x"${CXXFLAGS}" = x; then
+   CXXFLAGS="-O3"
+fi
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_TYPE_SIZE_T
+AC_F77_LIBRARY_LDFLAGS
+if test x"${F77}" != x; then
+   AC_F77_WRAPPERS
+fi
+
+# Checks for library functions.
+AC_CHECK_FUNCS([pow sqrt])
+
+# Check for arch flags
+ACX_ARCHFLAG([no], [], [])
+
+# Check for OpenMP
+AX_OPENMP([ax_have_openmp=yes;AC_DEFINE(HAVE_OPENMP,1,[Define if OpenMP is enabled])])
+AM_CONDITIONAL([HAVE_AM_OPENMP], [test $ax_have_openmp = yes])
+
+# Check for MPI
+ACX_MPI
+AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
 
 # Check for CFITSIO
 
@@ -83,12 +112,22 @@ fi
 AC_SUBST([YAML_CPP_CPPFLAGS])
 AC_SUBST([YAML_CPP_LDFLAGS])
 
-# Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
-AC_TYPE_SIZE_T
 
-# Checks for library functions.
-AC_CHECK_FUNCS([pow sqrt])
-
-AC_CONFIG_FILES([Makefile src/Makefile])
+# Generate Makefiles
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([src/Makefile])
 AC_OUTPUT
+
+# Print out detected build options
+AC_MSG_NOTICE([                                           ])
+AC_MSG_NOTICE([=========== Build Configuration ===========])
+AC_MSG_NOTICE([  C++ Compiler     : $CXX])
+AC_MSG_NOTICE([  C Compile flags  : $CXXFLAGS])
+if test x"${ax_have_openmp}" = xyes; then
+  AC_MSG_NOTICE([  OpenMP           : Detected ($OPENMP_CFLAGS)])
+else
+  AC_MSG_NOTICE([  OpenMP           : Disabled])
+fi
+AC_MSG_NOTICE([===========================================])
+AC_MSG_NOTICE([                                           ])
+
