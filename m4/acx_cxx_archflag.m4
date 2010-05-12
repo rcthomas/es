@@ -39,7 +39,7 @@ dnl 2008-12-10
 dnl Support as many compilers as possible (not just GCC).
 dnl
 
-AC_DEFUN([ACX_ARCHFLAG],
+AC_DEFUN([ACX_CXX_ARCHFLAG],
 [AC_REQUIRE([AC_PROG_CXX])
 AC_REQUIRE([AC_CANONICAL_HOST])
 

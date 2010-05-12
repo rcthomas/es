@@ -8,6 +8,13 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 #AM_INIT_AUTOMAKE([-Wall -Werror])
 AM_INIT_AUTOMAKE
+
+# Set default optimization to '-O3' instead of the default '-g -O2'
+if test x"${CXXFLAGS}" = x; then
+   CXXFLAGS="-O3"
+fi
+
+# Set language
 AC_LANG(C++)
 AC_CANONICAL_HOST
 
@@ -19,10 +26,10 @@ AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-# Set default optimization to '-O3' instead of the default '-g -O2'
-if test x"${CXXFLAGS}" = x; then
-   CXXFLAGS="-O3"
-fi
+# Doxygen options
+DX_PDF_FEATURE(ON)
+DX_HTML_FEATURE(ON)
+DX_INIT_DOXYGEN(ES, doxygen.txt, doc)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -36,7 +43,7 @@ fi
 AC_CHECK_FUNCS([pow sqrt])
 
 # Check for arch flags
-ACX_ARCHFLAG([no], [], [])
+ACX_CXX_ARCHFLAG([no], [], [])
 
 # Check for OpenMP
 AX_OPENMP([ax_have_openmp=yes;AC_DEFINE(HAVE_OPENMP,1,[Define if OpenMP is enabled])])
@@ -47,37 +54,7 @@ ACX_MPI
 AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
 
 # Check for CFITSIO
-
-AC_ARG_WITH([cfitsio],
-  [AC_HELP_STRING([--with-cfitsio@<:@=DIR@:>@],
-    [using CFITSIO (DIR = prefix for CFITSIO installation)])])
-CFITSIO_CPPFLAGS=''
-CFITSIO_LDFLAGS=''
-if test "x$with_cfitsio" != xno; then
-  if test -n "$with_cfitsio"; then
-    CFITSIO_CPPFLAGS="-I${with_cfitsio}/include"
-    CFITSIO_LDFLAGS="-L${with_cfitsio}/lib"
-  fi
-  tmp_CPPFLAGS=$CPPFLAGS
-  tmp_LDFLAGS=$LDFLAGS
-  CPPFLAGS="$CPPFLAGS $CFITSIO_CPPFLAGS"
-  LDFLAGS="$LDFLAGS $CFITSIO_LDFLAGS"
-  have_cfitsio=no
-  AC_CHECK_HEADER([fitsio.h],
-    [AC_CHECK_LIB([cfitsio],
-      [main],
-      [have_cfitsio=yes
-        CFITSIO_LDFLAGS="$CFITSIO_LDFLAGS -lcfitsio"
-        AC_DEFINE([HAVE_CFITSIO], 1,
-                  [Define to 1 if we can use CFITSIO])
-      ]
-    )]
-  )
-  CPPFLAGS=$tmp_CPPFLAGS
-  LDFLAGS=$tmp_LDFLAGS
-fi
-AC_SUBST([CFITSIO_CPPFLAGS])
-AC_SUBST([CFITSIO_LDFLAGS])
+ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 
 # Check for YAML-CPP
 
@@ -122,9 +99,10 @@ AC_OUTPUT
 AC_MSG_NOTICE([                                           ])
 AC_MSG_NOTICE([=========== Build Configuration ===========])
 AC_MSG_NOTICE([  C++ Compiler     : $CXX])
+AC_MSG_NOTICE([  MPI C++ Compiler : $MPICXX])
 AC_MSG_NOTICE([  C Compile flags  : $CXXFLAGS])
 if test x"${ax_have_openmp}" = xyes; then
-  AC_MSG_NOTICE([  OpenMP           : Detected ($OPENMP_CFLAGS)])
+  AC_MSG_NOTICE([  OpenMP           : Detected ($OPENMP_CXXFLAGS)])
 else
   AC_MSG_NOTICE([  OpenMP           : Disabled])
 fi
