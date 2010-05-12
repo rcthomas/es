@@ -57,38 +57,7 @@ AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
 ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 
 # Check for YAML-CPP
-
-AC_ARG_WITH([yaml-cpp],
-  [AC_HELP_STRING([--with-yaml-cpp@<:@=DIR@:>@],
-    [using YAML-CPP (DIR = prefix for YAML-CPP installation)])])
-YAML_CPP_CPPFLAGS=''
-YAML_CPP_LDFLAGS=''
-if test "x$with_yaml_cpp" != xno; then
-  if test -n "$with_yaml_cpp"; then
-    YAML_CPP_CPPFLAGS="-I${with_yaml_cpp}/include"
-    YAML_CPP_LDFLAGS="-L${with_yaml_cpp}/lib"
-  fi
-  tmp_CPPFLAGS=$CPPFLAGS
-  tmp_LDFLAGS=$LDFLAGS
-  CPPFLAGS="$CPPFLAGS $YAML_CPP_CPPFLAGS"
-  LDFLAGS="$LDFLAGS $YAML_CPP_LDFLAGS"
-  have_yaml_cpp=no
-  AC_CHECK_HEADER([yaml-cpp/yaml.h],
-    [AX_CXX_CHECK_LIB([yaml-cpp],
-      [YAML::Node],
-      [have_yaml_cpp=yes
-        YAML_CPP_LDFLAGS="$YAML_CPP_LDFLAGS -lyaml-cpp"
-        AC_DEFINE([HAVE_YAML_CPP], 1,
-                  [Define to 1 if we can use YAML_CPP])
-      ]
-    )]
-  )
-  CPPFLAGS=$tmp_CPPFLAGS
-  LDFLAGS=$tmp_LDFLAGS
-fi
-AC_SUBST([YAML_CPP_CPPFLAGS])
-AC_SUBST([YAML_CPP_LDFLAGS])
-
+ACX_YAML([], [AC_MSG_ERROR([Could not find the yaml-cpp library!])])
 
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
@@ -106,6 +75,8 @@ if test x"${ax_have_openmp}" = xyes; then
 else
   AC_MSG_NOTICE([  OpenMP           : Disabled])
 fi
+AC_MSG_NOTICE([  CFITSIO          : $CFITSIO])
+AC_MSG_NOTICE([  yaml-cpp         : $YAML])
 AC_MSG_NOTICE([===========================================])
 AC_MSG_NOTICE([                                           ])
 
