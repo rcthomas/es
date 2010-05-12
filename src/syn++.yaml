@@ -26,8 +26,8 @@ grid :
     v_size      : 100
     v_outer_max : 30.0
 opacity :
-    line_dir    : /home/rthomas/data/lines
-    ref_file    : /home/rthomas/data/refs.dat
+    line_dir    : /usr/local/share/es/lines
+    ref_file    : /usr/local/share/es/refs.dat
     form        : exp
     v_ref       : 10.0
     log_tau_min : -2.0
@@ -44,7 +44,7 @@ setups :
         v_outer :  30.0
         t_phot  :  12.0
         ions    :  [ 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
-        active  :  [  Yes,   No,   No,   No,   No,   No,   No,   No,   No ]
+        active  :  [  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes ]
         log_tau :  [  0.1,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 ]
         v_min   :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
         v_max   :  [ 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0 ]
@@ -57,7 +57,7 @@ setups :
         v_outer :  30.0
         t_phot  :  12.0
         ions    :  [ 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
-        active  :  [  Yes,   No,   No,   No,   No,   No,   No,   No,   No ]
+        active  :  [  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes ]
         log_tau :  [  0.1,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 ]
         v_min   :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
         v_max   :  [ 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0 ]
@@ -70,7 +70,7 @@ setups :
         v_outer :  30.0
         t_phot  :  12.0
         ions    :  [ 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
-        active  :  [  Yes,   No,   No,   No,   No,   No,   No,   No,   No ]
+        active  :  [  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes ]
         log_tau :  [  0.1,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 ]
         v_min   :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
         v_max   :  [ 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0 ]

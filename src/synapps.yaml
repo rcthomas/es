@@ -22,8 +22,8 @@ grid :
     v_size      : 100
     v_outer_max : 30.0
 opacity :
-    line_dir    : /global/u1/r/rthomas/data/lines
-    ref_file    : /global/u1/r/rthomas/data/refs.dat
+    line_dir    : /usr/local/share/es/lines
+    ref_file    : /usr/local/share/es/refs.dat
     form        : exp
     v_ref       : 10.0
     log_tau_min : -2.0
