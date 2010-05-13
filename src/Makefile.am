@@ -1,11 +1,11 @@
-AM_CPPFLAGS = -I$(top_srcdir)/src $(CFITSIO_CPPFLAGS) $(YAML_CPPFLAGS)
-AM_LDFLAGS = -L$(top_builddir)/src
-AM_LIBS = $(CFITSIO) $(YAML) -lm
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/external/yaml $(CFITSIO_CPPFLAGS)
+AM_LDFLAGS = -L$(top_builddir)/src -L$(top_builddir)/external/yaml
+AM_LIBS = $(top_builddir)/external/yaml/libyaml-cpp.la $(CFITSIO) -lm
 AM_CXXFLAGS =
 
 if HAVE_AM_OPENMP
-  AM_CXXFLAGS += $(OPENMP_CFLAGS)
-  AM_LIBS += $(OPENMP_CFLAGS)
+  AM_CXXFLAGS += $(OPENMP_CXXFLAGS)
+  AM_LIBS += $(OPENMP_CXXFLAGS)
 endif
 
 noinst_HEADERS =        \
@@ -28,8 +28,8 @@ ES_Synow_Setup.hh       \
 ES_Synow_Source.hh      \
 ES_Synow_Spectrum.hh
 
-noinst_LIBRARIES = libes.a
-libes_a_SOURCES =       \
+noinst_LTLIBRARIES = libes.la
+libes_la_SOURCES =       \
 ES_Accelerator.cc       \
 ES_Blackbody.cc         \
 ES_LineManager.cc       \
@@ -41,16 +41,16 @@ ES_Synow_Opacity.cc     \
 ES_Synow_Setup.cc       \
 ES_Synow_Source.cc      \
 ES_Synow_Spectrum.cc
-libes_a_LIBADD = $(AM_LIBS)
+libes_la_LIBADD = $(AM_LIBS)
 
 bin_PROGRAMS = synpp synapps
 
 synpp_SOURCES  = syn++.cc
 synpp_LDFLAGS  = $(AM_LDFLAGS)
-synpp_LDADD    = libes.a $(AM_LIBS)
+synpp_LDADD    = libes.la $(AM_LIBS)
 
 synapps_SOURCES  = synapps.cc
 synapps_CPPFLAGS = $(AM_CPPFLAGS) $(APPSPACK_CPPFLAGS)
 synapps_LDFLAGS  = $(AM_LDFLAGS)
-synapps_LDADD    = libes.a $(APPSPACK) $(LAPACK_LIBS) $(BLAS_LIBS) $(AM_LIBS) $(FLIBS)
+synapps_LDADD    = libes.la $(APPSPACK) $(LAPACK_LIBS) $(BLAS_LIBS) $(AM_LIBS) $(FLIBS)
 

@@ -21,6 +21,7 @@ AC_CANONICAL_HOST
 # Checks for programs.
 AC_PROG_AWK
 AC_PROG_CXX
+AC_PROG_F77
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
@@ -57,7 +58,7 @@ AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
 ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 
 # Check for YAML-CPP
-ACX_YAML([], [AC_MSG_ERROR([Could not find the yaml-cpp library!])])
+#ACX_YAML([], [AC_MSG_ERROR([Could not find the yaml-cpp library!])])
 
 # Check for LAPACK/BLAS
 ACX_BLAS([], [AC_MSG_ERROR([Could not find a Blas library (needed by appspack)!])])
@@ -69,6 +70,8 @@ ACX_APPSPACK([], [AC_MSG_ERROR([Could not find the appspack library!])])
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([external/Makefile])
+AC_CONFIG_FILES([external/yaml/Makefile])
 AC_OUTPUT
 
 # Print out detected build options
@@ -83,7 +86,7 @@ else
   AC_MSG_NOTICE([  OpenMP           : Disabled])
 fi
 AC_MSG_NOTICE([  CFITSIO          : $CFITSIO])
-AC_MSG_NOTICE([  yaml-cpp         : $YAML])
+#AC_MSG_NOTICE([  yaml-cpp         : $YAML])
 AC_MSG_NOTICE([  BLAS             : $BLAS_LIBS])
 AC_MSG_NOTICE([  LAPACK           : $LAPACK_LIBS])
 AC_MSG_NOTICE([  appspack         : $APPSPACK])
