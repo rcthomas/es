@@ -45,9 +45,7 @@
 #ifndef APPSPACK_COMMON_HPP
 #define APPSPACK_COMMON_HPP
 
-#ifdef HAVE_CONFIG_H
-#include "APPSPACK_Config.hpp"
-#endif
+#include <config.h>
 
 #ifdef HAVE_IOSTREAM
 #include <iostream>

@@ -38,9 +38,7 @@
 #ifndef APPSPACK_COMMON_H
 #define APPSPACK_COMMON_H
 
-#ifdef HAVE_CONFIG_H
-#include "APPSPACK_Config.hpp"
-#endif
+#include <config.h>
 
 #include <math.h>
 #include <stdio.h>

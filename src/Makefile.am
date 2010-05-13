@@ -50,7 +50,7 @@ synpp_LDFLAGS  = $(AM_LDFLAGS)
 synpp_LDADD    = libes.la $(AM_LIBS)
 
 synapps_SOURCES  = synapps.cc
-synapps_CPPFLAGS = $(AM_CPPFLAGS) $(APPSPACK_CPPFLAGS)
-synapps_LDFLAGS  = $(AM_LDFLAGS)
-synapps_LDADD    = libes.la $(APPSPACK) $(LAPACK_LIBS) $(BLAS_LIBS) $(AM_LIBS) $(FLIBS)
+synapps_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/external/appspack -I$(top_srcdir)/external/appspack/cddlib
+synapps_LDFLAGS  = $(AM_LDFLAGS) -L$(top_builddir)/external/appspack -L$(top_builddir)/external/appspack/cddlib
+synapps_LDADD    = libes.la $(top_builddir)/external/appspack/libappspack.la $(top_builddir)/external/appspack/cddlib/libcdd.la $(LAPACK_LIBS) $(BLAS_LIBS) $(AM_LIBS) $(FLIBS)
 

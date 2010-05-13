@@ -33,12 +33,50 @@ DX_HTML_FEATURE(ON)
 DX_INIT_DOXYGEN(ES, doxygen.txt, doc)
 
 # Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_HEADERS([iostream iostream.h])
+AC_CHECK_HEADERS([iomanip iomanip.h])
+AC_CHECK_HEADERS([cmath math.h])
+AC_CHECK_HEADERS([cstdlib stdlib.h])
 AC_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_F77_LIBRARY_LDFLAGS
 if test x"${F77}" != x; then
    AC_F77_WRAPPERS
 fi
+
+# can we say using std::ostream?
+AC_MSG_CHECKING(whether "using std::ostream" is okay)
+AC_COMPILE_IFELSE(
+[
+  AC_LANG_PROGRAM(
+  [[
+#ifdef HAVE_IOSTREAM
+#include <iostream>
+#elif defined(HAVE_IOSTREAM_H)
+#include <iostream.h>
+#endif
+  ]],
+  [[using std::ostream;]])
+],
+[AC_MSG_RESULT(yes)],
+[
+  AC_MSG_RESULT(no)
+  AC_DEFINE(NO_USING_STD_OSTREAM,1,[define if "using std::ostream" is not okay])
+])
+
+# do we need "using namespace std"?
+AC_MSG_CHECKING(whether "using namespace std" is required)
+AC_TRY_COMPILE(
+  [#include<string>],
+  [string a;],
+  [AC_MSG_RESULT(no)],
+  [
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(REQUIRE_USING_NAMESPACE_STD,,[define if "using namespace std" is required])
+  ]
+)
+
+AC_DEFINE(HAVE_CDDLIB, 1, [Always defined since libcdd is built internally.])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow sqrt])
@@ -57,21 +95,17 @@ AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
 # Check for CFITSIO
 ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 
-# Check for YAML-CPP
-#ACX_YAML([], [AC_MSG_ERROR([Could not find the yaml-cpp library!])])
-
 # Check for LAPACK/BLAS
 ACX_BLAS([], [AC_MSG_ERROR([Could not find a Blas library (needed by appspack)!])])
 ACX_LAPACK([], [AC_MSG_ERROR([Could not find a Lapack library (needed by appspack)!])])
-
-# Check for Appspack
-ACX_APPSPACK([], [AC_MSG_ERROR([Could not find the appspack library!])])
 
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([external/Makefile])
 AC_CONFIG_FILES([external/yaml/Makefile])
+AC_CONFIG_FILES([external/appspack/Makefile])
+AC_CONFIG_FILES([external/appspack/cddlib/Makefile])
 AC_OUTPUT
 
 # Print out detected build options
@@ -86,10 +120,8 @@ else
   AC_MSG_NOTICE([  OpenMP           : Disabled])
 fi
 AC_MSG_NOTICE([  CFITSIO          : $CFITSIO])
-#AC_MSG_NOTICE([  yaml-cpp         : $YAML])
 AC_MSG_NOTICE([  BLAS             : $BLAS_LIBS])
 AC_MSG_NOTICE([  LAPACK           : $LAPACK_LIBS])
-AC_MSG_NOTICE([  appspack         : $APPSPACK])
 AC_MSG_NOTICE([===========================================])
 AC_MSG_NOTICE([                                           ])
 
