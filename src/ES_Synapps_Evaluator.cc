@@ -23,7 +23,7 @@
 #include "ES_Synapps_Evaluator.hh"
 #include "ES_Synow.hh"
 
-#include "APPSPACK_Vector.hpp"
+#include <APPSPACK_Vector.hpp>
 
 #include <cmath>
 

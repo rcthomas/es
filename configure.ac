@@ -59,6 +59,13 @@ ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 # Check for YAML-CPP
 ACX_YAML([], [AC_MSG_ERROR([Could not find the yaml-cpp library!])])
 
+# Check for LAPACK/BLAS
+ACX_BLAS([], [AC_MSG_ERROR([Could not find a Blas library (needed by appspack)!])])
+ACX_LAPACK([], [AC_MSG_ERROR([Could not find a Lapack library (needed by appspack)!])])
+
+# Check for Appspack
+ACX_APPSPACK([], [AC_MSG_ERROR([Could not find the appspack library!])])
+
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
@@ -77,6 +84,9 @@ else
 fi
 AC_MSG_NOTICE([  CFITSIO          : $CFITSIO])
 AC_MSG_NOTICE([  yaml-cpp         : $YAML])
+AC_MSG_NOTICE([  BLAS             : $BLAS_LIBS])
+AC_MSG_NOTICE([  LAPACK           : $LAPACK_LIBS])
+AC_MSG_NOTICE([  appspack         : $APPSPACK])
 AC_MSG_NOTICE([===========================================])
 AC_MSG_NOTICE([                                           ])
 

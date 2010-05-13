@@ -95,8 +95,7 @@ else
 
    # Save environment
 
-   acx_yaml_save_CC="$CC"
-   acx_yaml_save_CPP="$CPP"
+   acx_yaml_save_CXX="$CXX"
    acx_yaml_save_CPPFLAGS="$CPPFLAGS"
    acx_yaml_save_LIBS="$LIBS"
 
@@ -107,18 +106,17 @@ else
 
    AC_CHECK_HEADERS([yaml-cpp/yaml.h])
 
-   AX_CXX_CHECK_LIB([], [YAML::Node], [acx_yaml_ok=yes;AC_DEFINE(HAVE_YAML,1,[Define if you have the YAML library.])])
+   AX_CXX_CHECK_LIB([yaml-cpp], [YAML::Node], [acx_yaml_ok=yes;AC_DEFINE(HAVE_YAML,1,[Define if you have the YAML library.])])
 
    if test $acx_yaml_ok = no; then
       YAML="$acx_yaml_default"
       LIBS="$acx_yaml_default $acx_yaml_save_LIBS -lm"
-      AX_CXX_CHECK_LIB([], [YAML::Node], [acx_yaml_ok=yes;AC_DEFINE(HAVE_YAML,1,[Define if you have the YAML library.])])
+      AX_CXX_CHECK_LIB([yaml-cpp], [YAML::Node], [acx_yaml_ok=yes;AC_DEFINE(HAVE_YAML,1,[Define if you have the YAML library.])])
    fi
 
    # Restore environment
 
-   CC="$acx_yaml_save_CC"
-   CPP="$acx_yaml_save_CPP"
+   CXX="$acx_yaml_save_CXX"
    LIBS="$acx_yaml_save_LIBS"
    CPPFLAGS="$acx_yaml_save_CPPFLAGS"
 

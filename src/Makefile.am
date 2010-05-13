@@ -1,3 +1,13 @@
+AM_CPPFLAGS = -I$(top_srcdir)/src $(CFITSIO_CPPFLAGS) $(YAML_CPPFLAGS)
+AM_LDFLAGS = -L$(top_builddir)/src
+AM_LIBS = $(CFITSIO) $(YAML) -lm
+AM_CXXFLAGS =
+
+if HAVE_AM_OPENMP
+  AM_CXXFLAGS += $(OPENMP_CFLAGS)
+  AM_LIBS += $(OPENMP_CFLAGS)
+endif
+
 noinst_HEADERS =        \
 ES_Accelerator.hh       \
 ES_Blackbody.hh         \
@@ -31,15 +41,16 @@ ES_Synow_Opacity.cc     \
 ES_Synow_Setup.cc       \
 ES_Synow_Source.cc      \
 ES_Synow_Spectrum.cc
-
-libes_a_CPPFLAGS = $(CFITSIO_CPPFLAGS) $(YAML_CPP_CPPFLAGS) $(APPSPACK_CPPFLAGS)
+libes_a_LIBADD = $(AM_LIBS)
 
 bin_PROGRAMS = synpp synapps
 
 synpp_SOURCES  = syn++.cc
-synpp_CPPFLAGS = $(YAML_CPP_CPPFLAGS)
-synpp_LDADD    = libes.a $(CFITSIO_LDFLAGS) $(YAML_CPP_LDFLAGS)
+synpp_LDFLAGS  = $(AM_LDFLAGS)
+synpp_LDADD    = libes.a $(AM_LIBS)
 
 synapps_SOURCES  = synapps.cc
-synapps_CPPFLAGS = $(YAML_CPP_CPPFLAGS) $(APPSPACK_CPPFLAGS)
-synapps_LDADD    = libes.a $(CFITSIO_LDFLAGS) $(YAML_CPP_LDFLAGS) $(APPSPACK_LDFLAGS)
+synapps_CPPFLAGS = $(AM_CPPFLAGS) $(APPSPACK_CPPFLAGS)
+synapps_LDFLAGS  = $(AM_LDFLAGS)
+synapps_LDADD    = libes.a $(APPSPACK) $(LAPACK_LIBS) $(BLAS_LIBS) $(AM_LIBS) $(FLIBS)
+

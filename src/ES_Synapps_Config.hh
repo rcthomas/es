@@ -23,7 +23,7 @@
 #ifndef ES__SYNAPPS__CONFIG
 #define ES__SYNAPPS__CONFIG
 
-#include "APPSPACK_Parameter_List.hpp"
+#include <APPSPACK_Parameter_List.hpp>
 
 namespace YAML
 {

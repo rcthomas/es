@@ -1,37 +1,37 @@
 #
 # SYNOPSIS
 #
-#   ACX_CFITSIO([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+#   ACX_APPSPACK([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 #
 # DESCRIPTION
 #
-#   This macro looks for a version of the CFITSIO library.  The CFITSIO_CPPFLAGS
-#   and CFITSIO output variables hold the compile and link flags.
+#   This macro looks for a version of the APPSPACK library.  The APPSPACK_CPPFLAGS
+#   and APPSPACK output variables hold the compile and link flags.
 #
-#   To link an application with CFITSIO, you should link with:
+#   To link an application with APPSPACK, you should link with:
 #
-#   	$CFITSIO
+#   	$APPSPACK
 #
 #   The user may use:
 # 
-#       --with-cfitsio-cpp=<flags> --with-cfitsio-libs=<flags> 
+#       --with-appspack-cpp=<flags> --with-appspack-libs=<flags> 
 #
-#   to manually specify the CFITSIO include and linking flags.
+#   to manually specify the APPSPACK include and linking flags.
 #
-#   ACTION-IF-FOUND is a list of shell commands to run if an CFITSIO library is
+#   ACTION-IF-FOUND is a list of shell commands to run if an APPSPACK library is
 #   found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it is
 #   not found. If ACTION-IF-FOUND is not specified, the default action will
-#   define HAVE_CFITSIO and set output variables above.
+#   define HAVE_APPSPACK and set output variables above.
 #
 #   This macro requires autoconf 2.50 or later.
 #
 # LAST MODIFICATION
 #
-#   2009-07-08
+#   2010-05-12
 #
 # COPYLEFT
 #
-#   Copyright (c) 2009 Theodore Kisner <tskisner@lbl.gov>
+#   Copyright (c) 2010 Theodore Kisner <tskisner@lbl.gov>
 #
 #   This program is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU General Public License as published by the
@@ -59,85 +59,92 @@
 #   distribute a modified version of the Autoconf Macro, you may extend this
 #   special exception to the GPL to apply to your modified version as well.
 
-AC_DEFUN([ACX_CFITSIO], [
+AC_DEFUN([ACX_APPSPACK], [
 AC_PREREQ(2.50)
+AC_REQUIRE([ACX_MPI])
+AC_REQUIRE([AX_CXX_CHECK_LIB])
+AC_REQUIRE([ACX_LAPACK])
 
-acx_cfitsio_ok=no
-acx_cfitsio_default="-lcfitsio"
+acx_appspack_ok=no
+acx_appspack_cdd_ok=no
+acx_appspack_default="-lappspack -lcdd"
 
-CFITSIO_CPPFLAGS=""
-CFITSIO=""
+APPSPACK_CPPFLAGS=""
+APPSPACK=""
 
-AC_ARG_WITH(cfitsio-cpp, [AC_HELP_STRING([--with-cfitsio-cpp=<flags>], [use serial CFITSIO preprocessing flags <flags>.  Set to "no" to disable.])])
+AC_ARG_WITH(appspack-cpp, [AC_HELP_STRING([--with-appspack-cpp=<flags>], [use APPSPACK preprocessing flags <flags>.  Set to "no" to disable.])])
 
-AC_ARG_WITH(cfitsio-libs, [AC_HELP_STRING([--with-cfitsio-libs=<flags>], [use serial CFITSIO linking flags <flags>.  Set to "no" to disable.])])
+AC_ARG_WITH(appspack-libs, [AC_HELP_STRING([--with-appspack-libs=<flags>], [use APPSPACK linking flags <flags>.  Set to "no" to disable.])])
 
-if test x"$with_cfitsio_cpp" != x; then
-   if test x"$with_cfitsio_cpp" != xno; then
-      CFITSIO_CPPFLAGS="$with_cfitsio_cpp"
+if test x"$with_appspack_cpp" != x; then
+   if test x"$with_appspack_cpp" != xno; then
+      APPSPACK_CPPFLAGS="$with_appspack_cpp"
    else
-      acx_cfitsio_ok=disable
+      acx_appspack_ok=disable
    fi
 fi
 
-if test x"$with_cfitsio_libs" != x; then
-   if test x"$with_cfitsio_libs" != xno; then
-      CFITSIO="$with_cfitsio_libs"
+if test x"$with_appspack_libs" != x; then
+   if test x"$with_appspack_libs" != xno; then
+      APPSPACK="$with_appspack_libs"
    else
-      acx_cfitsio_ok=disable
+      acx_appspack_ok=disable
    fi
 fi
 
-if test $acx_cfitsio_ok = disable; then
-   echo "**** CFITSIO explicitly disabled by configure."
+if test $acx_appspack_ok = disable; then
+   echo "**** APPSPACK explicitly disabled by configure."
 else
 
    # Save environment
 
-   acx_cfitsio_save_CC="$CC"
-   acx_cfitsio_save_CPP="$CPP"
-   acx_cfitsio_save_CPPFLAGS="$CPPFLAGS"
-   acx_cfitsio_save_LIBS="$LIBS"
+   acx_appspack_save_CXX="$CXX"
+   acx_appspack_save_CPPFLAGS="$CPPFLAGS"
+   acx_appspack_save_LIBS="$LIBS"
 
-   # Test serial compile and linking
+   # Test MPI compile and linking
 
-   CPPFLAGS="$CPPFLAGS $CFITSIO_CPPFLAGS"
-   LIBS="$CFITSIO $acx_cfitsio_save_LIBS -lm"
+   CXX="$MPICXX"
+   CPPFLAGS="$CPPFLAGS $APPSPACK_CPPFLAGS"
+   LIBS="$APPSPACK $LAPACK_LIBS $BLAS_LIBS $acx_appspack_save_LIBS $FLIBS -lm"
 
-   AC_CHECK_HEADERS([fitsio.h])
+#   AC_CHECK_HEADERS([APPSPACK_Executor_MPI.hpp])
 
-   AC_MSG_CHECKING([for ffopen in user specified location])
-   AC_TRY_LINK_FUNC(ffopen, [acx_cfitsio_ok=yes;AC_DEFINE(HAVE_CFITSIO,1,[Define if you have the CFITSIO library.])], [])
-   AC_MSG_RESULT($acx_cfitsio_ok)
+   AX_CXX_CHECK_LIB([cdd], [dd_InitializeArow], [acx_appspack_cdd_ok=yes])
 
-   if test $acx_cfitsio_ok = no; then
-      CFITSIO="$acx_cfitsio_default"
-      LIBS="$acx_cfitsio_default $acx_cfitsio_save_LIBS -lm"
-      AC_MSG_CHECKING([for ffopen in default location])
-      AC_TRY_LINK_FUNC(ffopen, [acx_cfitsio_ok=yes;AC_DEFINE(HAVE_CFITSIO,1,[Define if you have the CFITSIO library.])], [])
-      AC_MSG_RESULT($acx_cfitsio_ok)
-   fi
+   if test $acx_appspack_cdd_ok = yes; then
+      AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
+   else
+      APPSPACK="$acx_appspack_default"
+      LIBS="$acx_appspack_default $LAPACK_LIBS $BLAS_LIBS $acx_appspack_save_LIBS $FLIBS -lm"
+      AX_CXX_CHECK_LIB([cdd], [dd_InitializeArow], [acx_appspack_cdd_ok=yes])
+      if test $acx_appspack_cdd_ok = no; then
+      	 AC_MSG_WARN([Cannot link to Appspack libcdd library- did you build appspack with --enable-cddlib?])
+      else
+         AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
+      fi
+    fi
 
    # Restore environment
 
-   CC="$acx_cfitsio_save_CC"
-   CPP="$acx_cfitsio_save_CPP"
-   LIBS="$acx_cfitsio_save_LIBS"
-   CPPFLAGS="$acx_cfitsio_save_CPPFLAGS"
+   CXX="$acx_appspack_save_CXX"
+   LIBS="$acx_appspack_save_LIBS"
+   CPPFLAGS="$acx_appspack_save_CPPFLAGS"
 
 fi
 
 # Define exported variables
 
-AC_SUBST(CFITSIO_CPPFLAGS)
-AC_SUBST(CFITSIO)
+AC_SUBST(APPSPACK_CPPFLAGS)
+AC_SUBST(APPSPACK)
 
 # Execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
    
-if test x"$acx_cfitsio_ok" = xyes; then
-   ifelse([$1],,[echo "**** Enabling support for CFITSIO."],[$1])
+if test x"$acx_appspack_ok" = xyes; then
+   ifelse([$1],,[echo "**** Enabling support for APPSPACK."],[$1])
 else
-   ifelse([$2],,[echo "**** CFITSIO not found - disabling support."],[$2])
+   ifelse([$2],,[echo "**** APPSPACK not found - disabling support."],[$2])
 fi
 
 ])
+
