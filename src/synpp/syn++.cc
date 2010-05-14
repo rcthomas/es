@@ -26,6 +26,7 @@
 
 #include <fstream>
 #include <getopt.h>
+#include <cstdlib>
 
 void operator >> ( const YAML::Node& node, ES::Synow::Setup& setup )
 {

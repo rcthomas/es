@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.64])
 AC_INIT([ES], [0.95], [rcthomas@lbl.gov])
-AC_CONFIG_SRCDIR([src/ES_Accelerator.cc])
+AC_CONFIG_SRCDIR([src/libes/ES_Accelerator.cc])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 #AM_INIT_AUTOMAKE([-Wall -Werror])
@@ -89,7 +89,7 @@ AX_OPENMP([ax_have_openmp=yes;AC_DEFINE(HAVE_OPENMP,1,[Define if OpenMP is enabl
 AM_CONDITIONAL([HAVE_AM_OPENMP], [test $ax_have_openmp = yes])
 
 # Check for MPI
-ACX_MPI
+ACX_MPI([acx_have_mpi="1";AC_DEFINE(HAVE_MPI,1,[Define if you have the MPI library.])])
 AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
 
 # Check for CFITSIO
@@ -102,6 +102,9 @@ ACX_LAPACK([], [AC_MSG_ERROR([Could not find a Lapack library (needed by appspac
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([src/libes/Makefile])
+AC_CONFIG_FILES([src/synpp/Makefile])
+AC_CONFIG_FILES([src/synapps/Makefile])
 AC_CONFIG_FILES([external/Makefile])
 AC_CONFIG_FILES([external/yaml/Makefile])
 AC_CONFIG_FILES([external/appspack/Makefile])
@@ -110,7 +113,7 @@ AC_OUTPUT
 
 # Print out detected build options
 AC_MSG_NOTICE([                                           ])
-AC_MSG_NOTICE([=========== Build Configuration ===========])
+AC_MSG_NOTICE([  ======================== Build Configuration =============================])
 AC_MSG_NOTICE([  C++ Compiler     : $CXX])
 AC_MSG_NOTICE([  MPI C++ Compiler : $MPICXX])
 AC_MSG_NOTICE([  C Compile flags  : $CXXFLAGS])
@@ -122,6 +125,6 @@ fi
 AC_MSG_NOTICE([  CFITSIO          : $CFITSIO])
 AC_MSG_NOTICE([  BLAS             : $BLAS_LIBS])
 AC_MSG_NOTICE([  LAPACK           : $LAPACK_LIBS])
-AC_MSG_NOTICE([===========================================])
+AC_MSG_NOTICE([  ==========================================================================])
 AC_MSG_NOTICE([                                           ])
 
