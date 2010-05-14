@@ -1,5 +1,7 @@
 CXX = $(MPICXX)
 
+EXTRA_DIST = synapps.yaml
+
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/libes \
 -I$(top_srcdir)/src/synapps \
@@ -28,6 +30,11 @@ if HAVE_AM_OPENMP
   AM_CXXFLAGS += $(OPENMP_CXXFLAGS)
   AM_LIBS += $(OPENMP_CXXFLAGS)
 endif
+
+noinst_HEADERS = \
+ES_Synapps_Config.hh \
+ES_Synapps_Evaluator.hh \
+ES_Synapps.hh
 
 noinst_LTLIBRARIES = libesapps.la
 libesapps_la_SOURCES =       \

@@ -3,6 +3,8 @@ AM_LDFLAGS = -L$(top_builddir)/src/libes -L$(top_builddir)/src/synpp -L$(top_bui
 AM_LIBS = $(top_builddir)/external/yaml/libyaml-cpp.la $(CFITSIO) -lm
 AM_CXXFLAGS =
 
+EXTRA_DIST = syn++.yaml
+
 if HAVE_AM_OPENMP
   AM_CXXFLAGS += $(OPENMP_CXXFLAGS)
   AM_LIBS += $(OPENMP_CXXFLAGS)
