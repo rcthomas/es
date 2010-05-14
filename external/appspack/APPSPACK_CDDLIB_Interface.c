@@ -185,7 +185,7 @@ int compute_cone_generators(int *num_pointy,    double ***P,
     *P = (double**) malloc( (*num_pointy) * sizeof(double*) );
     if (*P == NULL) {
       printf("%s: Memory allocation failed! (line %d)\n", __FILE__, __LINE__);
-      printf("%s: Requested %d bytes\n", __FILE__, 
+      printf("%s: Requested %lu bytes\n", __FILE__, 
              (*num_pointy) * sizeof(double*));
       return (ACK);
     }
@@ -196,7 +196,7 @@ int compute_cone_generators(int *num_pointy,    double ***P,
     if (*L == NULL) {
       printf("%s: Memory allocation failed! (line %d)\n",
              __FILE__, __LINE__);
-      printf("%s: Requested %d bytes\n", __FILE__,
+      printf("%s: Requested %lu bytes\n", __FILE__,
              (*num_lineality) * sizeof(double*));
       return (ACK);
     }
@@ -213,7 +213,7 @@ int compute_cone_generators(int *num_pointy,    double ***P,
       if ((*L)[nl] == NULL) {
         printf("%s: Memory allocation failed! (line %d)\n",
                __FILE__, __LINE__);
-        printf("%s: Requested %d bytes\n", __FILE__, n * sizeof(double*));
+        printf("%s: Requested %lu bytes\n", __FILE__, n * sizeof(double*));
         return (ACK);
       }
       for (j = 0; j < n; j++) {
@@ -226,7 +226,7 @@ int compute_cone_generators(int *num_pointy,    double ***P,
       if ((*P)[np] == NULL) {
         printf("%s: Memory allocation failed! (line %d)\n",
                __FILE__, __LINE__);
-        printf("%s: Requested %d bytes\n", __FILE__, n * sizeof(double*));
+        printf("%s: Requested %lu bytes\n", __FILE__, n * sizeof(double*));
         return (ACK);
       }
       for (j = 0; j < n; j++) {

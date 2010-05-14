@@ -71,12 +71,12 @@ void dd_SetInputFile(FILE **f,dd_DataFileType inputfile,dd_ErrorType *Error)
   int i,dotpos=0,trial=0;
   char ch;
   char *tempname;
-  
+  int iret;
   
   *Error=dd_NoError;
   while (!opened && !quit) {
     fprintf(stderr,"\n>> Input file: ");
-    scanf("%s",inputfile);
+    iret=scanf("%s",inputfile);
     ch=getchar();
     stop=dd_FALSE;
     for (i=0; i<dd_filenamelen && !stop; i++){
@@ -206,6 +206,8 @@ void dd_ProcessCommandLine(FILE *f, dd_MatrixPtr M, char *line)
   char newline[dd_linelenmax];
   dd_colrange j;
   mytype value;
+  char *cret;
+  int iret;
 
   dd_init(value);
   if (strncmp(line, "hull", 4)==0) {
@@ -220,7 +222,7 @@ void dd_ProcessCommandLine(FILE *f, dd_MatrixPtr M, char *line)
   if (strncmp(line, "partial_enum", 12)==0 ||
        strncmp(line, "equality", 8)==0  ||
        strncmp(line, "linearity", 9)==0 ) {
-    fgets(newline,dd_linelenmax,f);    
+    cret=fgets(newline,dd_linelenmax,f);    
     dd_SetLinearity(M,newline);
   }
   if (strncmp(line, "maximize", 8)==0 ||
@@ -231,7 +233,7 @@ void dd_ProcessCommandLine(FILE *f, dd_MatrixPtr M, char *line)
     if (M->numbtype==dd_Real) {
 #if !defined(GMPRATIONAL)
         double rvalue;
-        fscanf(f, "%lf", &rvalue);
+        iret=fscanf(f, "%lf", &rvalue);
         dd_set_d(value, rvalue);
 #endif
       } else {
@@ -935,6 +937,8 @@ dd_MatrixPtr dd_PolyFile2Matrix (FILE *f, dd_ErrorType *Error)
 #if !defined(GMPRATIONAL)
   double rvalue;
 #endif
+  char *cret;
+  int iret;
 
   dd_init(value);
   (*Error)=dd_NoError;
@@ -955,12 +959,12 @@ dd_MatrixPtr dd_PolyFile2Matrix (FILE *f, dd_ErrorType *Error)
           strncmp(command, "equality", 8)==0  ||
           strncmp(command, "linearity", 9)==0 ) {
         linearity=dd_TRUE;
-        fgets(comsave,dd_linelenmax,f);
+        cret=fgets(comsave,dd_linelenmax,f);
       }
       if (strncmp(command, "begin", 5)==0) found=dd_TRUE;
     }
   }
-  fscanf(f, "%ld %ld %s", &m_input, &d_input, numbtype);
+  iret=fscanf(f, "%ld %ld %s", &m_input, &d_input, numbtype);
   fprintf(stderr,"size = %ld x %ld\nNumber Type = %s\n", m_input, d_input, numbtype);
   NT=dd_GetNumberType(numbtype);
   if (NT==dd_Unknown) {
@@ -978,7 +982,7 @@ dd_MatrixPtr dd_PolyFile2Matrix (FILE *f, dd_ErrorType *Error)
         *Error=dd_NoRealNumberSupport;
         goto _L99;
 #else
-        fscanf(f, "%lf", &rvalue);
+        iret=fscanf(f, "%lf", &rvalue);
         dd_set_d(value, rvalue);
 #endif
       } else {
@@ -1003,9 +1007,9 @@ dd_MatrixPtr dd_PolyFile2Matrix (FILE *f, dd_ErrorType *Error)
     dd_SetLinearity(M,comsave);
   }
   while (!feof(f)) {
-    fscanf(f,"%s", command);
+    iret=fscanf(f,"%s", command);
     dd_ProcessCommandLine(f, M, command);
-    fgets(command,dd_linelenmax,f); /* skip the CR/LF */
+    cret=fgets(command,dd_linelenmax,f); /* skip the CR/LF */
   } 
 
 _L99: ;
@@ -2061,9 +2065,10 @@ void dd_fread_rational_value (FILE *f, mytype value)
 {
    char     number_s [255];
    mytype rational_value;
+   int iret;
    
    dd_init(rational_value);
-   fscanf(f, "%s ", number_s);
+   iret=fscanf(f, "%s ", number_s);
    dd_sread_rational_value (number_s, rational_value);
    dd_set(value,rational_value);
    dd_clear(rational_value);
