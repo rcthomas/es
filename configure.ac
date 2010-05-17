@@ -103,7 +103,7 @@ ACX_LAPACK([], [AC_MSG_ERROR([Could not find a Lapack library (needed by appspac
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/libes/Makefile])
-AC_CONFIG_FILES([src/synpp/Makefile])
+AC_CONFIG_FILES([src/syn++/Makefile])
 AC_CONFIG_FILES([src/synapps/Makefile])
 AC_CONFIG_FILES([external/Makefile])
 AC_CONFIG_FILES([external/yaml/Makefile])
