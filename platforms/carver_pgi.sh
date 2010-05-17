@@ -1,5 +1,6 @@
 #!/bin/sh
 
+. /usr/common/nsg/opt/Modules/default/init/sh
 . /project/projectdirs/cmb/modules/carver/cmbenv.sh
 
 cmbenv pgi
