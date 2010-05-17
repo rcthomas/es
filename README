@@ -1,0 +1,140 @@
+
+========================
+Mon May 17 14:38:55 2010
+========================
+
+    * Programs
+    * Software Dependencies
+    * Download
+    * Installation
+    * Documentation
+    * Citing SYN++ or SYNAPPS
+    * License
+    * What Does ES Mean?
+    * Author 
+
+Programs
+========
+
+The ES package builds two main executables of interest.
+
+    * SYN++
+      Consider this a rewrite of the original SYNOW code in C++. It has
+      a few further enhancements, a new structured input file format,
+      and the atomic data files have been repackaged and are more complete
+      than what SYNOW has.
+
+    * SYNAPPS
+      This code uses the same library code that SYN++ does to implement
+      a spectrum synthesis calculation within the objective function of a
+      parallel optimization framework. So, SYNAPPS is something of an
+      automated SYN++. The idea is for SYNAPPS to do the work so supernova
+      spectroscopists can do thinking. 
+
+Software Dependencies
+=====================
+
+ES has one mandatory software dependency, and two others that you can
+ignore if you only want to build SYN++. To build SYNAPPS you need to be
+able to build MPI code (see, for example, OpenMPI). You can also enable
+OpenMP for full multi-level parallelism. For details, see Installation
+below.
+
+    * CFITSIO FITS I/O
+      Mandatory for building both SYN++ and SYNAPPS. Atomic line list
+      files are stored in FITS format, eliminating a support issue SYNOW
+      had with byte rotation.
+
+    * BLAS Basic Linear Algebra Subprograms
+      Mandatory for building SYNAPPS, but not SYN++.
+
+    * LAPACK Linear Algebra Package
+      Mandatory for building SYNAPPS, but not SYN++. 
+
+A word about OpenMP. SYN++ and SYNAPPS can both take advantage of OpenMP
+if you have it available with your compiler. The spectrum synthesis
+calculation can be made faster with OpenMP but don't expect it to scale
+arbitrarily (diminishing returns around 2-8 cores). In order to use
+OpenMP at the same time as running SYNAPPS you probably really need to
+know what you are doing. Contact me if you have questions.
+
+Download
+========
+
+    * Version 0.95. 
+
+The project is also hosted at github. If you want to collaborate, please
+let me know.
+
+Installation
+============
+
+It should go something like this on a Unix-like system:
+
+    $ tar zxvf es-0.95.tar.gz
+    $ cd es-0.95
+    $ ./configure
+    $ make
+    $ make install
+
+Of course, you may need to pass options to configure though (see
+"./configure -h" for all of them). Here are some of the more common
+ones. Suppose you do not have super-user privileges to install the code
+to the default location. Then do:
+
+    $ ./configure --prefix=$HOME/local/or/whatever
+
+Most SN people I know work on OS X, like me.  Personally I use MacPorts
+to get Unix-like packages (see above for software dependencies).  This
+works for me on Mac OS X Snow Leopard with MacPorts:
+
+    $ ./configure --with-cfitsio-cpp="-I/opt/local/include" \
+        --with-cfitsio-libs="-L/opt/local/lib -lcfitsio"
+
+And that was all I needed (it enables OpenMP and finds blas and lapack
+just fine).
+
+The "platforms" subdirectory may include an example shell script that 
+can help you.  If you can't get it working, just email the author.
+
+Thanks to Ted Kisner for autoconf wizardry!
+
+Documentation
+=============
+
+The most important documentation is this web page, the INSTALL, and
+README files that come with the source code. There are sample input
+files for users to orient themselves with. More detailed documentation
+can be generated from the ES source using doxygen but this is mostly
+only of interest to me or other potential developers.
+
+There is also a code-description paper available here.  Citing SYN++ or
+SYNAPPS If you use SYN++ or SYNAPPS in your own research, please cite
+the code-description paper. The proper bibliography entry is is
+
+Thomas, R. C., Nugent, P. E., and Meza, J. C., 2010, ...
+
+License
+=======
+
+ES is distributed under the terms of the Version 3 GNU General Public
+License, and is available to anyone.
+
+What Does ES Mean?
+==================
+
+ES stands for "Elementary Supernova," a term used by Jeffery and Branch
+(1990) to describe a conceptual model that serves as the basis for a
+number of computer codes used in the analysis of supernova spectra. See
+Branch, Baron, and Jeffery (2003) and references therein to learn more.
+
+SYNOW is the classic example ES code. Originally written by David
+Branch, and then updated and modernized (in 1993) by Adam Fisher at the
+University of Oklahoma, SYNOW has become a widely used tool among
+supernova scientists. Learning to use SYNOW is a rite of passage for
+many budding supernova spectroscopists.
+
+Author
+======
+
+ES was developed by R. C. Thomas at Lawrence Berkeley Lab.
