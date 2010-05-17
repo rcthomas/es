@@ -1,0 +1,78 @@
+#-
+#- Copyright (C) 2010 Rollin C. Thomas <rcthomas@lbl.gov>
+#- 
+#- This file is part of ES.
+#- 
+#- ES is free software: you can redistribute it and/or modify it under the
+#- terms of the GNU General Public License as published by the Free
+#- Software Foundation, either version 3 of the License, or (at your
+#- option) any later version.
+#- 
+#- ES is distributed in the hope that it will be useful, but WITHOUT ANY
+#- WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#- for more details.
+#- 
+#- You should have received a copy of the GNU General Public License along
+#- with ES.  If not, see <http://www.gnu.org/licenses/>.
+#- 
+---
+output :
+    min_wl      : 2500.0
+    max_wl      : 10000.0
+    wl_step     : 5.0
+grid :
+    bin_width   : 0.3
+    v_size      : 100
+    v_outer_max : 30.0
+opacity :
+    line_dir    : /usr/local/share/es/lines
+    ref_file    : /usr/local/share/es/refs.dat
+    form        : exp
+    v_ref       : 10.0
+    log_tau_min : -2.0
+source :
+    mu_size     : 10
+spectrum :
+    p_size      : 60
+    flatten     : No
+setups :
+    -   a0      :  1.0
+        a1      :  0.0
+        a2      :  0.0
+        v_phot  :   8.0
+        v_outer :  30.0
+        t_phot  :  12.0
+        ions    :  [ 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
+        active  :  [  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes ]
+        log_tau :  [  0.1,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 ]
+        v_min   :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
+        v_max   :  [ 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0 ]
+        aux     :  [  1.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
+        temp    :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
+    -   a0      :  1.0
+        a1      :  0.0
+        a2      :  0.0
+        v_phot  :  10.0
+        v_outer :  30.0
+        t_phot  :  12.0
+        ions    :  [ 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
+        active  :  [  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes ]
+        log_tau :  [  0.1,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 ]
+        v_min   :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
+        v_max   :  [ 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0 ]
+        aux     :  [  1.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
+        temp    :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
+    -   a0      :  1.0
+        a1      :  0.0
+        a2      :  0.0
+        v_phot  :  12.0
+        v_outer :  30.0
+        t_phot  :  12.0
+        ions    :  [ 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
+        active  :  [  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes ]
+        log_tau :  [  0.1,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 ]
+        v_min   :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
+        v_max   :  [ 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0 ]
+        aux     :  [  1.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
+        temp    :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
