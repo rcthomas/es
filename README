@@ -108,8 +108,12 @@ files for users to orient themselves with. More detailed documentation
 can be generated from the ES source using doxygen but this is mostly
 only of interest to me or other potential developers.
 
-There is also a code-description paper available here.  Citing SYN++ or
-SYNAPPS If you use SYN++ or SYNAPPS in your own research, please cite
+There is also a code-description paper available here.  
+
+Citing SYN++ or SYNAPPS 
+=======================
+
+If you use SYN++ or SYNAPPS in your own research, please cite
 the code-description paper. The proper bibliography entry is is
 
 Thomas, R. C., Nugent, P. E., and Meza, J. C., 2010, ...
