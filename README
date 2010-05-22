@@ -1,11 +1,11 @@
 
-========================
-Mon May 17 14:38:55 2010
-========================
+Contents
+========
 
     * Programs
     * Software Dependencies
     * Download
+    * Atomic Lines
     * Installation
     * Documentation
     * Citing SYN++ or SYNAPPS
@@ -56,15 +56,17 @@ if you have it available with your compiler. The spectrum synthesis
 calculation can be made faster with OpenMP but don't expect it to scale
 arbitrarily (diminishing returns around 2-8 cores). In order to use
 OpenMP at the same time as running SYNAPPS you probably really need to
-know what you are doing. Contact me if you have questions.
+know what you are doing. Contact the author if you have questions.
 
 Download
 ========
 
-    * Version 0.95. 
+See also the section on Atomic Lines.
+
+    * Current: Version 0.95. 
 
 The project is also hosted at github. If you want to collaborate, please
-let me know.
+contact the author.
 
 Installation
 ============
@@ -78,15 +80,32 @@ It should go something like this on a Unix-like system:
     $ make install
 
 Of course, you may need to pass options to configure though (see
-"./configure -h" for all of them). Here are some of the more common
-ones. Suppose you do not have super-user privileges to install the code
-to the default location. Then do:
+"./configure -h" for all of them). Most commonly one will need to use
+the --prefix flag.  Suppose you do not have super-user privileges to
+install the code to the default location. Then you can do something
+like:
 
-    $ ./configure --prefix=$HOME/local/or/whatever
+    $ ./configure --prefix=$HOME/local
 
-Most SN people I know work on OS X, like me.  Personally I use MacPorts
-to get Unix-like packages (see above for software dependencies).  This
-works for me on Mac OS X Snow Leopard with MacPorts:
+The "install" target deposits the ES executables and corresponding
+example control files into the installation path. No libraries or
+headers are installed. If you use the above example, this structure
+will be added to the file system:
+
+    $HOME/
+        local/
+            bin/
+                syn++
+                synapps
+                ...
+            share/
+                syn++.yaml
+                synapps.yaml
+                ...
+
+Most supernova researchers I know work on OS X.  Personally I use
+MacPorts to install Unix-like packages (see above for software
+dependencies). This works for me on Mac OS X Snow Leopard with MacPorts:
 
     $ ./configure --with-cfitsio-cpp="-I/opt/local/include" \
         --with-cfitsio-libs="-L/opt/local/lib -lcfitsio"
@@ -95,20 +114,47 @@ And that was all I needed (it enables OpenMP and finds blas and lapack
 just fine).
 
 The "platforms" subdirectory may include an example shell script that 
-can help you.  If you can't get it working, just email the author.
+can help you. If you can't get it working, just contact the author.
 
-Thanks to Ted Kisner for autoconf wizardry!
+Thanks to Ted Kisner for help with the GNU build tools.
+
+Atomic Lines
+============
+
+In order to run the code, you will need the atomic line data files. They
+are available in the format ES needs at the website where the ES code is
+downloaded in a single tar.gz file. Once you have downloaded them, you 
+unpack them into some path (I recommend placing them where the example
+YAML control files are installed). Use this path when running any of the
+ES executables. Here is an example of how you might set things up for
+all the users on your system, assuming you've downloaded the atomic data
+and have super-user privileges already:
+
+    $ mv es-data.tar.gz /usr/local/share
+    $ cd /usr/local/share
+    $ tar zxvf es-data.tar.gz
+
+Then, in one of the control files for an ES executable, you set:
+
+    opacity :
+        line_dir    : /usr/local/share/es/lines
+        ref_file    : /usr/local/share/es/refs.dat
+
+If you don't have super-user privileges, you could unpack the atomic
+line data files into $HOME/local/share (following the example install
+for ordinary users under the Installation section above).
 
 Documentation
 =============
 
-The most important documentation is this web page, the INSTALL, and
+The most important documentation is the web page, the INSTALL, and
 README files that come with the source code. There are sample input
 files for users to orient themselves with. More detailed documentation
 can be generated from the ES source using doxygen but this is mostly
-only of interest to me or other potential developers.
+only of interest to developers.
 
-There is also a code-description paper available here.  
+There is also a code-description paper explaining the motivation for
+developing the code, and also outlining the technique.
 
 Citing SYN++ or SYNAPPS 
 =======================
@@ -142,3 +188,7 @@ Author
 ======
 
 ES was developed by R. C. Thomas at Lawrence Berkeley Lab.
+
+========================
+Sat May 22 11:51:14 2010
+========================
