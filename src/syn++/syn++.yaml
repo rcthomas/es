@@ -18,42 +18,42 @@
 #- 
 ---
 output :
-    min_wl      : 2500.0
-    max_wl      : 10000.0
-    wl_step     : 5.0
+    min_wl      : 2500.0        # min. wavelength in AA
+    max_wl      : 10000.0       # max. wavelength in AA
+    wl_step     : 5.0           # wavelength spacing in AA
 grid :
-    bin_width   : 0.3
-    v_size      : 100
-    v_outer_max : 30.0
+    bin_width   : 0.3           # opacity bin size in kkm/s
+    v_size      : 100           # size of line-forming region grid
+    v_outer_max : 30.0          # fastest ejecta velocity in kkm/s
 opacity :
-    line_dir    : /usr/local/share/es/lines
-    ref_file    : /usr/local/share/es/refs.dat
-    form        : exp
-    v_ref       : 10.0
-    log_tau_min : -2.0
+    line_dir    : /usr/local/share/es/lines     # path to atomic line data
+    ref_file    : /usr/local/share/es/refs.dat  # path to ref. line data
+    form        : exp           # parameterization (only exp for now)
+    v_ref       : 10.0          # reference velocity for parameterization
+    log_tau_min : -2.0          # opacity threshold
 source :
-    mu_size     : 10
+    mu_size     : 10            # number of angles for source integration
 spectrum :
-    p_size      : 60
-    flatten     : No
+    p_size      : 60            # number of phot. impact parameters for spectrum
+    flatten     : No            # divide out continuum or not
 setups :
-    -   a0      :  1.0
-        a1      :  0.0
-        a2      :  0.0
-        v_phot  :   8.0
-        v_outer :  30.0
-        t_phot  :  12.0
-        ions    :  [ 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]
-        active  :  [  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes,  Yes ]
-        log_tau :  [  0.1,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 ]
-        v_min   :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
-        v_max   :  [ 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0 ]
-        aux     :  [  1.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
-        temp    :  [ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 ]
-    -   a0      :  1.0
-        a1      :  0.0
-        a2      :  0.0
-        v_phot  :  10.0
+    -   a0      :  1.0          # constant term
+        a1      :  0.0          # linear warp term
+        a2      :  0.0          # quadratic warp term
+        v_phot  :   8.0         # velocity at photosphere (kkm/s)
+        v_outer :  30.0         # outer velocity of line forming region (kkm/s)
+        t_phot  :  12.0         # blackbody photosphere temperature (kK)
+        ions    :  [ 1601, 2201, 2401, 2601 ]   # ions (100*Z+I, I=0 is neutral)
+        active  :  [  Yes,  Yes,  Yes,  Yes ]   # actually use the ion or not
+        log_tau :  [  0.1,  1.0,  1.0,  1.0 ]   # ref. line opacity at v_ref
+        v_min   :  [ 10.0, 10.0, 10.0, 10.0 ]   # lower cutoff (kkm/s)
+        v_max   :  [ 30.0, 30.0, 30.0, 30.0 ]   # upper cutoff (kkm/s)
+        aux     :  [  1.0, 10.0, 10.0, 10.0 ]   # e-folding for exp form
+        temp    :  [ 10.0, 10.0, 10.0, 10.0 ]   # Boltzmann exc. temp. (kK)
+    -   a0      :  1.0  
+        a1      :  0.0          # more than one
+        a2      :  0.0          # setup can be run
+        v_phot  :  10.0         # per instance of syn++ ...
         v_outer :  30.0
         t_phot  :  12.0
         ions    :  [ 1601, 2201, 2401, 2601, 2602, 2701, 2702, 2801, 2802 ]

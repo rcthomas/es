@@ -18,31 +18,38 @@
 #- 
 ---
 grid :
-    bin_width   : 0.3
-    v_size      : 100
-    v_outer_max : 30.0
+    bin_width   : 0.3           # opacity bin size in kkm/s
+    v_size      : 100           # size of line-forming region grid
+    v_outer_max : 30.0          # fastest ejecta velocity in kkm/s
 opacity :
-    line_dir    : /usr/local/share/es/lines
-    ref_file    : /usr/local/share/es/refs.dat
-    form        : exp
-    v_ref       : 10.0
-    log_tau_min : -2.0
+    line_dir    : /usr/local/share/es/lines     # path to atomic line data
+    ref_file    : /usr/local/share/es/refs.dat  # path to ref. line data
+    form        : exp           # parameterization (only exp for now)
+    v_ref       : 10.0          # reference velocity for parameterization
+    log_tau_min : -2.0          # opacity threshold
 source :
-    mu_size     : 10
+    mu_size     : 10            # number of angles for source integration
 spectrum :
-    p_size      : 60
-    flatten     : No
+    p_size      : 60            # number of phot. impact parameters for spectrum
+    flatten     : No            # divide out continuum or not
 evaluator :
-    target_file : "SNF20080514-002_P000000_S_drr.dat"
-    vector_norm : 2
+    target_file : "target.dat"  # spectrum to fit (format: wl, flux, flux_error)
+    vector_norm : 2             # objective function norm
     regions     :
-        apply   : [   Yes,   No,  Yes ]
-        weight  : [     0,    1,    1 ]
-        lower   : [     0, 3900, 5600 ]
-        upper   : [ 10000, 4100, 6400 ]
+        apply   : [   Yes,   No,  Yes ] # fit this wavelength region or not
+        weight  : [     0,    1,    1 ] # weight the region by this number
+        lower   : [     0, 3900, 5600 ] # min. wavelength for region definition
+        upper   : [ 10000, 4100, 6400 ] # max. wavelength for region definition
 config :
-    fit_file    : "SNF20080514-002_P000000_S_drr.fit"
-    cache_file  : "SNF20080514-002_P000000_S_drr.cache"
+    fit_file    : "target.fit"      # when done, put answer here
+    cache_file  : "target.cache"    # evaluated point cache
+
+    # Various bounds and scaling for parameters, see syn++.yaml example 
+    # for definition of each parameter.  Parameters can be fixed to a 
+    # set value --- others can be made to float.
+
+    # Make note of the "detach" setting --- if set to Yes then the ion
+    # will have a v_min equal to v_phot.
 
     a0          :  { fixed:  No, start:    1, lower:   0, upper: 10, scale: 10 }
     a1          :  { fixed:  No, start: -2.6, lower: -10, upper: 10, scale: 20 }
