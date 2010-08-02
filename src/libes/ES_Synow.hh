@@ -30,4 +30,8 @@
 #include "ES_Synow_Spectrum.hh"
 #include "ES_Synow_Setup.hh"
 
+#ifdef HAVE_MOAT
+#include "ES_Synow_MOATSource.hh"
+#endif
+
 #endif
