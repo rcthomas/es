@@ -1,6 +1,6 @@
 // 
-// File    : ES_Synow_GpuSource.cc
-// -------------------------------
+// File    : ES_Synow_MOATSource.cc
+// --------------------------------
 //
 // Copyright (C) 2010 Rollin C. Thomas <rcthomas@lbl.gov>
 // 
@@ -20,12 +20,12 @@
 // with ES.  If not, see <http://www.gnu.org/licenses/>.
 //  
 
-#include "ES_Synow_GpuSource.hh"
+#include "ES_Synow_MOATSource.hh"
 #include "ES_Synow_Grid.hh"
 #include "ES_Synow_Setup.hh"
 #include "ES_Blackbody.hh"
 
-ES::Synow::GpuSource::GpuSource( ES::Synow::Grid& grid, size_t const mu_size ) :
+ES::Synow::MOATSource::MOATSource( ES::Synow::Grid& grid, size_t const mu_size ) :
     ES::Synow::Operator( grid ),
     _mu_size( mu_size )
 {
@@ -39,13 +39,13 @@ ES::Synow::GpuSource::GpuSource( ES::Synow::Grid& grid, size_t const mu_size ) :
 
 }
 
-ES::Synow::GpuSource::~GpuSource()
+ES::Synow::MOATSource::~MOATSource()
 {
     // What's the MOAT cleanup for _dev?
 }
 
 
-void ES::Synow::Source::operator() ( const ES::Synow::Setup& setup )
+void ES::Synow::MOATSource::operator() ( const ES::Synow::Setup& setup )
 {
     // ...
 }
