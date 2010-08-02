@@ -23,7 +23,6 @@ ES_Synow_Opacity.hh     \
 ES_Synow_Operator.hh    \
 ES_Synow_Setup.hh       \
 ES_Synow_Source.hh      \
-ES_Synow_MOATSource.hh  \
 ES_Synow_Spectrum.hh
 
 noinst_LTLIBRARIES = libes.la
@@ -36,9 +35,13 @@ ES_Synow_Grid.cc        \
 ES_Synow_Opacity.cc     \
 ES_Synow_Setup.cc       \
 ES_Synow_Source.cc      \
-ES_Synow_MOATSource.cc  \
 ES_Synow_Spectrum.cc
 libes_la_LIBADD = $(AM_LIBS)
+
+if HAVE_AM_MOAT
+  noinst_HEADERS += ES_Synow_MOATSource.hh
+  libes_la_SOURCES += ES_Synow_MOATSource.cc
+endif
 
 bin_PROGRAMS = snprep
 

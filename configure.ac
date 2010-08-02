@@ -95,6 +95,10 @@ AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
 # Check for CFITSIO
 ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 
+# Check for MOAT
+ACX_MOAT([acx_have_moat="1";AC_DEFINE(HAVE_MOAT,1,[Define if you have the MOAT library.])])
+AM_CONDITIONAL([HAVE_AM_MOAT], [test "$acx_have_moat" = 1])
+
 # Check for LAPACK/BLAS
 ACX_BLAS([], [AC_MSG_ERROR([Could not find a Blas library (needed by appspack)!])])
 ACX_LAPACK([], [AC_MSG_ERROR([Could not find a Lapack library (needed by appspack)!])])
@@ -125,6 +129,7 @@ fi
 AC_MSG_NOTICE([  CFITSIO          : $CFITSIO])
 AC_MSG_NOTICE([  BLAS             : $BLAS_LIBS])
 AC_MSG_NOTICE([  LAPACK           : $LAPACK_LIBS])
+AC_MSG_NOTICE([  MOAT             : $MOAT])
 AC_MSG_NOTICE([  ==========================================================================])
 AC_MSG_NOTICE([                                           ])
 
