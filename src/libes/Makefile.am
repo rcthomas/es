@@ -41,6 +41,8 @@ libes_la_LIBADD = $(AM_LIBS)
 if HAVE_AM_MOAT
   noinst_HEADERS += ES_Synow_MOATSource.hh
   libes_la_SOURCES += ES_Synow_MOATSource.cc
+  AM_CPPFLAGS += $(MOAT_CPPFLAGS)
+  AM_LIBS += $(MOAT)
 endif
 
 bin_PROGRAMS = snprep
