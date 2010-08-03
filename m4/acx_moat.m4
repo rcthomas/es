@@ -73,6 +73,7 @@ AC_REQUIRE([ACX_MPI])
 acx_moat_ok=no
 acx_moat_serial=no
 acx_moat_mpi=no
+acx_moat_opencl=no
 
 MOAT_CPPFLAGS=""
 MOAT=""
@@ -95,6 +96,10 @@ if test x"$acx_moat_config" != x; then
    MOAT=`$acx_moat_config --libs`
    MOATMPI=`$acx_moat_config --mpilibs`
    MOATOCL=`$acx_moat_config --opencl`
+   if test x"$MOATOCL" = xyes; then
+      acx_moat_opencl=yes
+      AC_DEFINE(HAVE_MOAT_OPENCL,1,[Define if you have MOAT OpenCL support])
+   fi
 
    # Check for headers and libraries
 

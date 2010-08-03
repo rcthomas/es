@@ -30,7 +30,7 @@
 #include "ES_Synow_Spectrum.hh"
 #include "ES_Synow_Setup.hh"
 
-#ifdef HAVE_MOAT
+#ifdef HAVE_MOAT_OPENCL
 #include "ES_Synow_MOATSource.hh"
 #endif
 

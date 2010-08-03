@@ -97,7 +97,7 @@ ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 
 # Check for OpenCL + MOAT
 ACX_MOAT([acx_have_moat=yes;AC_DEFINE(HAVE_MOAT,1,[Define if you have the MOAT library.])])
-AM_CONDITIONAL([HAVE_AM_MOAT], [test "$acx_have_moat" = yes])
+AM_CONDITIONAL([HAVE_AM_MOAT], [test "$acx_have_moat" = yes && test "$acx_moat_opencl" = yes])
 
 # Check for LAPACK/BLAS
 ACX_BLAS([], [AC_MSG_ERROR([Could not find a Blas library (needed by appspack)!])])
