@@ -61,7 +61,7 @@ namespace ES
 
                 /// Constructor.
 
-                MOATSource( ES::Synow::Grid& grid, int const mu_size );
+                MOATSource( ES::Synow::Grid& grid, size_t const mu_size );
 
                 /// Destructor.
 
