@@ -16,6 +16,9 @@
 #          *OR*
 #       $MOATMPI (MPI)
 #
+#   Additionally, the variable $MOATOCL is set to "1" if OpenCL support is
+#   enabled in MOAT and set to "0" otherwise.
+#
 #   The user may use:
 # 
 #       --with-moat-config=<full path to moat-config.sh>
@@ -74,6 +77,7 @@ acx_moat_mpi=no
 MOAT_CPPFLAGS=""
 MOAT=""
 MOATMPI=""
+MOATOCL="0"
 
 AC_ARG_WITH(moatconfig, [AC_HELP_STRING([--with-moatconfig=<PATH>], [use the moatconfig specified by <PATH>.])])
 
@@ -90,6 +94,7 @@ if test x"$acx_moat_config" != x; then
    MOAT_CPPFLAGS=`$acx_moat_config --cflags`
    MOAT=`$acx_moat_config --libs`
    MOATMPI=`$acx_moat_config --mpilibs`
+   MOATOCL=`$acx_moat_config --opencl`
 
    # Check for headers and libraries
 
@@ -127,6 +132,7 @@ fi
 AC_SUBST(MOAT_CPPFLAGS)
 AC_SUBST(MOAT)
 AC_SUBST(MOATMPI)
+AC_SUBST(MOATOCL)
 
 # Execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 
