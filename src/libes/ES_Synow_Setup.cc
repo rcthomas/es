@@ -1,4 +1,4 @@
-// 
+//
 // File    : ES_Synow_Setup.cc
 // ---------------------------
 //
@@ -22,7 +22,7 @@
 
 #include "ES_Synow_Setup.hh"
 
-void ES::Synow::Setup::resize( int const num_ions )
+void ES::Synow::Setup::resize( size_t const num_ions )
 {
     ions.resize   ( num_ions );
     active.resize ( num_ions );
@@ -51,67 +51,3 @@ bool ES::Synow::Setup::operator() ( const std::vector< double >& x )
     }
     return false;
 }
-
-// bool ES::Setup::operator() ( lua::state& lua )
-// {
-//    int value = lua.next();
-//    if( ! value ) return value;
-//    ions.clear();
-//    active.clear();
-//    log_tau.clear();
-//    v_min.clear();
-//    v_max.clear();
-//    aux.clear();
-//    temp.clear();
-//    lua.getfield( "a0"      ).to( a0      ).pop();
-//    lua.getfield( "a1"      ).to( a1      ).pop();
-//    lua.getfield( "a2"      ).to( a2      ).pop();
-//    lua.getfield( "v_phot"  ).to( v_phot  ).pop();
-//    lua.getfield( "v_outer" ).to( v_outer ).pop();
-//    lua.getfield( "t_phot"  ).to( t_phot  ).pop();
-//    lua.getfield( "ions"    ).to( ions    ).pop();
-//    lua.getfield( "active"  ).to( active  ).pop();
-//    lua.getfield( "log_tau" ).to( log_tau ).pop();
-//    lua.getfield( "v_min"   ).to( v_min   ).pop();
-//    lua.getfield( "v_max"   ).to( v_max   ).pop();
-//    lua.getfield( "aux"     ).to( aux     ).pop();
-//    lua.getfield( "temp"    ).to( temp    ).pop();
-//    lua.pop();
-//    return value;
-// }
-
-// std::ostream& ES::Setup::lua_stream( std::ostream& stream ) const
-// {
-//    std::string pre = "   ";
-//    stream << pre << "{" << std::endl;
-//    stream << pre << pre << "a0      = " << a0      << "," << std::endl;
-//    stream << pre << pre << "a1      = " << a1      << "," << std::endl;
-//    stream << pre << pre << "a2      = " << a2      << "," << std::endl;
-//    stream << pre << pre << "v_phot  = " << v_phot  << "," << std::endl;
-//    stream << pre << pre << "v_outer = " << v_outer << "," << std::endl;
-//    stream << pre << pre << "t_phot  = " << t_phot  << "," << std::endl;
-//    stream << std::endl;
-//    stream << pre << pre << "ions    = { ";
-//    for( int i = 0; i < ions.size(); ++ i ) stream << std::setw( 5 ) << ions[ i ] << ", ";
-//    stream << "}, " << std::endl;
-//    stream << pre << pre << "active  = { ";
-//    for( int i = 0; i < ions.size(); ++ i ) stream << std::setw( 5 ) << ( active[ i ] ? "true" : "false" ) << ", ";
-//    stream << "}, " << std::endl;
-//    stream << pre << pre << "log_tau = { ";
-//    for( int i = 0; i < ions.size(); ++ i ) stream << std::setw( 5 ) << log_tau[ i ] << ", ";
-//    stream << "}, " << std::endl;
-//    stream << pre << pre << "v_min   = { ";
-//    for( int i = 0; i < ions.size(); ++ i ) stream << std::setw( 5 ) << v_min[ i ] << ", ";
-//    stream << "}, " << std::endl;
-//    stream << pre << pre << "v_max   = { ";
-//    for( int i = 0; i < ions.size(); ++ i ) stream << std::setw( 5 ) << v_max[ i ] << ", ";
-//    stream << "}, " << std::endl;
-//    stream << pre << pre << "aux     = { ";
-//    for( int i = 0; i < ions.size(); ++ i ) stream << std::setw( 5 ) << aux[ i ] << ", ";
-//    stream << "}, " << std::endl;
-//    stream << pre << pre << "temp    = { ";
-//    for( int i = 0; i < ions.size(); ++ i ) stream << std::setw( 5 ) << temp[ i ] << ", ";
-//    stream << "}, " << std::endl;
-//    stream << pre << "}," << std::endl;
-//    return stream;
-// }

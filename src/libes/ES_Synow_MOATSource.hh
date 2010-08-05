@@ -73,19 +73,40 @@ namespace ES
 
             private :
 
-                moat_ocl_dev*   _dev;   ///< MOAT OpenCL device.
+                moat_ocl_binary*    _binary;    ///< MOAT OpenCL binary program.
+                moat_ocl_dev*       _dev;       ///< MOAT OpenCL device.
+                cl_context          _context;   ///< OpenCL context from MOAT.
+                cl_command_queue    _queue;     ///< OpenCL command queue from MOAT.
+                cl_kernel           _kernel;    ///< OpenCL kernel.
+                cl_mem              _dev_v;     ///< OpenCL buffer: velocity grid.
+                cl_mem              _dev_mu;    ///< OpenCL buffer: angle grid.
+                cl_mem              _dev_dmu;   ///< OpenCL buffer: angle step grid.
+                cl_mem              _dev_shift; ///< OpenCL buffer: initial Doppler shifts.
+                cl_mem              _dev_wl;    ///< OpenCL buffer: wavelength list.
+                cl_mem              _dev_tau;   ///< OpenCL buffer: opacity table.
+                cl_mem              _dev_start; ///< OpenCL buffer: integration start bin.
+                cl_mem              _dev_in;    ///< OpenCL buffer: initial intensity.
+                cl_mem              _dev_src;   ///< OpenCL buffer: source function.
 
-////            // Note that the full compliment of angles at each point is 
-////            // 2 * mu_size --- one set is for rays subtending the sky 
-////            // and the other set is for rays subtending the photosphere.
-////            // This implementation is actually a good compromise of speed
-////            // and accuracy, and was first used in the original Synow.
-////            // The resolution requirements are pretty lax here.
+                size_t              _global_work_size;  ///< OpenCL global workgroup size.
+                size_t              _local_work_size;   ///< OpenCL local workgroup size.
+
+                // Note that the full compliment of angles at each point is 
+                // 2 * mu_size --- one set is for rays subtending the sky 
+                // and the other set is for rays subtending the photosphere.
+                // This implementation is actually a good compromise of speed
+                // and accuracy, and was first used in the original Synow.
+                // The resolution requirements are pretty lax here.
+                //
+                // Note: User should set mu_size to equal a half-warp, so the
+                // workgroup is equal to a full warp.
 
                 size_t   _mu_size;      ///< Number of angles subtending either sky or photosphere.
-////            double*  _mu;           ///< List of angles as direction-cosines.
-////            double*  _dmu;          ///< Step in direction-cosine units for integral.
-////            double*  _shift;        ///< Minimum Doppler first-order Doppler shift along each ray.
+                double*  _mu;           ///< List of angles as direction-cosines.
+                double*  _dmu;          ///< Step in direction-cosine units for integral.
+                double*  _shift;        ///< Minimum Doppler first-order Doppler shift along each ray.
+                size_t*  _start;        ///< Wavelength bin starting points for integration.
+                double*  _in;           ///< Initial intensity buffer for integration.
 
         };
 

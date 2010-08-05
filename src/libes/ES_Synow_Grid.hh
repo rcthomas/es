@@ -60,11 +60,11 @@ namespace ES
                 /// Named constructor.
 
                 static Grid create( double const min_output_wl, double const max_output_wl, double const bin_width, 
-                        int const v_size, double const v_outer_max );
+                        size_t const v_size, double const v_outer_max );
 
                 /// Constructor.
 
-                Grid( double const min_wl_, double const max_wl_, double const bin_width_, int const v_size_ );
+                Grid( double const min_wl_, double const max_wl_, double const bin_width_, size_t const v_size_ );
 
                 /// Destructor.
 
@@ -77,9 +77,9 @@ namespace ES
                 double         min_wl;        ///< Bluest wavelength considered in AA.
                 double         max_wl;        ///< Reddest wavelength considered in AA.
                 double         bin_width;     ///< Opacity/source bin width in kkm/s.
-                int            wl_size;       ///< Capacity of wavelength bin array.
-                int            wl_used;       ///< Number of wavelength bins with nonzero Sobolev opacity.
-                int            v_size;        ///< Line-forming region velocity grid size.
+                size_t         wl_size;       ///< Capacity of wavelength bin array.
+                size_t         wl_used;       ///< Number of wavelength bins with nonzero Sobolev opacity.
+                size_t         v_size;        ///< Line-forming region velocity grid size.
                 double*        wl;            ///< Wavelengths of opacity/source bin centers in Angstroms.
                 double*        v;             ///< Velocity grid in kkm/s.
                 double*        tau;           ///< Sobolev opacity table.

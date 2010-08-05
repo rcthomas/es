@@ -53,7 +53,7 @@ namespace ES
 
                 /// Constructor.
 
-                Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::Spectrum& reference, int const p_size, bool const flatten );
+                Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::Spectrum& reference, size_t const p_size, bool const flatten );
 
                 /// Destructor.
 
@@ -70,8 +70,8 @@ namespace ES
 
                 bool _flatten;              ///< If true, "flatten" the spectrum.
 
-                int      _p_size;           ///< Number of impact parameters subtending photosphere.
-                int      _p_total;          ///< Total number of impact parameters subtending line-forming region.
+                size_t   _p_size;           ///< Number of impact parameters subtending photosphere.
+                size_t   _p_total;          ///< Total number of impact parameters subtending line-forming region.
                 double*  _in;               ///< Specific intensities.
                 double*  _p;                ///< Impact parameters.
                 double*  _min_shift;        ///< Minimum first-order Doppler shift along each impact parameter.

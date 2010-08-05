@@ -74,7 +74,7 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
         if( ! setup.active[ i ] ) continue;
         double lin_tau = pow( 10.0, setup.log_tau[ i ] );
         std::map< int, std::vector< double > >::iterator tau = tau_map.find( setup.ions[ i ] );
-        for( int iv = 0; iv < _grid->v_size; ++ iv )
+        for( size_t iv = 0; iv < _grid->v_size; ++ iv )
         {
             if( _grid->v[ iv ] < setup.v_min[ i ] ) continue;
             if( _grid->v[ iv ] > setup.v_max[ i ] ) break;
@@ -88,7 +88,7 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
     double factor = 1.0 + _grid->bin_width / 299.792;
     double min_wl = _grid->min_wl;
     double max_wl = min_wl * factor;
-    int    offset = 0;
+    size_t offset = 0;
 
     std::vector< ES::Line >::iterator line = _lines.begin();
     while( line != _lines.end() && line->wl < min_wl ) ++ line;
@@ -105,13 +105,13 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
             double str = line->wl * line->gf * exp( 11.604506 * ( ref_line.el - line->el ) / temp_map[ line->ion ] ) / 
                 ref_line.wl / ref_line.gf;
             std::map< int, std::vector< double > >::iterator tau = tau_map.find( line->ion );
-            for( int iv = 0; iv < _grid->v_size; ++ iv ) _grid->tau[ offset + iv ] += tau->second[ iv ] * str;
+            for( size_t iv = 0; iv < _grid->v_size; ++ iv ) _grid->tau[ offset + iv ] += tau->second[ iv ] * str;
             ++ line;
         }
         if( line->wl >= max_wl || line == _lines.end() )
         {
             bool keep = false;
-            for( int iv = 0; iv < _grid->v_size; ++ iv ) 
+            for( size_t iv = 0; iv < _grid->v_size; ++ iv ) 
             {
                 if( _grid->tau[ offset + iv ] < tau_min ) continue;
                 keep = true;
@@ -125,7 +125,7 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
             }
             else
             {
-                for( int iv = 0; iv < _grid->v_size; ++ iv ) _grid->tau[ offset + iv ] = 0.0;
+                for( size_t iv = 0; iv < _grid->v_size; ++ iv ) _grid->tau[ offset + iv ] = 0.0;
             }
             min_wl = max_wl;
             max_wl *= factor;

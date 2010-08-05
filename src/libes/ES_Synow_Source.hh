@@ -56,7 +56,7 @@ namespace ES
 
                 /// Constructor.
 
-                Source( ES::Synow::Grid& grid, int const mu_size );
+                Source( ES::Synow::Grid& grid, size_t const mu_size );
 
                 /// Destructor.
 
@@ -75,7 +75,7 @@ namespace ES
                 // and accuracy, and was first used in the original Synow.
                 // The resolution requirements are pretty lax here.
 
-                int      _mu_size;      ///< Number of angles subtending either sky or photosphere.
+                size_t   _mu_size;      ///< Number of angles subtending either sky or photosphere.
                 double*  _mu;           ///< List of angles as direction-cosines.
                 double*  _dmu;          ///< Step in direction-cosine units for integral.
                 double*  _shift;        ///< Minimum Doppler first-order Doppler shift along each ray.

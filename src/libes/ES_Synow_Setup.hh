@@ -47,7 +47,7 @@ namespace ES
 
                 /// Resize ion table and associated quantities.
 
-                void resize( int const num_ions );
+                void resize( size_t const num_ions );
 
                 /// Settings from STL vector.
 

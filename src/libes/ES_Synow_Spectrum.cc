@@ -30,7 +30,7 @@
 #include <algorithm>
 
 ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::Spectrum& reference, 
-        int const p_size, bool const flatten ) :
+        size_t const p_size, bool const flatten ) :
     ES::Synow::Operator( grid ),
     _output( &output ),
     _reference( &reference ),
@@ -54,14 +54,14 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
     double v_phot  = setup.v_phot;
     double v_outer = setup.v_outer;
     double v_step  = _grid->v[ 1 ] - _grid->v[ 0 ];
-    int    v_size  = _grid->v_size;
-    int    wl_used = _grid->wl_used;
+    size_t v_size  = _grid->v_size;
+    size_t wl_used = _grid->wl_used;
 
     // Set up impact parameters, resizing arrays if needed.
 
     double p_step = v_phot / double( _p_size );
     double p_init  = 0.5 * p_step;
-    int    p_outer = 0;
+    size_t p_outer = 0;
     while( p_init + p_step * p_outer < v_outer ) ++ p_outer;
 
     if( p_outer > _p_total )
@@ -70,7 +70,7 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
         _alloc( true );
     }
 
-    for( int ip = 0; ip < p_outer; ++ ip )
+    for( size_t ip = 0; ip < p_outer; ++ ip )
     {
         _p[ ip ] = p_init + ip * p_step;
         _max_shift[ ip ] = 1.0 + sqrt( v_outer * v_outer - _p[ ip ] * _p[ ip ] ) / 299.792;
@@ -80,16 +80,16 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
     // Compute.
 
     double norm = 0.0;
-    for( int ip = 0; ip < _p_size; ++ ip ) norm += _p[ ip ] * p_step;
+    for( size_t ip = 0; ip < _p_size; ++ ip ) norm += _p[ ip ] * p_step;
     norm = 1.0 / norm;
 
     for( size_t iw = 0; iw < _output->size(); ++ iw )
     {
-        int start = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _min_shift[ _p_size ] ) - _grid->wl;
-        int stop  = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _max_shift[ 0       ] ) - _grid->wl;
+        size_t start = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _min_shift[ _p_size ] ) - _grid->wl;
+        size_t stop  = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _max_shift[ 0       ] ) - _grid->wl;
 
         _reference->flux( iw ) = 0.0;
-        for( int ip = 0; ip < p_outer; ++ ip ) 
+        for( size_t ip = 0; ip < p_outer; ++ ip ) 
         {
             if( ip < _p_size )
             {
@@ -103,7 +103,7 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
         }
         _reference->flux( iw ) *= norm;
 
-        for( int ib = start; ib < stop; ++ ib )
+        for( size_t ib = start; ib < stop; ++ ib )
         {
             double zs = _grid->wl[ ib ] / _output->wl( iw );
             int offset = ib * v_size;
@@ -125,7 +125,7 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
         }
 
         _output->flux( iw ) = 0.0;
-        for( int ip = 0; ip < p_outer; ++ ip ) _output->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
+        for( size_t ip = 0; ip < p_outer; ++ ip ) _output->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
         _output->flux( iw ) *= norm;
 
     }

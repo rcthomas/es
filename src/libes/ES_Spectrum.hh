@@ -132,10 +132,10 @@ namespace ES
             //@{
 
             /// Assign wavelength value to spectrum tuple position i.
-            double& wl( int const i )       { return _wl[ i ]; }
+            double& wl( size_t const i )       { return _wl[ i ]; }
 
             /// Return wavelength value at spectrum tuple position i.
-            double  wl( int const i ) const { return _wl[ i ]; }
+            double  wl( size_t const i ) const { return _wl[ i ]; }
 
             /// Minimum wavelength in the spectrum.
             double min_wl() const { return _wl.front(); }
@@ -152,10 +152,10 @@ namespace ES
             //@{
 
             /// Assign flux value to spectrum tuple position i.
-            double& flux( int const i )       { return _flux[ i ]; }
+            double& flux( size_t const i )       { return _flux[ i ]; }
 
             /// Return flux value at spectrum tuple position i.
-            double  flux( int const i ) const { return _flux[ i ]; }
+            double  flux( size_t const i ) const { return _flux[ i ]; }
 
             /// Minimum flux in the spectrum.
             double min_flux() const;
@@ -173,10 +173,10 @@ namespace ES
             //@{
 
             /// Assign flux-error value to spectrum tuple position i.
-            double& flux_error( int const i )       { return _flux_error[ i ]; }
+            double& flux_error( size_t const i )       { return _flux_error[ i ]; }
 
             /// Return flux-error value at spectrum tuple position i.
-            double  flux_error( int const i ) const { return _flux_error[ i ]; }
+            double  flux_error( size_t const i ) const { return _flux_error[ i ]; }
 
             //@}
 
