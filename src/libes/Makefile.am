@@ -39,10 +39,21 @@ ES_Synow_Spectrum.cc
 libes_la_LIBADD = $(AM_LIBS)
 
 if HAVE_AM_MOAT
+  SUFFIXES = .cl .ocl
+
+  MOATCC = $(MOATBUILD)
+  MOATCCFLAGS =
+
+  .cl.ocl:
+	$(MOATCC) $(MOATCCFLAGS) $(AM_MOATCCFLAGS) $<
+
   noinst_HEADERS += ES_Synow_MOATSource.hh
   libes_la_SOURCES += ES_Synow_MOATSource.cc
   AM_CPPFLAGS += $(MOAT_CPPFLAGS)
   AM_LIBS += $(MOAT)
+  libes.la : ES_Synow_MOATSource.ocl
+
+  CLEANFILES = ES_Synow_MOATSource.ocl
 endif
 
 bin_PROGRAMS = snprep

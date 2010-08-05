@@ -31,6 +31,11 @@ if HAVE_AM_OPENMP
   AM_LIBS += $(OPENMP_CXXFLAGS)
 endif
 
+if HAVE_AM_MOAT
+  AM_CPPFLAGS += $(MOAT_CPPFLAGS)
+  AM_LIBS += $(MOAT)
+endif
+
 noinst_HEADERS = \
 ES_Synapps_Config.hh \
 ES_Synapps_Evaluator.hh \

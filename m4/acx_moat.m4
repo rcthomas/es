@@ -17,7 +17,8 @@
 #       $MOATMPI (MPI)
 #
 #   Additionally, the variable $MOATOCL is set to "1" if OpenCL support is
-#   enabled in MOAT and set to "0" otherwise.
+#   enabled in MOAT and set to "0" otherwise.  The path to the moatbuild 
+#   compiler is stored in $MOATBUILD.
 #
 #   The user may use:
 # 
@@ -96,7 +97,8 @@ if test x"$acx_moat_config" != x; then
    MOAT=`$acx_moat_config --libs`
    MOATMPI=`$acx_moat_config --mpilibs`
    MOATOCL=`$acx_moat_config --opencl`
-   if test x"$MOATOCL" = xyes; then
+   MOATBUILD=`$acx_moat_config --build`
+   if test x"$MOATOCL" = x1; then
       acx_moat_opencl=yes
       AC_DEFINE(HAVE_MOAT_OPENCL,1,[Define if you have MOAT OpenCL support])
    fi
@@ -138,6 +140,7 @@ AC_SUBST(MOAT_CPPFLAGS)
 AC_SUBST(MOAT)
 AC_SUBST(MOATMPI)
 AC_SUBST(MOATOCL)
+AC_SUBST(MOATBUILD)
 
 # Execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 

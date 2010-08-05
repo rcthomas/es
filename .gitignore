@@ -1,5 +1,6 @@
 *~
 *.o
+*.ocl
 *.la
 *.lo
 .deps
