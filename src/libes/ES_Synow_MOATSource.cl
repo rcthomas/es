@@ -20,24 +20,26 @@
 // with ES.  If not, see <http://www.gnu.org/licenses/>.
 //  
 
+#pragma OPENCL EXTENSION cl_khr_fp64: enable
+
 __kernel void source
 (
-    ulong       const           iw,
-    ulong       const           v_size,
-    ulong       const           mu_size,
-    ulong       const           wl_size,
-    __global    const   float*  v,
-    __local             float*  vbuf,
-    __global    const   float*  mu,
-    __global    const   float*  dmu,
-    __global    const   float*  shift,
-    __global    const   float*  wl,
-    __local             float*  wlbuf,
-    __global    const   float*  tau,
+    ulong       const            iw,
+    ulong       const            v_size,
+    ulong       const            mu_size,
+    ulong       const            wl_size,
+    __global    const   double*  v,
+    __local             double*  vbuf,
+    __global    const   double*  mu,
+    __global    const   double*  dmu,
+    __global    const   double*  shift,
+    __global    const   double*  wl,
+    __local             double*  wlbuf,
+    __global    const   double*  tau,
     __global    const   ulong*  start,
-    __global            float*  in,
-    __local             float*  inbuf,
-    __global            float*  src
+    __global            double*  in,
+    __local             double*  inbuf,
+    __global            double*  src
 )
 {
 
@@ -73,10 +75,10 @@ __kernel void source
     }
     barrier(CLK_LOCAL_MEM_FENCE);
     
-    float mymu = mu[ j ];
+    double mymu = mu[ j ];
     barrier(CLK_LOCAL_MEM_FENCE);
     
-    float mydmu = dmu[ iv * mu_size * 2 + im ];
+    double mydmu = dmu[ iv * mu_size * 2 + im ];
     barrier(CLK_LOCAL_MEM_FENCE);
     
     ulong mystart = start[ i ];
@@ -90,24 +92,24 @@ __kernel void source
       memory access to the src, and tau vectors...
     */
     
-    float   vv     = vbuf[ iv ];
-    float   v_phot = vbuf[ 0 ];
-    float   v_step = vbuf[ 1 ] - vbuf[ 0 ];
+    double   vv     = vbuf[ iv ];
+    double   v_phot = vbuf[ 0 ];
+    double   v_step = vbuf[ 1 ] - vbuf[ 0 ];
     
     size_t chunk = (size_t) (v_size / group_size);
     size_t rem = v_size - (chunk * group_size);
     
     for( size_t ib = mystart; ib < iw; ib ++ )
     {
-        float  dd = ( wlbuf[ iw ] / wlbuf[ ib ] - 1.0 ) * 299.792;
-        float  vd = sqrt( vv * vv + dd * dd - 2.0 * vv * dd * mymu );
+        double  dd = ( wlbuf[ iw ] / wlbuf[ ib ] - 1.0 ) * 299.792;
+        double  vd = sqrt( vv * vv + dd * dd - 2.0 * vv * dd * mymu );
         size_t il = (size_t)( ( vd - v_phot ) / v_step );
-        float  cu = ( vd - vbuf[ il ] ) / v_step;
-        float  cl = 1.0 - cu;
+        double  cu = ( vd - vbuf[ il ] ) / v_step;
+        double  cl = 1.0 - cu;
         size_t ii = ib * v_size + il;
         
-        float  et = cl * tau[ ii ] + cu * tau[ ii + 1 ];
-        float  ss = cl * src[ ii ] + cu * src[ ii + 1 ];
+        double  et = cl * tau[ ii ] + cu * tau[ ii + 1 ];
+        double  ss = cl * src[ ii ] + cu * src[ ii + 1 ];
         
         et = exp( - et );
         inbuf[ im ] = inbuf[ im ] * et + ( 1.0 - et ) * ss;
@@ -126,7 +128,7 @@ __kernel void source
     if( im == 0 )
     {
       size_t offset = iw * v_size + iv;
-      float srcbuf = src[ offset ];
+      double srcbuf = src[ offset ];
       
       for( size_t jm = 0; jm < mu_size * 2; jm ++ )
       {
