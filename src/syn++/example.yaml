@@ -1,0 +1,52 @@
+#-
+#- Copyright (C) 2010 Rollin C. Thomas <rcthomas@lbl.gov>
+#- 
+#- This file is part of ES.
+#- 
+#- ES is free software: you can redistribute it and/or modify it under the
+#- terms of the GNU General Public License as published by the Free
+#- Software Foundation, either version 3 of the License, or (at your
+#- option) any later version.
+#- 
+#- ES is distributed in the hope that it will be useful, but WITHOUT ANY
+#- WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#- for more details.
+#- 
+#- You should have received a copy of the GNU General Public License along
+#- with ES.  If not, see <http://www.gnu.org/licenses/>.
+#- 
+---
+output :
+    min_wl      : 2500.0
+    max_wl      : 10000.0
+    wl_step     : 3.0
+grid :
+    bin_width   : 0.3
+    v_size      : 100
+    v_outer_max : 30.0
+opacity :
+    line_dir    : /usr/local/share/es/lines
+    ref_file    : /usr/local/share/es/refs.dat
+    form        : exp
+    v_ref       : 10.0
+    log_tau_min : -2.0
+source :
+    mu_size     : 10
+spectrum :
+    p_size      : 60
+    flatten     : No
+setups :
+    -   a0      :  1.24e+00
+        a1      :  1.86e-01
+        a2      : -5.23e+00
+        v_phot  :  6.10e+00
+        v_outer :  3.00e+01
+        t_phot  :  8.41e+00
+        ions    :  [ 1601,  0800,  1401,  0200,  2201,  2001,  2401, 0201 ]
+        active  :  [  Yes,   Yes,   Yes,   Yes,   Yes,   Yes,   Yes,  Yes ]
+        log_tau :  [ -2.00e+00, -1.01e+00, -7.44e-01, -1.18e+00,  7.75e-02,  2.00e+00,  1.06e+00, -5.71e-01 ]
+        v_min   :  [  6.10e+00,  6.10e+00,  6.10e+00,  8.50e+00,  6.10e+00,  6.10e+00,  6.10e+00,  6.10e+00 ]
+        v_max   :  [  3.00e+01,  3.00e+01,  3.00e+01,  3.00e+01,  3.00e+01,  3.00e+01,  3.00e+01,  3.00e+01 ]
+        aux     :  [  7.74e-01,  7.30e-01,  1.36e+00,  6.56e-01,  2.66e+00,  1.79e+00,  1.00e+00,  2.43e+00 ]
+        temp    :  [  5.28e+00,  7.75e+00,  1.51e+01,  5.00e+00,  7.37e+00,  6.05e+00,  9.06e+00,  1.35e+01 ]
