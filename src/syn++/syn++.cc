@@ -47,7 +47,7 @@ void operator >> ( const YAML::Node& node, ES::Synow::Setup& setup )
 
 void usage( std::ostream& stream )
 {
-    stream << "usage: syn++ [--verbose] control.yaml" << std::endl;
+    stream << "usage: syn++ [--verbose] [--gpu] control.yaml" << std::endl;
 }
 
 int main( int argc, char* argv[] )
@@ -56,6 +56,7 @@ int main( int argc, char* argv[] )
     // Command line.
 
     int verbose = 0;
+    int gpu     = 0;
 
     while( 1 )
     {
@@ -63,6 +64,7 @@ int main( int argc, char* argv[] )
         static struct option long_options[] =
         {
             { "verbose" , no_argument, &verbose, 1   },
+            { "gpu"     , no_argument,     &gpu, 1   },
             { "help"    , no_argument,        0, 'h' }
         };
 
@@ -137,8 +139,17 @@ int main( int argc, char* argv[] )
 
     // Source operator.
 
-    ES::Synow::Source source( grid,
+    ES::Synow::Operator* source;
+    if( ! gpu )
+    {
+        source = new ES::Synow::Source( grid,
             yaml[ "source" ][ "mu_size" ] );
+    }
+    else
+    {
+        source = new ES::Synow::MOATSource( grid,
+            yaml[ "source" ][ "mu_size" ] );
+    }
 
     // Spectrum operator.
 

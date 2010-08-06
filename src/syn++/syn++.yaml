@@ -32,7 +32,7 @@ opacity :
     v_ref       : 10.0          # reference velocity for parameterization
     log_tau_min : -2.0          # opacity threshold
 source :
-    mu_size     : 10            # number of angles for source integration
+    mu_size     : 16            # number of angles for source integration
 spectrum :
     p_size      : 60            # number of phot. impact parameters for spectrum
     flatten     : No            # divide out continuum or not

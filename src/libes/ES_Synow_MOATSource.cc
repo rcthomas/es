@@ -42,29 +42,44 @@ ES::Synow::MOATSource::MOATSource( ES::Synow::Grid& grid, size_t const mu_size )
 
     // Read binary programs.
 
-    _binary = moat_ocl_binary_read( "ES_Synow_MOATSource", "-Werror" );
+    _binary = moat_ocl_binary_read( "/home/rthomas/project/es/src/libes/ES_Synow_MOATSource", "-Werror" );
 
     // Prepare one of the GPUs.
 
     _dev     = moat_ocl_getgpu( 0 );
+    // std::cout << ( _dev == NULL ) << std::endl;
     _context = moat_ocl_getcontext( _dev );
+    // std::cout << ( _context == NULL ) << std::endl;
     _queue   = _dev->outoforder ? moat_ocl_ooqueue_get( _dev ) : moat_ocl_ioqueue_get( _dev );
+    // std::cout << ( _queue == NULL ) << std::endl;
 
     // Load coarse kernel for computing the source function.
 
     _kernel = moat_ocl_kernel_get( _binary, _dev, "ES_Synow_MOATSource" );
+    // std::cout << ( _kernel == NULL ) << std::endl;
 
     // Allocate buffers needed for source metadata initialization.
 
-    _dev_v     = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) *           v_size               , NULL, NULL );
-    _dev_mu    = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) *           v_size * _mu_size * 2, NULL, NULL );
-    _dev_dmu   = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) *           v_size * _mu_size * 2, NULL, NULL );
-    _dev_shift = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) *           v_size * _mu_size * 2, NULL, NULL );
-    _dev_wl    = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) * wl_size                        , NULL, NULL );
-    _dev_tau   = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) * wl_size * v_size               , NULL, NULL );
-    _dev_start = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( size_t ) * wl_size * v_size * _mu_size * 2, NULL, NULL );
-    _dev_in    = clCreateBuffer( _context, CL_MEM_READ_WRITE, sizeof( double ) * wl_size * v_size * _mu_size * 2, NULL, NULL );
-    _dev_src   = clCreateBuffer( _context, CL_MEM_READ_WRITE, sizeof( double ) * wl_size * v_size               , NULL, NULL );
+    cl_int cl_err = 0;
+
+    _dev_v     = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) *           v_size               , NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
+    _dev_mu    = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) *           v_size * _mu_size * 2, NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
+    _dev_dmu   = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) *           v_size * _mu_size * 2, NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
+    _dev_shift = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) *           v_size * _mu_size * 2, NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
+    _dev_wl    = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) * wl_size                        , NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
+    _dev_tau   = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( double ) * wl_size * v_size               , NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
+    _dev_start = clCreateBuffer( _context, CL_MEM_READ_ONLY , sizeof( size_t ) * wl_size * v_size * _mu_size * 2, NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
+    _dev_in    = clCreateBuffer( _context, CL_MEM_READ_WRITE, sizeof( double ) * wl_size * v_size * _mu_size * 2, NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
+    _dev_src   = clCreateBuffer( _context, CL_MEM_READ_WRITE, sizeof( double ) * wl_size * v_size               , NULL, &cl_err );
+    // std::cout << "*** " << cl_err << std::endl;
 
     _global_work_size = v_size * _mu_size * 2;
     _local_work_size  = _mu_size * 2;
@@ -85,6 +100,9 @@ ES::Synow::MOATSource::~MOATSource()
 
 void ES::Synow::MOATSource::operator() ( const ES::Synow::Setup& setup )
 {
+
+    moat_prof_register( "OCL_GPU" , "OpenCL total GPU time");
+    moat_prof_start( "OCL_GPU" );
 
     size_t i;
 
@@ -166,7 +184,7 @@ void ES::Synow::MOATSource::operator() ( const ES::Synow::Setup& setup )
                 _start[ i ] = 0;
                 double start_wl = _grid->wl[ iw ] * _shift[ j ];
                 while( _grid->wl[ _start[ i ] ] < start_wl ) ++ _start[ i ];
-                _in[ i ] = (*_grid->bb)( _grid->wl[ iw ] * _shift[ i ] ) * pow( _shift[ i ], 3 );
+                _in[ i ] = (*_grid->bb)( start_wl ) * pow( _shift[ j ], 3 );
 
                 ++ i;
                 ++ j;
@@ -191,48 +209,79 @@ void ES::Synow::MOATSource::operator() ( const ES::Synow::Setup& setup )
 
     // Enqueue buffer-write events.
 
+    cl_int cl_err = 0;
+
     cl_event write_events[ 9 ];
 
-    clEnqueueWriteBuffer( _queue, _dev_v    , CL_TRUE, 0, sizeof( double ) *           v_size               , (const void*)   _grid->v, 0, NULL, &(write_events[ 0 ]) );
-    clEnqueueWriteBuffer( _queue, _dev_mu   , CL_TRUE, 0, sizeof( double ) *           v_size * _mu_size * 2, (const void*)        _mu, 0, NULL, &(write_events[ 1 ]) );
-    clEnqueueWriteBuffer( _queue, _dev_dmu  , CL_TRUE, 0, sizeof( double ) *           v_size * _mu_size * 2, (const void*)       _dmu, 0, NULL, &(write_events[ 2 ]) );
-    clEnqueueWriteBuffer( _queue, _dev_shift, CL_TRUE, 0, sizeof( double ) *           v_size * _mu_size * 2, (const void*)     _shift, 0, NULL, &(write_events[ 3 ]) );
-    clEnqueueWriteBuffer( _queue, _dev_wl   , CL_TRUE, 0, sizeof( double ) * wl_used                        , (const void*)  _grid->wl, 0, NULL, &(write_events[ 4 ]) );
-    clEnqueueWriteBuffer( _queue, _dev_tau  , CL_TRUE, 0, sizeof( double ) * wl_used * v_size               , (const void*) _grid->tau, 0, NULL, &(write_events[ 5 ]) );
-    clEnqueueWriteBuffer( _queue, _dev_start, CL_TRUE, 0, sizeof( size_t ) * wl_used * v_size * _mu_size * 2, (const void*)     _start, 0, NULL, &(write_events[ 6 ]) );
-    clEnqueueWriteBuffer( _queue, _dev_in   , CL_TRUE, 0, sizeof( double ) * wl_used * v_size * _mu_size * 2, (const void*)        _in, 0, NULL, &(write_events[ 7 ]) );
-    clEnqueueWriteBuffer( _queue, _dev_src  , CL_TRUE, 0, sizeof( double ) * wl_used * v_size               , (const void*) _grid->src, 0, NULL, &(write_events[ 8 ]) );
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_v    , CL_TRUE, 0, sizeof( double ) *           v_size               , (const void*)   _grid->v, 0, NULL, &(write_events[ 0 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_mu   , CL_TRUE, 0, sizeof( double ) *           v_size * _mu_size * 2, (const void*)        _mu, 0, NULL, &(write_events[ 1 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_dmu  , CL_TRUE, 0, sizeof( double ) *           v_size * _mu_size * 2, (const void*)       _dmu, 0, NULL, &(write_events[ 2 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_shift, CL_TRUE, 0, sizeof( double ) *           v_size * _mu_size * 2, (const void*)     _shift, 0, NULL, &(write_events[ 3 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_wl   , CL_TRUE, 0, sizeof( double ) * wl_used                        , (const void*)  _grid->wl, 0, NULL, &(write_events[ 4 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_tau  , CL_TRUE, 0, sizeof( double ) * wl_used * v_size               , (const void*) _grid->tau, 0, NULL, &(write_events[ 5 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_start, CL_TRUE, 0, sizeof( size_t ) * wl_used * v_size * _mu_size * 2, (const void*)     _start, 0, NULL, &(write_events[ 6 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_in   , CL_TRUE, 0, sizeof( double ) * wl_used * v_size * _mu_size * 2, (const void*)        _in, 0, NULL, &(write_events[ 7 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clEnqueueWriteBuffer( _queue, _dev_src  , CL_TRUE, 0, sizeof( double ) * wl_used * v_size               , (const void*) _grid->src, 0, NULL, &(write_events[ 8 ]) );
+    // std::cout << "*** " << cl_err << std::endl;
 
     // Set kernel arguments.
 
     size_t iw = 0;
 
-    clSetKernelArg( _kernel,  0, sizeof( size_t )                   , (void*) &iw         );
-    clSetKernelArg( _kernel,  1, sizeof( size_t )                   , (void*) &v_size     );
-    clSetKernelArg( _kernel,  2, sizeof( size_t )                   , (void*) &_mu_size   );
-    clSetKernelArg( _kernel,  3, sizeof( size_t )                   , (void*) &wl_used    );
-    clSetKernelArg( _kernel,  4, sizeof( cl_mem )                   , (void*) &_dev_v     );
-    clSetKernelArg( _kernel,  5, sizeof( double ) * v_size          ,         NULL        );
-    clSetKernelArg( _kernel,  6, sizeof( cl_mem )                   , (void*) &_dev_mu    );
-    clSetKernelArg( _kernel,  7, sizeof( cl_mem )                   , (void*) &_dev_dmu   );
-    clSetKernelArg( _kernel,  8, sizeof( cl_mem )                   , (void*) &_dev_shift );
-    clSetKernelArg( _kernel,  9, sizeof( cl_mem )                   , (void*) &_dev_wl    );
-    clSetKernelArg( _kernel, 10, sizeof( double ) * wl_used         ,         NULL        );
-    clSetKernelArg( _kernel, 11, sizeof( cl_mem )                   , (void*) &_dev_tau   );
-    clSetKernelArg( _kernel, 12, sizeof( cl_mem )                   , (void*) &_dev_start );
-    clSetKernelArg( _kernel, 13, sizeof( cl_mem )                   , (void*) &_dev_in    );
-    clSetKernelArg( _kernel, 14, sizeof( double ) * _local_work_size,         NULL        );
-    clSetKernelArg( _kernel, 15, sizeof( cl_mem )                   , (void*) &_dev_src   );
+    cl_err = clSetKernelArg( _kernel,  0, sizeof( size_t )                   , (void*) &iw         );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  1, sizeof( size_t )                   , (void*) &v_size     );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  2, sizeof( size_t )                   , (void*) &_mu_size   );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  3, sizeof( size_t )                   , (void*) &wl_used    );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  4, sizeof( cl_mem )                   , (void*) &_dev_v     );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  5, sizeof( double ) * v_size          ,         NULL        );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  6, sizeof( cl_mem )                   , (void*) &_dev_mu    );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  7, sizeof( cl_mem )                   , (void*) &_dev_dmu   );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  8, sizeof( cl_mem )                   , (void*) &_dev_shift );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel,  9, sizeof( cl_mem )                   , (void*) &_dev_wl    );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel, 10, sizeof( double ) * wl_used         ,         NULL        );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel, 11, sizeof( cl_mem )                   , (void*) &_dev_tau   );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel, 12, sizeof( cl_mem )                   , (void*) &_dev_start );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel, 13, sizeof( cl_mem )                   , (void*) &_dev_in    );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel, 14, sizeof( double ) * _local_work_size,         NULL        );
+    // std::cout << "*** " << cl_err << std::endl;
+    cl_err = clSetKernelArg( _kernel, 15, sizeof( cl_mem )                   , (void*) &_dev_src   );
+    // std::cout << "*** " << cl_err << std::endl;
 
     // Enqueue and execute kernel chain.
 
     cl_event last_event;
     cl_event exec_event;
+    clEnqueueNDRangeKernel( _queue, _kernel, 1, NULL, &_global_work_size, &_local_work_size, 9, write_events, &exec_event );
+    last_event = exec_event;
 
-    for( size_t iw = 0; iw < wl_used; ++ iw )
+    for( size_t iw = 1; iw < wl_used; ++ iw )
     {
-        clSetKernelArg( _kernel, 0, sizeof( size_t ), (void*) &iw );
-        clEnqueueNDRangeKernel( _queue, _kernel, 1, NULL, &_global_work_size, &_local_work_size, 1, &last_event, &exec_event );
+        cl_err = clSetKernelArg( _kernel, 0, sizeof( size_t ), (void*) &iw );
+        // std::cout << ">>> " << cl_err << std::endl;
+        cl_err = clEnqueueNDRangeKernel( _queue, _kernel, 1, NULL, &_global_work_size, &_local_work_size, 1, &last_event, &exec_event );
+        // std::cout << "*** " << cl_err << std::endl;
         last_event = exec_event;
     }
 
@@ -245,5 +294,8 @@ void ES::Synow::MOATSource::operator() ( const ES::Synow::Setup& setup )
     // Cleanup.
 
     clFinish( _queue );
+
+    moat_prof_stop( "OCL_GPU" );
+    moat_prof_print( stderr );
 
 }

@@ -23,6 +23,8 @@
 #ifndef ES__SYNOW
 #define ES__SYNOW
 
+#include <config.h>
+
 #include "ES_Spectrum.hh"
 #include "ES_Synow_Grid.hh"
 #include "ES_Synow_Opacity.hh"

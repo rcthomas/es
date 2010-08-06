@@ -20,6 +20,9 @@
 // with ES.  If not, see <http://www.gnu.org/licenses/>.
 //  
 
+#include <moat.h>       // tmp
+#include <moat_ocl.h>   // tmp
+
 #include "ES_Synow_Source.hh"
 #include "ES_Synow_Grid.hh"
 #include "ES_Synow_Setup.hh"
@@ -52,6 +55,9 @@ ES::Synow::Source::~Source()
 
 void ES::Synow::Source::operator() ( const ES::Synow::Setup& setup )
 {
+
+    moat_prof_register( "OCL_CPU" , "Total CPU time");
+    moat_prof_start( "OCL_CPU" );
 
     // Local caching.
 
@@ -149,5 +155,8 @@ void ES::Synow::Source::operator() ( const ES::Synow::Setup& setup )
             _grid->src[ iw * v_size + iv ] *= 0.5;
         }
     }
+
+    moat_prof_stop( "OCL_CPU" );
+    moat_prof_print( stderr );
 
 }

@@ -22,7 +22,7 @@
 
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 
-__kernel void source
+__kernel void ES_Synow_MOATSource
 (
     ulong       const            iw,
     ulong       const            v_size,
@@ -36,7 +36,7 @@ __kernel void source
     __global    const   double*  wl,
     __local             double*  wlbuf,
     __global    const   double*  tau,
-    __global    const   ulong*  start,
+    __global    const    ulong*  start,
     __global            double*  in,
     __local             double*  inbuf,
     __global            double*  src
