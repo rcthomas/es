@@ -1,0 +1,58 @@
+# $Id: README,v 1.2 2005/06/30 00:23:19 tgkolda Exp $ 
+# $Source: /space/CVS-Acro/acro/packages/appspack/appspack/examples/README,v $ 
+
+
+HOW TO RUN THE APPSPACK EXAMPLES
+
+
+o General information on running APPSPACK is provided in the Doxygen
+  documentation (included with this package and available online)
+  under "Using the APPSPACK Executables".
+
+o To run an example in serial, type
+
+    appspack_serial example1.apps
+
+  You may need to include the path to the serial version, e.g.,
+
+    ../src/appspack_serial example1.apps
+
+o To run an example in MPI, the command line will depend on which MPI
+  you are using. In MPICH, the command looks like
+
+    mpirun -np 5 appspack_mpi example1.apps
+
+  (The path the appspack_mpi may need to be specified here as well.)
+
+
+o Sample output has been included for each example (e.g.,
+  example1.out) *but* your results may vary due to the asynchronism in
+  APPSPACK.
+
+DESCRIPTION OF THE EXAMPLES
+
+
+o Example 1 is written in C. It's objective function is
+
+	f(x) = sum i * x_i^2.
+  
+  It also has bound constraints in example1.apps
+
+o Example 2 is written in C++. It has the same objective function as 
+  Example 1 but also includes the nonlinear constraint
+
+	sum x_i^2 >= 1
+
+  It also has  bound constraints in example2.apps.
+
+o Example 3 is written in C++. It uses the objective function
+
+	sum x_i^2
+
+  with constraints
+
+	(x_1)^2 + (x_2 - 2)^2 + (x_3)^2 < 3
+	(x_1 - 2)^2 + (x_2)^2 + (x_3)^2 < 3
+
+  It also has bound constraints in example3.apps.
+

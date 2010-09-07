@@ -1,0 +1,24 @@
+// $Id: bugs.dox,v 1.1 2004/08/13 20:23:35 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/bugs.dox,v $ 
+
+/*!
+
+\page pageBugs Bug Reporting and Enhancement Requests
+
+\section pageBugs_bugzilla Bugzilla
+
+To reports bugs or make enhancement requests, visit 
+<A HREF="http://software.sandia.gov/bugzilla/">The Bugzilla (Bug Tracking) Database at Software.Sandia.Gov</A>,
+and use the following instructions.
+<UL>
+<LI>Click on "Enter a new bug report"
+<LI>Choose "APPSPACK"
+<LI>Either login or create a new account
+<LI>Submit your bug report
+</UL>
+
+\section pageBugs_questions For All Other Questions and Comments...
+
+Please contact \ref pagePrimaryContact.
+
+*/

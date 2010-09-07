@@ -1,0 +1,31 @@
+// $Id: mailinglists.dox,v 1.1 2004/08/13 20:23:35 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/mailinglists.dox,v $ 
+
+/*!
+
+\page pageMailingLists Mailing Lists
+
+<p>The %APPSPACK mailing lists use 
+<A HREF="http://software.sandia.gov/mailman/listinfo/">Mailman on Software.Sandia.Gov</A>.
+We recommend that users and developers subscribe to the following mailing lists as appropriate. 
+Please do not report bugs to the mailing lists; instead, see \ref pageBugs.
+
+The following mailing lists are available:
+<ul>
+
+<li><a href="http://software.sandia.gov/mailman/listinfo/appspack-announce">APPSPACK-Announce Mailing List</a> - 
+Low-volume, primarily for release announcements. (Highly recommended for all developers and users)
+
+<li><a href="http://software.sandia.gov/mailman/listinfo/appspack-users">APPSPACK-Users Mailing List</a> - 
+Discussion forum for users of %APPSPACK. (Recommended for all
+developers and any users that are interested in discussions about
+%APPSPACK.)
+
+<li><a href="http://software.sandia.gov/mailman/listinfo/appspack-developers">APPSPACK-Developers Mailing List</a> - 
+Discussion forum for %APPSPACK developers. (Recommended for all developers, not recommended for users.)
+
+<li><a href="http://software.sandia.gov/mailman/listinfo/appspack-checkins">APPSPACK-Checkins Mailing List</a> - 
+All CVS Commit Messages (Recommended for all active developers.)
+</ul>
+
+*/

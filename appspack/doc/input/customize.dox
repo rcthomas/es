@@ -1,0 +1,100 @@
+// $Id: customize.dox,v 1.3 2006/06/30 19:14:31 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/customize.dox,v $ 
+
+/*!
+
+\page pageCustomize Customizing APPSPACK
+
+
+You can customize APPSPACK in three ways:
+<ul>
+<li> \ref pageCustomize_evaluator
+<li> \ref pageCustomize_executor
+<li> \ref pageCustomize_combiner
+</ul>
+
+\section pageCustomize_evaluator Customizing the APPSPACK::Evaluator to change the way single function evaluations are handled
+
+The APPSPACK::Evaluator is the object that does a single function
+evaluation. The parallelism is typically handled at the
+APPSPACK::Executor level; see below.  Our default implementation is
+the APPSPACK::Evaluator::SystemCall, which creates an input file,
+executes a system call to run the evaluation program, and reads the
+resulting output file.
+
+You may wish to write your own custom version of the
+APPSPACK::Evaluator for any number of reasons, including customizing
+the input and output files or, better yet, linking directly with the
+function evaluation subroutine, bypassing the file I/O and system
+calls that are used by the APPSPACK::Evaluator::SystemCall.
+
+Here are the steps to creating your own custom evaluator for the MPI
+version. (The instructions for the serial version are similar.)
+
+<ol>
+<li> Create an object, e.g., MyCustomEvaluator, that derives from
+APPSPACK::Evaluator and is defined in the files MyCustomEvaluator.hpp
+and MyCustomEvaluator.cpp.
+<li> Copy APPSPACK_Main_MPI.cpp to APPSPACK_Main_MyCustomMPI.cpp.
+<li> Modify APPSPACK_Main_MyCustomMPI.cpp by replacing
+APPSPACK::Evaluator::SystemCall with MyCustomEvaluator, as
+appropriate.
+<li> Compile this code and link it with the %APPSPACK libraries
+(-lappspack -lcdd -llapack -lblas).
+</ol>
+
+A documented example is included in the directory
+example-custom-evaluator; see cev_main.cpp, cev_evaluator.hpp, and
+cev_evaluator.cpp.  
+
+\section pageCustomize_executor Customizing the APPSPACK::Executor to change the way function evaluations are distributed in parallel
+
+The APPSPACK::Executor handles \e all aspects of evaluating a
+function, including all aspects of the parallelism and message
+passing. The interface is outlined in the base class
+APPSPACK::Executor::Interface.
+
+We have provided two implementations for the user:
+APPSPACK::Executor::Serial and APPSPACK::Executor::MPI, which are used
+in our two default executables (see \ref pageExecutables).  The
+serial implementation is provided primarily for
+testing purposes; here, we focus on the MPI implementation because it
+is useful as an example of how to create your own version.
+
+The APPSPACK::Executor::MPI is simply an interface for managing the
+worker nodes. It is used on the master process to keep track of which
+workers are busy, distribute trial points to the workers for
+evaluation, and receive and relay the resulting function values.
+
+The worker is implemented inside APPSPACK_Main_MPI.cpp and is set up
+to coordinate with the message sent by the APPSPACK::Executor::MPI
+object.  (Click on "Go to the source code of this file" and then
+scroll down to the worker code, which is offset by 
+<code>*** Worker ***</code>).
+
+The abilities for customizing the APPSPACK::Executor are endless. It
+can be easily be made to work with other parallel protocals and more.
+
+<ol>
+<li> Create an object, e.g., MyCustomExecutor, that derives from
+APPSPACK::Executor and is defined in the files MyCustomExecutor.hpp
+and MyCustomExecutor.cpp.
+<li> Copy APPSPACK_Main_MPI.cpp to APPSPACK_Main_MyCustomMPI.cpp.
+<li> Modify APPSPACK_Main_MyCustomMPI.cpp by replacing
+APPSPACK::Executor::SystemCall with MyCustomExecutor, as
+appropriate.
+<li> Compile this code and link it with the %APPSPACK libraries
+(-lappspack -lcdd -llapack -lblas).
+</ol>
+
+A documented example is included in the directory
+example-custom-executor; see cex_executor.cpp, cex_executor.hpp,
+cex_main.cpp, cex_master.cpp, cex_msgtags.hpp, cex_worker.cpp.
+
+\section pageCustomize_combiner Customizing the APPSPACK::Combiner to change the way multiple function are combined
+
+The APPSPACK::Combiner::Generic class implements a simple combiner
+function and provides the abstract interface for writing your own combiner.
+
+*/
+

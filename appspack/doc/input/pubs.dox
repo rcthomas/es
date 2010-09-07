@@ -1,0 +1,137 @@
+// $Id: pubs.dox,v 1.3 2006/06/30 17:37:08 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/pubs.dox,v $ 
+
+/*!
+
+\page pagePubs Publications about APPSPACK
+
+\section pagePubs_current About the Current Version
+
+<dl>
+<dt> [GrKo06] </dt>
+<dd>
+Joshua D. Griffin and Tamara G. Kolda, Asynchronous Parallel
+Generating Set Search for Linearly-Constrained Optimization, Technical
+Report, Sandia National Laboratories, Livermore, CA July 2006.
+</dd>
+
+<dt> [GrKo05] </dt>
+<dd>
+Genetha A. Gray and Tamara G. Kolda, 
+<a href="http://csmr.ca.sandia.gov/~tgkolda/pubs.html#ACM-TOMS-APPSPACK">Algorithm 8xx: 
+%APPSPACK 4.0: Asynchronous Parallel Pattern Search for
+ Derivative-Free Optimization</a>, ACM T. Math. Software, to appear (accepted Nov. 2005).
+</dd>
+
+<dt> [Ko05] </dt>
+<dd>Tamara G. Kolda, 
+<a href="http://csmr.ca.sandia.gov/~tgkolda/pubs.html#SIAM-60358">Revisiting 
+Asynchronous Parallel Pattern Search for
+Nonlinear Optimization</a>, SIAM J. Optimization, 16(2):563-586, Dec. 2005. 
+(<a href="http://dx.doi.org/10.1137/040603589">doi:10.1137/040603589</a>) 
+(http://epubs.siam.org/sam-bin/dbq/article/60358)
+</dd>
+</dl>
+
+\section pagePubs_earlier About Earlier Versions
+
+<dl>
+
+<dt> [HoKoTo01] </dt>
+<dd>
+Patricia Hough, Tamara G. Kolda, and Virginia Torczon,
+<a href="http://epubs.siam.org/sam-bin/dbq/article/36582">Asynchronous Parallel Pattern Search for Nonlinear Optimization</a>,
+SIAM J. Scientific Computing, 23(1):134-156, June 2001.
+</dd>
+
+<dt> [KoTo04] </dt>
+<dd>
+Tamara. G. Kolda and Virginia J. Torczon, 
+<a href="http://epubs.siam.org/sam-bin/dbq/article/39810">On the Convergence of
+Asynchronous Parallel Pattern Search</A>, SIAM J. Optimization,
+14(4):939-964, May 2004
+</dd>
+
+</dl>
+
+\section pagePubs_howtocite How To Cite APPSPACK
+
+Thank you for using %APPSPACK. If you are using <b>version 4.0</b> or later,
+we ask that you please cite [GrKo05] and [Ko05] in any resulting
+publications or reports. Please also cite [GrKo06] for any problems in
+which linear constraints are present.  
+If you are using an <b>earlier version</b>, please cite [HoKoTo01] and [KoTo04].
+
+\section pagePubs_bibtex BibTeX
+
+\verbatim
+
+@TECHREPORT{GrKo06,
+  author =	 {Joshua D. Griffin and Tamara G. Kolda},
+  title =	 {Asynchronous Parallel Generating Set Search For
+                  Linearly-Constrained Optimization},
+  institution =	 {Sandia National Laboratories, Albuquerque, NM and
+                  Livermore, CA},
+  year =	 {2006},
+  month =	 jul
+}
+
+@ARTICLE{GrKo05,
+  author =	 {Genetha A. Gray and Tamara G. Kolda},
+  title =	 {Algorithm 8xx: {APPSPACK} 4.0: Asynchronous Parallel
+                  Pattern Search for Derivative-Free Optimization},
+  journal =	 {ACM Transactions on Mathematical Software},
+  note =	 {To appear (Accepted Nov. 2005)},
+  url =          {http://csmr.ca.sandia.gov/~tgkolda/ref#ACM-TOMS-APPSPACK4}
+}
+
+@ARTICLE{SIAM-60358,
+  author =	 {Tamara G. Kolda},
+  title =	 {Revisiting asynchronous parallel pattern search for
+                  nonlinear optimization},
+  journal =	 {SIAM Journal on Optimization},
+  year =	 {2005},
+  volume =	 {16},
+  number =	 {2},
+  pages =	 {563--586},
+  month =	 dec,
+  doi =		 {10.1137/040603589},
+  url =		 {http://epubs.siam.org/sam-bin/dbq/article/60358},
+}
+
+
+@Article{HoKoTo01,
+  author =       {Patricia D. Hough and Tamara G. Kolda and Virginia J. Torczon},
+  title =        {Asynchronous Parallel Pattern Search for Nonlinear Optimization},
+  journal =      {{SIAM} Journal on Scientific Computing},
+  year =         2001,
+  volume =       23,
+  number =       1,
+  pages =        {134--156},
+  doi =          {10.1137/S1064827599365823},
+  url =          {http://epubs.siam.org/sam-bin/dbq/article/36582}
+}
+ 
+@Article{KoTo04,
+  author =	 {Tamara G. Kolda and Virginia J. Torczon},
+  title =	 {On the convergence of Asynchronous Parallel Pattern Search},
+  journal =	 {{SIAM} Journal on Optimization},
+  year =	 {2004},
+  volume =	 {14},
+  number =	 {4},
+  pages =	 {939--964},
+  doi =		 {10.1137/S1052623401398107},
+  url =		 {http://epubs.siam.org/sam-bin/dbq/article/39810}
+}
+ 
+\endverbatim
+
+\section pagePubs_sa See Also
+
+<ul>
+<li> \ref pageUsers
+</ul>
+
+
+
+*/

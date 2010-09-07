@@ -1,0 +1,109 @@
+// $Id: configure.dox,v 1.3 2006/06/30 17:54:02 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/configure.dox,v $ 
+
+/*!
+
+\page pageConfigure Configuration, Compilation, and Installation
+
+We assume you have already downloaded and unpacked %APPSPACK; if not,
+see \ref pageDownloads.
+
+\section pageCompilation_Configure Step 1: Configuring APPSPACK
+
+Before you can compile %APPSPACK, you must run configure. As much as
+possible, configure will automatically detect the appropriate settings
+for your system. However, there are options that allow you to tweak
+the settings to your situation. In particular, you must use configure
+options to specify that the MPI version of %APPSPACK should be built.
+
+The configuration should be run from the top-level %APPSPACK source
+directory.  Here are some common examples of using
+configure.
+
+<ul>
+<li> Configure to build the serial version of %APPSPACK.
+
+\code
+configure
+\endcode
+
+<li> Configure to build \e both the serial and MPI versions of %APPSPACK.
+
+\code 
+configure --with-mpi-compilers
+\endcode
+
+This version uses the MPI compilers (mpicxx or mpiCC, mpicc, and mpif77). 
+
+<li> Configure with degenerate constraint support (disabled by default).
+
+\code 
+configure --enable-cddlib
+\endcode
+
+
+
+</ul>   
+
+If you do not like the choices that configure makes, you may overide
+them by using the \ref pageConfigureOptions.
+
+\section pageCompilation_Compiling Step 2: Compiling APPSPACK
+
+Once you have successfully configured %APPSPACK, you may use the
+following commands to build the libraries and executables, from the
+top-level %APPSPACK source directory.
+
+<ul>
+<li> To compile %APPSPACK:
+
+\code
+make
+\endcode
+</ul>
+
+Depending on the options specified during configure, the compilation
+creates the following libraries and executables.
+
+<ul>
+<li>\c src/appspack_serial (APPSPACK_Main_Serial.cpp)
+<li>\c src/appspack_mpi (APPSPACK_Main_MPI.cpp)
+<li>\c src/libappspack.a 
+<li>\c cddlib/cddlib.a
+<li>\c examples/example1 (example1.c)
+<li>\c examples/example2 (example2.cpp)
+<li>\c examples/example2a (example2a.cpp)
+<li>\c examples/example3 (example3.cpp)
+<li>\c examples/example4 (example4.cpp)
+<li>\c examples/example5 (example5.cpp)
+</ul>
+
+\section pageCompilation_Installation Step 3: Installing APPSPACK (optional)
+
+Once you have successfully compiled %APPSPACK, you may use the
+following commands to install the executables, libraries, and header
+files.
+
+<ul>
+<li> To install %APPSPACK:
+
+\code
+make install
+\endcode
+</ul>
+
+The following files will be installed in the following locations. The
+locations may be overridden by specifying the appropriate configure
+options.
+
+<ul>
+<li> Header files - \c /usr/local/include
+<li> Executables (\c appspack_serial and \c appspack_mpi) - \c /usr/local/bin
+<li> Libraries (\c libappspack.a, \c libcdd.a) - \c /usr/local/lib
+</ul>
+
+\section pageCompilation_Use Step 4: Using APPSPACK 
+
+Now you are reading to use %APPSPACK; see \ref pageExecutables.
+
+*/

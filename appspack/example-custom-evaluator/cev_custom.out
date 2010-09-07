@@ -1,0 +1,177 @@
+
+-----------------------------------------------------
+APPSPACK: Asynchronous Parallel Pattern Search
+Written by T. G. Kolda et al., Sandia National Labs
+For more information visit 
+http://software.sandia.gov/appspack
+-----------------------------------------------------
+
+
+###########################################
+###   APPSPACK Initialization Results   ###
+
+*** Parameter List ***
+Bounds Tolerance = 0.005   [default]
+Cache Comparison Tolerance = 0.005   [default]
+Cache Input File = ""   [default]
+Cache Output File = ""   [default]
+Contraction Factor = 0.5   [default]
+Debug = 4
+Initial Step = 1   [default]
+Initial X = [ 2.000e-01  3.000e-01 ]
+Machine Epsilon = 1e-14   [default]
+Max Queue Size = 0   [default]
+Maximum Exchange Return = 1000   [default]
+Minimum Exchange Return = 1   [default]
+Minimum Step = 0.02   [default]
+Precision = 3   [default]
+Step Tolerance = 0.01   [default]
+Sufficient Decrease Factor = 0.01   [default]
+Synchronous = false   [default]
+
+*** Constraints ***
+
+Bound Constraints 
+lower = [-1.000e+00 -1.000e+00 ]
+upper = [ 3.000e+00  3.000e+00 ]
+scaling = [ 4.000e+00  4.000e+00 ]
+
+*** Conveyor ***
+
+Using MPI Executor with 4 workers
+
+### End APPSPACK Initialization Results ###
+###########################################
+
+New Min: f=<null>     x=[ 2.000e-01  3.000e-01 ] step=1.000e+00 tag=0 state=Evaluated (Initial Point)
+
+Trial Points After Conveyor:
+f= 9.180e+00 x=[ 3.000e+00  3.000e-01 ] step=1.000e+00 tag=1 state=Evaluated  Success: 1
+f= 2.040e+00 x=[ 2.000e-01 -1.000e+00 ] step=1.000e+00 tag=4 state=Evaluated  Success: 2
+
+New Min: f= 2.040e+00 x=[ 2.000e-01 -1.000e+00 ] step=1.000e+00 tag=4 state=Evaluated  Success: 2
+
+Trial Points After Conveyor:
+f= 1.100e+01 x=[ 3.000e+00 -1.000e+00 ] step=1.000e+00 tag=5 state=EvaluatedInsufficientDecrease  Success: 3
+
+Trial Points After Conveyor:
+f= 3.000e+00 x=[-1.000e+00 -1.000e+00 ] step=1.000e+00 tag=6 state=EvaluatedInsufficientDecrease  Success: 4
+f= 1.804e+01 x=[ 2.000e-01  3.000e+00 ] step=1.000e+00 tag=7 state=EvaluatedInsufficientDecrease  Success: 5
+
+Trial Points After Conveyor:
+f= 3.000e+00 x=[-1.000e+00 -1.000e+00 ] step=5.000e-01 tag=9 state=CachedInsufficientDecrease  Success: 5
+
+Trial Points After Conveyor:
+f= 6.840e+00 x=[ 2.200e+00 -1.000e+00 ] step=5.000e-01 tag=8 state=EvaluatedInsufficientDecrease  Success: 6
+f= 2.040e+00 x=[ 2.000e-01  1.000e+00 ] step=5.000e-01 tag=10 state=EvaluatedInsufficientDecrease  Success: 7
+
+Trial Points After Conveyor:
+f= 2.640e+00 x=[-8.000e-01 -1.000e+00 ] step=2.500e-01 tag=11 state=EvaluatedInsufficientDecrease  Success: 8
+f= 3.440e+00 x=[ 1.200e+00 -1.000e+00 ] step=2.500e-01 tag=12 state=EvaluatedInsufficientDecrease  Success: 9
+
+Trial Points After Conveyor:
+f=<null>     x=[ 2.000e-01  0.000e+00 ] step=2.500e-01 tag=13 state=EvaluatedInsufficientDecrease  Constraint Violation: 1 Success: 9
+f= 2.490e+00 x=[ 7.000e-01 -1.000e+00 ] step=1.250e-01 tag=14 state=EvaluatedInsufficientDecrease  Constraint Violation: 1 Success: 10
+
+Trial Points After Conveyor:
+f= 2.090e+00 x=[-3.000e-01 -1.000e+00 ] step=1.250e-01 tag=15 state=EvaluatedInsufficientDecrease  Constraint Violation: 1 Success: 11
+
+Trial Points After Conveyor:
+f= 1.180e+00 x=[-1.000e+00  3.000e-01 ] step=1.000e+00 tag=2 state=Evaluated  Constraint Violation: 1 Success: 12
+f=<null>     x=[ 2.000e-01 -5.000e-01 ] step=1.250e-01 tag=17 state=EvaluatedInsufficientDecrease  Constraint Violation: 2 Success: 12
+f= 2.203e+00 x=[ 4.500e-01 -1.000e+00 ] step=6.250e-02 tag=16 state=EvaluatedInsufficientDecrease  Constraint Violation: 2 Success: 13
+f= 1.804e+01 x=[ 2.000e-01  3.000e+00 ] step=1.000e+00 tag=3 state=Evaluated  Constraint Violation: 2 Success: 14
+
+New Min: f= 1.180e+00 x=[-1.000e+00  3.000e-01 ] step=1.000e+00 tag=2 state=Evaluated  Constraint Violation: 1 Success: 12
+
+Trial Points After Conveyor:
+f= 9.180e+00 x=[ 3.000e+00  3.000e-01 ] step=1.000e+00 tag=19 state=CachedInsufficientDecrease  Constraint Violation: 2 Success: 14
+f= 3.000e+00 x=[-1.000e+00 -1.000e+00 ] step=1.000e+00 tag=21 state=CachedInsufficientDecrease  Constraint Violation: 2 Success: 14
+
+Trial Points After Conveyor:
+f= 3.000e+00 x=[-1.000e+00 -1.000e+00 ] step=5.000e-01 tag=23 state=CachedInsufficientDecrease  Constraint Violation: 2 Success: 14
+f= 1.900e+01 x=[-1.000e+00  3.000e+00 ] step=1.000e+00 tag=20 state=EvaluatedInsufficientDecrease  Constraint Violation: 2 Success: 15
+f= 1.180e+00 x=[ 1.000e+00  3.000e-01 ] step=5.000e-01 tag=22 state=EvaluatedInsufficientDecrease  Constraint Violation: 2 Success: 16
+
+Trial Points After Conveyor:
+f=<null>     x=[ 0.000e+00  3.000e-01 ] step=2.500e-01 tag=24 state=EvaluatedInsufficientDecrease  Constraint Violation: 3 Success: 16
+f= 1.158e+01 x=[-1.000e+00  2.300e+00 ] step=5.000e-01 tag=25 state=EvaluatedInsufficientDecrease  Constraint Violation: 3 Success: 17
+f= 1.980e+00 x=[-1.000e+00 -7.000e-01 ] step=2.500e-01 tag=26 state=EvaluatedInsufficientDecrease  Constraint Violation: 3 Success: 18
+
+Trial Points After Conveyor:
+f=<null>     x=[-5.000e-01  3.000e-01 ] step=1.250e-01 tag=27 state=EvaluatedInsufficientDecrease  Constraint Violation: 4 Success: 18
+f= 4.380e+00 x=[-1.000e+00  1.300e+00 ] step=2.500e-01 tag=28 state=EvaluatedInsufficientDecrease  Constraint Violation: 4 Success: 19
+f= 1.080e+00 x=[-1.000e+00 -2.000e-01 ] step=1.250e-01 tag=29 state=Evaluated  Constraint Violation: 4 Success: 20
+
+New Min: f= 1.080e+00 x=[-1.000e+00 -2.000e-01 ] step=1.250e-01 tag=29 state=Evaluated  Constraint Violation: 4 Success: 20
+
+Trial Points After Conveyor:
+f= 1.180e+00 x=[-1.000e+00  3.000e-01 ] step=1.250e-01 tag=31 state=CachedInsufficientDecrease  Constraint Violation: 4 Success: 20
+f= 1.980e+00 x=[-1.000e+00 -7.000e-01 ] step=1.250e-01 tag=32 state=CachedInsufficientDecrease  Constraint Violation: 4 Success: 20
+
+Trial Points After Conveyor:
+f=<null>     x=[-5.000e-01 -2.000e-01 ] step=1.250e-01 tag=30 state=EvaluatedInsufficientDecrease  Constraint Violation: 5 Success: 20
+f= 1.005e+00 x=[-1.000e+00  5.000e-02 ] step=6.250e-02 tag=33 state=Evaluated  Constraint Violation: 5 Success: 21
+f= 1.405e+00 x=[-1.000e+00 -4.500e-01 ] step=6.250e-02 tag=34 state=EvaluatedInsufficientDecrease  Constraint Violation: 5 Success: 22
+
+New Min: f= 1.005e+00 x=[-1.000e+00  5.000e-02 ] step=6.250e-02 tag=33 state=Evaluated  Constraint Violation: 5 Success: 21
+
+Trial Points After Conveyor:
+f= 1.180e+00 x=[-1.000e+00  3.000e-01 ] step=6.250e-02 tag=36 state=CachedInsufficientDecrease  Constraint Violation: 5 Success: 22
+f= 1.080e+00 x=[-1.000e+00 -2.000e-01 ] step=6.250e-02 tag=37 state=CachedInsufficientDecrease  Constraint Violation: 5 Success: 22
+
+Trial Points After Conveyor:
+f=<null>     x=[-7.500e-01  5.000e-02 ] step=6.250e-02 tag=35 state=EvaluatedInsufficientDecrease  Constraint Violation: 6 Success: 22
+f= 1.061e+00 x=[-1.000e+00  1.750e-01 ] step=3.125e-02 tag=38 state=EvaluatedInsufficientDecrease  Constraint Violation: 6 Success: 23
+f= 1.011e+00 x=[-1.000e+00 -7.500e-02 ] step=3.125e-02 tag=39 state=EvaluatedInsufficientDecrease  Constraint Violation: 6 Success: 24
+
+Trial Points After Conveyor:
+f=<null>     x=[-8.750e-01  5.000e-02 ] step=3.125e-02 tag=40 state=EvaluatedInsufficientDecrease  Constraint Violation: 7 Success: 24
+f= 1.025e+00 x=[-1.000e+00  1.125e-01 ] step=1.562e-02 tag=41 state=EvaluatedInsufficientDecrease  Constraint Violation: 7 Success: 25
+f= 1.000e+00 x=[-1.000e+00 -1.250e-02 ] step=1.562e-02 tag=42 state=Evaluated  Constraint Violation: 7 Success: 26
+
+New Min: f= 1.000e+00 x=[-1.000e+00 -1.250e-02 ] step=1.562e-02 tag=42 state=Evaluated  Constraint Violation: 7 Success: 26
+
+Trial Points After Conveyor:
+f= 1.005e+00 x=[-1.000e+00  6.750e-02 ] step=2.000e-02 tag=44 state=CachedInsufficientDecrease  Constraint Violation: 7 Success: 26
+f= 1.011e+00 x=[-1.000e+00 -9.250e-02 ] step=2.000e-02 tag=45 state=CachedInsufficientDecrease  Constraint Violation: 7 Success: 26
+
+Trial Points After Conveyor:
+f=<null>     x=[-9.200e-01 -1.250e-02 ] step=2.000e-02 tag=43 state=EvaluatedInsufficientDecrease  Constraint Violation: 8 Success: 26
+f= 1.002e+00 x=[-1.000e+00  2.750e-02 ] step=1.000e-02 tag=46 state=EvaluatedInsufficientDecrease  Constraint Violation: 8 Success: 27
+f= 1.006e+00 x=[-1.000e+00 -5.250e-02 ] step=1.000e-02 tag=47 state=EvaluatedInsufficientDecrease  Constraint Violation: 8 Success: 28
+
+Trial Points After Conveyor:
+f=<null>     x=[-9.600e-01 -1.250e-02 ] step=1.000e-02 tag=48 state=EvaluatedInsufficientDecrease  Constraint Violation: 9 Success: 28
+
+Final State: Step Converged
+
+Final Min: f= 1.000e+00 x=[-1.000e+00 -1.250e-02 ] step=1.562e-02 tag=42 state=Evaluated  Constraint Violation: 7 Success: 26
+Number of evaluations is: 8
+Number of evaluations is: 7
+Number of evaluations is: 16
+Number of evaluations is: 6
+
+Final Directions:
+   0 : d = [ 4.000e+00  0.000e+00 ] step = 5.000e-03 
+   1 : d = [ 0.000e+00  4.000e+00 ] step = 5.000e-03 
+   2 : d = [ 0.000e+00 -4.000e+00 ] step = 5.000e-03 
+
+Number of Cached Function Evaluations: 10
+Number of Evaluations: 37
+
+Evaluation Breakdown by Message Type:
+  Constraint Violation: 9
+  Success: 28
+
+Evaluation Breakdown by Processor and Message Type:
+  Worker #1
+    Constraint Violation: 9
+    Success: 7
+  Worker #2
+    Success: 8
+  Worker #3
+    Success: 7
+  Worker #4
+    Success: 6
+

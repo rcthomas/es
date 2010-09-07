@@ -1,0 +1,23 @@
+// $Id: license.dox,v 1.1 2004/08/13 20:23:35 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/license.dox,v $ 
+
+/*!
+
+\page pageLicense License Information
+
+
+
+
+\section pageLicense_license GNU L-GPL License
+
+%APPSPACK is available for download under the terms of the <a
+href="http://www.gnu.org/copyleft/lesser.html">GNU Lesser General
+Public License</a>.
+
+\section pageLicense_opt Other Options
+
+Other licensing arrangments may be made by contacting \ref pagePrimaryContact.
+
+
+
+*/

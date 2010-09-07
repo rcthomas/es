@@ -1,0 +1,58 @@
+// $Id: developers.dox,v 1.5.2.2 2006/06/30 22:23:46 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/developers.dox,v $ 
+
+/*!
+
+\page pageDevInfo Developer Information
+
+\section pageDevelopers_repository CVS Repository
+
+The %APPSPACK CVS repository is maintained on software.sandia.gov. For access,
+contact \ref pagePrimaryContact.
+
+To do CVS remotely, set the CVS shell to SSH. For example, using csh,
+this can be done as follows:
+\verbatim
+setenv CVS_RSH ssh 
+\endverbatim
+
+
+The command for checking out the 5.0 branch of APPPSACK is then as follows.
+\verbatim
+cvs -d :ext:[username@]software.sandia.gov:/space/CVS-Acro co [-d DIRNAME] -r APPSPACK_Version_5_0 appspack
+\endverbatim
+
+The option <tt>[-d DIRNAME]</tt> specifies the directory name that
+appspack should be put into. The default is \c appspack.
+
+\note Developers should not make changes to the release branch without
+explicit permission from the project lead.
+
+For more information on CVS, see 
+<a href="http://www.cvshome.org/docs/">http://www.cvshome.org/docs/</a>.
+
+\section pageDevelopers_bonsai Bonsai
+
+Bonsai is a graphical user interface to CVS. 
+<a href="http://software.sandia.gov/bonsai/cvsqueryform.cgi?cvsroot=/space/CVS-Acro&module=appspack">Click here to make queries on Bonsai for %APPSPACK.</a>
+
+\section pageDevelopers_autotools AutoTools
+
+The following tools are used:
+
+- aclocal (distributed with automake)
+- autoheader (distributed with autoconf)
+- automake 
+- autoconf 
+
+\section pageDevelopers_links Other Useful Links
+
+<ul>
+<li> \ref pageBugs
+<li> \ref pageMailingLists
+<li> \ref pageDoxygen
+</ul>
+
+
+
+*/

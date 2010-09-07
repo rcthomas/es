@@ -1,0 +1,185 @@
+$Id: README,v 1.2.2.2 2007/02/16 17:28:03 tgkolda Exp $
+$Source: /space/CVS-Acro/acro/packages/appspack/appspack/README,v $
+
+ASYNCHRONOUS PARALLEL PATTERN SEARCH (APPS)
+COPYRIGHT (2000) Sandia Corporation.
+Under terms of Contract DE-AC04-94AL85000, there is a non-exclusive
+license for use of this work by or on behalf of the U.S. Government.
+LICENSE & WARRANTY INFORMATION in README.txt and LICENSE.txt.
+CONTACT Tamara G. Kolda (tgkolda@sandia.gov).
+
+AUTHORS:
+
+  Tamara G. Kolda 
+  Sandia National Labs
+  tgkolda@sandia.gov
+
+  Genetha Gray
+  Sandia National Labs
+  gagray@sandia.gov
+
+  Joshua Griffin
+  Sandia National Labs
+  jgriffi@sandia.gov
+
+  Patricia D. Hough   
+  Sandia National Labs 
+  pdhough@sandia.gov
+
+  Robert Darwin (Sandia Summer Intern, 2004)
+
+  Daniel Dunlavy (Sandia Summer Intern, 2001)
+
+  H. Alton Patrick (Sandia Summer Intern, 2000)
+
+  Sarah Brown (Sandia Summer Intern, 2000)
+
+
+COPYRIGHT INFORMATION:
+
+  Under terms of Contract DE-AC04-94AL85000, there is a non-exclusive
+  license for use of this work by or on behalf of the U.S. Government.
+
+  NOTICE: The United States Government is granted for itself and
+  others acting on its behalf a paid-up, nonexclusive, irrevocable
+  worldwide license in this data to reproduce, prepare derivative
+  works, and perform publicly and display publicly. Beginning five
+  (5) years from June 6, 2000, the United States Government is grated
+  for itself and others acting on its behalf a paid-up, nonexclusive,
+  irrevocable worldwide license in this data to reproduce, prepare
+  derivative works, and perform publicly and display publicly, and to
+  permit others to do so.
+
+  NEITHER THE UNITED STATES GOVERNMENT, NOR THE UNITED STATES
+  DEPARTMENT OF ENERGY, NOR SANDIA CORPORATION, NOR ANY OF THEIR
+  EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY
+  LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS OR
+  USEFULNESS OF ANY INFORMATION, APPARATUS, PRODUCT, OR PROCESS
+  DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE PRIVATELY
+  OWNED RIGHTS.
+
+LICENSING INFORMATION:
+
+  This library is free software; you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation; either version 2.1 of the
+  License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library in the file LICENSE.txt; if not,
+  write to the Free Software Foundation, Inc., 59 Temple Place, Suite
+  330, Boston, MA 02111-1307 USA
+
+DESCRIPTION:
+
+  APPS is an asynchronous parallel pattern search method for
+  optimization. Pattern search uses only function values for
+  optimization, so it can be applied to a wide variety of problems. Of
+  particular interest to us are engineering optimization design
+  problems characterized by a small number of variables and by
+  expensive objective function evaluations (typically complex
+  simulations that take minutes or hours to run). The name "pattern
+  search" derives from the fact that a pattern of search directions is
+  used to drive the search. Parallelism is achieved by dividing the
+  search directions (and corresponding function evaluations) among the
+  different processors. The "asynchronous" part comes about as a
+  consequence of the fact that the search along each direction
+  continues without waiting for searches along other directions to
+  finish, in contrast to the standard parallel pattern search method.
+
+WEB PAGE:
+
+  http://software.sandia.gov/appspack/
+
+FURTHER INSTRUCTIONS:
+
+  Please visit the web page for futher instruction on the following:
+
+  * Downloading, configuring, compiling, and installing APPSPACK
+  * Using APPSPACK and setting the parameters
+  * Reports on APPSPACK
+  * Citing APPSPACK and seeing other user success stories
+  * How to report bugs and make enhancement requests
+  * Information on joining APPSPACK mailing lists
+  * And more...
+
+SUPPORT FOR THIS WORK:
+
+  This research was sponsored by the Mathematical, Information, and
+  Computational Sciences Division at the United States Department of
+  Energy and by Sandia National Laboratory, a multiprogram laboratory
+  operated by Sandia Corporation, a Lockheed Martin Company, for the
+  United States Department of Energy under contract DE-AC04-94AL85000.
+
+DOWNLOADING APPSPACK
+
+1. Go to http://software.sandia.gov/appspack/
+2. Click on "APPSPACK License, Version, and Download Information"
+3. Click on "APPSPACK Version 5.0.1" 
+4. When prompted, save the file appspack-5.0.1.tar.gz to disk.
+
+UNPACKING APPSPACK
+
+To unpack the compressed tar file, type
+
+  gunzip -c appspack-5.0.1.tar.gz | tar -xvf -
+
+This will create a directory named appspack-5.0.1 containing the
+source code for APPSPACK. Rename this directory appspack.  The full
+path of the resulting appspack directory will be referred to as
+${APPSPACK} for the remainder of this file..
+
+CONFIGURING APPSPACK
+
+The next step is configuring APPSPACK for your computing environment.
+To do this, go to the ${APPSPACK} directory and type
+
+  ./configure [options]
+
+A full list of configure options can be obtained by typing 
+
+  configure --help 
+
+or by consulting the online documentation. The most important option
+is
+
+  --with-mpi-compilers[=PATH]
+
+which specifies that the MPI compilers (mpicc, mpif77, and mpicxx or
+mpiCC) should be used. The optional variable PATH designates the
+location of these compilers.  Specifying the path is useful when
+multiple versions of MPI are available.  If no path is indicated, the
+compilers found in the default path are used.  If APPSPACK is
+configured without any MPI options, only the serial version will be
+compiled and installed.
+
+Once APPSPACK has been successfully configured, the libraries and
+executables can be built.  To compile APPSPACK, go to the 
+${APPSPACK} directory, and type
+
+  make
+
+Assuming that an MPI configure option was specified, the make command
+will create both the serial and MPI executables:
+
+  ${APPSPACK}/src/appspack_serial
+  ${APPSPACK}/src/appspack_mpi
+
+The APPSPACK library ${APPSPACK}/src/libappspack.a will also be
+created, and several examples will be compiled in the
+${APPSPACK}/examples directory.
+
+INSTALLING APPSPACK
+
+Optionally, APPSPACK can be installed via the make install
+command. The default installation location is /usr/local, but this can
+be changed using the --prefix configure option. The executables
+appspack\_serial and appspack\_mpi are installed in the bin
+subdirectory, the header files are installed in the include
+subdirectory, and the library is installed in the lib directory. The
+examples are not installed.

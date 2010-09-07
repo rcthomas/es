@@ -1,0 +1,52 @@
+// $Id: downloads.dox,v 1.4.4.2 2007/02/16 17:28:03 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/downloads.dox,v $ 
+
+/*!
+
+\page pageDownloads Downloads
+
+
+\section pageDownloads_dev Version 5.0.1
+
+<ul> 
+<li><a HREF="http://software.sandia.gov/appspack/downloads/appspack-5.0.1.tar.gz">%APPSPACK Version 5.0.1</a>, February 16, 2007</li>
+</ul>
+
+ 
+\section pageDownloads_unpack Unpacking APPSPACK
+
+<ul> 
+<li> To unpack %APPSPACK, type
+
+\code
+tar -xzvf appspack-<version>.tar.gz 
+\endcode
+
+or
+
+\code
+gunzip -c appspack-<version>.tar.gz | tar -xvf -
+\endcode
+
+This will create a directory named <code>appspack-\<version\></code> containing the source
+code for %APPSPACK. 
+
+<li> In general, you may wish to rename this directory to \c appspack; i.e.,
+
+\code
+mv appspack-<version> appspack
+\endcode
+
+Throughout the remainder of the documentation, we will assume that
+%APPSPACK is installed in the directory \c appspack.
+
+</ul>
+
+\section pageDownloads_other Related Information
+<ul>
+<li> <a href="http://software.sandia.gov/appspack/versions.html">Other versions</a>
+<li> \ref pageLicense
+<li> \ref pageConfigure
+</ul>
+
+*/

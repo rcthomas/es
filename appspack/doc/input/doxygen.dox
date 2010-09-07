@@ -1,0 +1,24 @@
+// $Id: doxygen.dox,v 1.4 2004/11/22 22:40:49 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/doxygen.dox,v $ 
+
+/*!
+
+\page pageDoxygen Creating a Local Copy of the Documentation
+
+APPSPACK uses <a href="http://www.doxygen.org/index.html">Doxygen</a> for documentation. 
+
+The %APPSPACK documentation is available online at 
+<a href="http://software.sandia.gov/appspack/">http://software.sandia.gov/appspack/</a>.
+
+You can also generate a local copy of the documentation, assuming you
+have doxygen installed. 
+
+<ol> 
+<li>Make sure you have Doxygen, version 1.3.8 or later, installed. 
+<li>Follow the instructions for \ref pageDownloads_unpack.
+<li>Change directory to \c appspack/doc.
+<li>Type \c doxygen.
+<li>Point your browser to \c appspack/doc/html/index.html.
+</ol>
+
+*/

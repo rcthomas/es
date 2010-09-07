@@ -1,0 +1,97 @@
+
+-----------------------------------------------------
+APPSPACK: Asynchronous Parallel Pattern Search
+Written by T. G. Kolda et al., Sandia National Labs
+For more information visit 
+http://software.sandia.gov/appspack
+-----------------------------------------------------
+
+
+###########################################
+###   APPSPACK Initialization Results   ###
+
+*** Parameter List ***
+Bounds Tolerance = 5e-05   [default]
+Cache Comparison Tolerance = 5e-05   [default]
+Cache Input File = ""   [default]
+Cache Output File = ""   [default]
+Contraction Factor = 0.5   [default]
+Debug = 3
+Initial Step = 1   [default]
+Initial X = [ 5.000e-01  5.000e-01 ]
+Machine Epsilon = 1e-14   [default]
+Max Queue Size = 0   [default]
+Maximum Exchange Return = 1000   [default]
+Minimum Exchange Return = 1   [default]
+Minimum Step = 0.0002   [default]
+Precision = 3   [default]
+Step Tolerance = 0.0001
+Sufficient Decrease Factor = 0.01   [default]
+Synchronous = false   [default]
+
+*** Constraints ***
+
+Bound Constraints 
+lower = [-1.000e+00 -1.000e+00 ]
+upper = [ 3.000e+00  3.000e+00 ]
+scaling = [ 4.000e+00  4.000e+00 ]
+
+*** Conveyor ***
+Custom MPI executor with 4 workers
+
+### End APPSPACK Initialization Results ###
+###########################################
+
+New Min: f=<null>     x=[ 5.000e-01  5.000e-01 ] step=1.000e+00 tag=0 state=Evaluated (Initial Point)
+
+New Min: f= 1.500e+00 x=[-1.000e+00  5.000e-01 ] step=1.000e+00 tag=2 state=Evaluated  success: 2
+
+New Min: f= 1.125e+00 x=[-1.000e+00  2.500e-01 ] step=6.250e-02 tag=20 state=Evaluated  constraint violation: 4 success: 14
+
+New Min: f= 1.031e+00 x=[-1.000e+00  1.250e-01 ] step=3.125e-02 tag=26 state=Evaluated  constraint violation: 6 success: 16
+
+New Min: f= 1.008e+00 x=[-1.000e+00  6.250e-02 ] step=1.562e-02 tag=32 state=Evaluated  constraint violation: 8 success: 18
+
+New Min: f= 1.002e+00 x=[-1.000e+00  3.125e-02 ] step=7.812e-03 tag=38 state=Evaluated  constraint violation: 11 success: 21
+
+New Min: f= 1.000e+00 x=[-1.000e+00  1.562e-02 ] step=3.906e-03 tag=46 state=Evaluated  constraint violation: 13 success: 23
+
+New Min: f= 1.000e+00 x=[-1.000e+00  7.812e-03 ] step=1.953e-03 tag=52 state=Evaluated  constraint violation: 16 success: 25
+
+New Min: f= 1.000e+00 x=[-1.000e+00  3.906e-03 ] step=9.766e-04 tag=59 state=Evaluated  constraint violation: 18 success: 27
+
+New Min: f= 1.000e+00 x=[-1.000e+00  1.953e-03 ] step=4.883e-04 tag=65 state=Evaluated  constraint violation: 21 success: 30
+
+New Min: f= 1.000e+00 x=[-1.000e+00  9.766e-04 ] step=2.441e-04 tag=73 state=Evaluated  constraint violation: 24 success: 32
+
+New Min: f= 1.000e+00 x=[-1.000e+00  4.883e-04 ] step=1.221e-04 tag=80 state=Evaluated  constraint violation: 26 success: 34
+
+New Min: f= 1.000e+00 x=[-1.000e+00 -3.117e-04 ] step=2.000e-04 tag=83 state=Evaluated  constraint violation: 27 success: 35
+
+Final State: Step Converged
+
+Final Min: f= 1.000e+00 x=[-1.000e+00 -3.117e-04 ] step=2.000e-04 tag=83 state=Evaluated  constraint violation: 27 success: 35
+
+Final Directions:
+   0 : d = [ 4.000e+00  0.000e+00 ] step = 5.000e-05 
+   1 : d = [ 0.000e+00  4.000e+00 ] step = 5.000e-05 
+   2 : d = [ 0.000e+00 -4.000e+00 ] step = 5.000e-05 
+
+Number of Cached Function Evaluations: 23
+Number of Evaluations: 66
+
+Evaluation Breakdown by Message Type:
+  constraint violation: 29
+  success: 37
+
+Evaluation Breakdown by Processor and Message Type:
+  Worker #1
+    constraint violation: 28
+    success: 3
+  Worker #2
+    success: 20
+  Worker #3
+    constraint violation: 1
+    success: 13
+  Worker #4
+    success: 1

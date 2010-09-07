@@ -1,0 +1,142 @@
+// $Id: mainpage.dox,v 1.14.2.3 2007/02/16 17:28:03 tgkolda Exp $ 
+// $Source: /space/CVS-Acro/acro/packages/appspack/appspack/doc/input/mainpage.dox,v $ 
+
+/*!
+
+\mainpage Asynchronous Parallel Pattern Search
+
+<center><b>Version 5.0.1</b><br>Released February 16, 2007</center>
+
+\section mainpage_intro Introduction
+  
+  %APPSPACK is serial or parallel, derivative-free optimization software for
+  solving nonlinear unconstrained, bound-constrained, and linearly-constrained optimization
+  problems, with possibly noisy and expensive objective functions.
+  The basic optimization problem is of the form
+  \f[
+  \begin{array}{ll}
+  \min & f(x) \\
+  \mbox{subject to}  
+  &    c_L \leq  A_I x \leq  c_U \\
+  &                 A_E x   =   b \\
+  &    \ell \leq  x     \leq  u 
+  \end{array}
+  \f]
+  Here \f$f: \mathbb{R}^n \rightarrow \mathbb{R} \cup \{+\infty\}\f$
+  is the objective function. 
+  The inequality constraints are denoted by the matrix \f$A_I\f$ and
+  the upper and lower bounds \f$c_L,c_U\f$. Each constraint can be
+  bounded on both sides or just one.  The equality constraints are
+  denoted by the matrix \f$A_E\f$ and the right hand side \f$b\f$.
+  Finally, \f$\ell\f$ and \f$u\f$ denote the lower and upper bounds,
+  respectively, which are optional on a parameter-by-parameter basis.
+  To find a solution of this problem,
+  %APPSPACK implements asynchronous parallel generating set search, which
+  handles bound and linear constraints by choosing search directions
+  that conform to the nearby boundary.
+  %APPSPACK is written in C++ and uses MPI for
+  parallelism.  Constraint degeneracy is handled using the software package \ref pageCddlib 
+  (relevant files included with distribution).
+  Using %APPSPACK to solve optimization problems has the
+  following advantages:
+
+  <ul>
+  <li> \e Only function values are required for the optimization, so
+  it can be applied to a wide variety of problems. The user need
+  simply provide a program (written in any language such as Fortran,
+  C, C++, Perl, etc.)  that can evaluate the objective function at a
+  given point.
+  <li> The target applications are simulation-based optimization problems
+  characterized by a small number of variables (i.e., n < 100) and by
+  expensive objective function evaluations (typically complex
+  simulations that take minutes or hours to run). The procedure for
+  evaluating the objective function does not need to be encapsulated
+  in a subroutine and can, in fact, be an entirely separate program.
+  <li> The code can be run in parallel on a cluster of computers,
+  greatly reducing the total solution time. Parallelism is achieved
+  by assigning the individual function evaluations 
+  to different processors.  The (optional) asynchronism enables better
+  load balancing.
+  <li> The software is freely available under the terms of the GNU
+  Lesser General Public License. 
+  </ul>
+
+<b>Key words:</b>
+ optimization, derivative-free, parallel,
+direct search, pattern search, engineering design 
+
+\section mainpage_GettingStarted Getting Started
+
+<ul>
+<li> \ref pageDownloads 
+<li> \ref pageLicense 
+<li> \ref pageConfigure 
+</ul>
+
+\section mainpage_UsingTheCode Using the Code
+
+<ul>
+<li> \ref pagePubs 
+<li> \ref pageExecutables <!--<li> \ref pageLibrary [Using the Library]-->
+<li> \ref pageParameters 
+<li> \ref pageLinearParameters
+<li> \ref pageCustomize (for advanced users only)
+</ul>
+
+\section mainpage_Results Results with APPSPACK
+
+<ul>
+<li> \ref pagePubs_howtocite
+<li> \ref pageUsers
+</ul>
+
+\section mainpage_MoreInfo More Information
+
+<ul> 
+<li> \ref pageFAQ
+<li> \ref pageBugs 
+<li> \ref pageMailingLists 
+<li> \ref pageDevInfo 
+<li> \ref pageDoxygen
+<li> <a href="http://software.sandia.gov/appspack/versions.html">Other versions</a>
+</ul>
+
+
+\section mainpage_Contributors Contributors
+
+The following people have contributed code to %APPSPACK:
+
+<ul>
+<li> <a href="http://csmr.ca.sandia.gov/~tgkolda/">Tamara G. Kolda</a>,  
+     Sandia National Labs, 
+     tgkolda@sandia.gov
+<li> <a href="http://csmr.ca.sandia.gov/~pdhough/">Patricia D. Hough</a>,  
+     Sandia National Labs, 
+     pdhough@sandia.gov
+<li> <a href="http://csmr.ca.sandia.gov/~gagray/">Genetha Gray</a>, 
+     Sandia National Labs,
+     gagray@sandia.gov
+<li> <a href="http://csmr.ca.sandia.gov/~jgriffi/">Josh Griffin</a>, 
+     Sandia National Labs,
+     jgriffi@sandia.gov
+<li> <a href="http://www.math.wm.edu/~buckaroo/">R. Michael Lewis</a>,
+     College of William & Mary (\ref pageCddlib interface)
+<li> Robert Darwin  (Sandia Summer Intern, 2004)
+<li> Daniel Dunlavy (Sandia Summer Intern, 2001)
+<li> H. Alton Patrick (Sandia Summer Intern, 2000)
+<li> Sarah Brown (Sandia Summer Intern, 2000)
+</ul>
+
+We also gratefully acknowledge <A
+href="http://www.ifor.math.ethz.ch/~fukuda">Komei Fukuda</a> for
+providing the \ref pageCddlib, parts of which are distributed with
+%APPSPACK.
+
+\section mainpage_questions For All Other Questions and Comments...
+
+Please contact \ref pagePrimaryContact.
+
+
+*/
+
+
