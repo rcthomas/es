@@ -1,82 +1,23 @@
-# @HEADER
-# ************************************************************************
-# 
-#          APPSPACK: Asynchronous Parallel Pattern Search
-#                 Copyright (2003) Sandia Corporation
-# 
-# Under terms of Contract DE-AC04-94AL85000, there is a non-exclusive
-# license for use of this work by or on behalf of the U.S. Government.
-# 
-# This library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation; either version 2.1 of the
-# License, or (at your option) any later version.
-#  
-# This library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#                                                                                 
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-# USA.                                                                           .
-# 
-# Questions? Contact Tammy Kolda (tgkolda@sandia.gov) 
-# 
-# ************************************************************************
-# @HEADER
+AM_CPPFLAGS = -I$(top_srcdir)/external/appspack/cddlib
+AM_LDFLAGS = -L$(top_builddir)/external/appspack/cddlib
+AM_LIBS = -lm
+EXTRA_CPPFLAGS =
+AM_CFLAGS =
 
-# ------------------------------------------------------------------------
-# List of all libraries to install in $(libdir)
-# ------------------------------------------------------------------------
+noinst_HEADERS = \
+cdd.h \
+cddmp.h \
+cddtypes.h \
+setoper.h
 
-if BUILD_CDDLIB
-
-lib_LIBRARIES = libcdd.a	
-
-endif
-
-# ------------------------------------------------------------------------
-# Library AR Command
-# ------------------------------------------------------------------------
-
-if USE_ALTERNATE_AR
-
-libappspack_a_AR = $(ALTERNATE_AR)
-
-else
-
-libappspack_a_AR = $(AR) cru
-
-endif
-
-# ------------------------------------------------------------------------
-# Library source
-# ------------------------------------------------------------------------
-
-libcdd_a_SOURCES = \
-	$(srcdir)/cddcore.c \
-	$(srcdir)/cddio.c \
-	$(srcdir)/cddlib.c \
-	$(srcdir)/cddlp.c \
-	$(srcdir)/cddmp.c \
-	$(srcdir)/cddproj.c \
-	$(srcdir)/setoper.c
-
-# ------------------------------------------------------------------------
-# Extra files to distribute (i.e., headers that aren't installed)
-# ------------------------------------------------------------------------
-
-EXTRA_DIST = \
-	$(srcdir)/cdd.h \
-	$(srcdir)/cddmp.h \
-	$(srcdir)/cddtypes.h \
-	$(srcdir)/setoper.h
-
-# ------------------------------------------------------------------------
-# Files to be deleted by 'make maintainer-clean'
-# ------------------------------------------------------------------------
-
-MAINTAINERCLEANFILES = Makefile.in 
+noinst_LTLIBRARIES = libcdd.la
+libcdd_la_SOURCES = \
+cddcore.c \
+cddio.c \
+cddlib.c \
+cddlp.c \
+cddmp.c \
+cddproj.c \
+setoper.c
+libcdd_la_LIBADD = $(AM_LIBS)
 
