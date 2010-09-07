@@ -1,12 +1,13 @@
-CXX = @MPICXX@
-AM_CPPFLAGS = -I$(top_srcdir)/external/appspack -I$(top_srcdir)/external/appspack/cddlib
-AM_LDFLAGS = -L$(top_builddir)/external/appspack -L$(top_builddir)/external/appspack/cddlib
-AM_LIBS = $(top_builddir)/external/appspack/cddlib/libcdd.la $(LAPACK_LIBS) $(BLAS_LIBS) -lm $(FLIBS)
+AM_CPPFLAGS = -I$(top_srcdir)/src/cddlib -I$(top_srcdir)/src/libappspack
+AM_LDFLAGS = -L$(top_builddir)/src/cddlib -L$(top_builddir)/src/libappspack
+AM_LIBS = $(top_builddir)/src/cddlib/libcdd.la $(LAPACK_LIBS) $(BLAS_LIBS) -lm $(FLIBS)
 EXTRA_CPPFLAGS =
-AM_CFLAGS =
-
+AM_CXXFLAGS =
 
 noinst_HEADERS = \
+APPSPACK_Config.hpp
+
+include_HEADERS = \
 APPSPACK_Cache_Manager.hpp \
 APPSPACK_Cache_Point.hpp \
 APPSPACK_Cache_SplayTree.hpp \
@@ -36,7 +37,7 @@ APPSPACK_CDDLIB_Interface.h \
 APPSPACK_LAPACK_Wrappers.hpp \
 APPSPACK_Common.h
 
-noinst_LTLIBRARIES = libappspack.la
+lib_LTLIBRARIES = libappspack.la
 libappspack_la_SOURCES = \
 APPSPACK_Cache_Manager.cpp \
 APPSPACK_Cache_Point.cpp \
@@ -63,11 +64,4 @@ APPSPACK_CDDLIB_Interface.c \
 APPSPACK_LAPACK_Wrappers.cpp
 libappspack_la_LDFLAGS = $(AM_LDFLAGS)
 libappspack_la_LIBS = $(AM_LIBS)
-
-noinst_PROGRAMS = appspack_mpi
-
-appspack_mpi_SOURCES = APPSPACK_Main_MPI.cpp
-appspack_mpi_LDADD = libappspack.la $(AM_LIBS)
-
-SUBDIRS = cddlib
 

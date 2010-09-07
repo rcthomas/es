@@ -30,17 +30,6 @@
 # @HEADER
 
 ## #######################################################################
-## Options to automake (rarely used - don't worry about it)
-## #######################################################################
-AUTOMAKE_OPTIONS = foreign
-
-## #######################################################################
-## Aclocal command (rarely used - don't worry about it)
-## #######################################################################
-ACLOCAL	= aclocal
-ACLOCAL_AMFLAGS	= -I config
-
-## #######################################################################
 ## Additional files to be included in distribution for 'make dist'
 ## #######################################################################
 EXTRA_DIST = \
@@ -78,16 +67,5 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 autom4te.cache/* \
 ## #######################################################################
 ## Subdirectories to be make'd recursively
 ## #######################################################################
-SUBDIRS = cddlib src examples doc
+SUBDIRS = src examples doc
 
-## #######################################################################
-## Following are commands that only apply when APPSPACK is a
-## subpackage of ACRO.
-## #######################################################################
-if I_AM_SUBPACKAGE
-all-local:
-	@cd src && $(MAKE) copy-headers
-
-clean-local:
-
-endif

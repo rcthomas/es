@@ -1,5 +1,5 @@
-AM_CPPFLAGS = -I$(top_srcdir)/external/appspack/cddlib
-AM_LDFLAGS = -L$(top_builddir)/external/appspack/cddlib
+AM_CPPFLAGS = -I$(top_srcdir)/src/cddlib
+AM_LDFLAGS = -L$(top_builddir)/src/cddlib
 AM_LIBS = -lm
 EXTRA_CPPFLAGS =
 AM_CFLAGS =
