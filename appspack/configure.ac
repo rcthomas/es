@@ -37,21 +37,22 @@
 # This must be the first line in configure.ac.
 # Optional 3rd argument is email address for bugs.
 
-AC_INIT(appspack, 5.0.2, appspack-developers@software.sandia.gov)
+AC_INIT([appspack], [5.0.2], [appspack-developers@software.sandia.gov])
 
 # This is to protect against accidentally specifying the wrong
 # directory with --srcdir.
 
-AC_CONFIG_SRCDIR(src/APPSPACK_Common.hpp)
+AC_CONFIG_SRCDIR([src/libappspack/APPSPACK_Common.hpp])
 
 # Specify directory for auxillary build tools (e.g., install-sh,
 # config.sub, config.guess) and M4 files.
 
-AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_MACRO_DIR([config])
 
 # Header file created by configure
 
-AM_CONFIG_HEADER(src/APPSPACK_Config.hpp:src/APPSPACK_Config.hpp.in)
+AM_CONFIG_HEADER([src/libappspack/APPSPACK_Config.hpp:src/libappspack/APPSPACK_Config.hpp.in])
 
 # AM_MAINTAINER_MODE turns off maintainer-only makefile targets by
 # default, and changes configure to understand a
@@ -68,26 +69,22 @@ AM_MAINTAINER_MODE
 
 AC_CANONICAL_TARGET
 
-# Use automake, getting name and version from variables defined by
-# AC_INIT command.
+# Use automake
 
-AM_INIT_AUTOMAKE(${PACKAGE_NAME}, ${PACKAGE_VERSION})
+AM_INIT_AUTOMAKE
 
 # Specify required version of autoconf.
 
-AC_PREREQ(2.64)
+AC_PREREQ([2.64])
 
 # Set default optimization to '-O3' instead of the default '-g -O2'
 if test x"${CXXFLAGS}" = x; then
    CXXFLAGS="-O3"
 fi
 
-# Set language
-AC_LANG(C++)
-AC_CANONICAL_HOST
-
 # Checks for programs.
 AC_PROG_AWK
+AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_F77
 AC_PROG_INSTALL
@@ -95,61 +92,15 @@ AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-
-# Checks for special compiler options
-
-AC_CXX_COMPILER_VENDOR([CXX_VENDOR])
-AC_CXX_CPPFLAGS_STD_LANG([CXXFLAGS])
-
-case $target in
-
-  # OSF test
-  *osf*)
-
-    case $CXX in
-       cxx) SPECIAL_CXXFLAGS="-distinguish_nested_enums -tlocal";;
-    esac
-
-  ;;
-
-  # IBM test
-  rs6000-ibm-aix3.2.* | rs6000-ibm-aix4.* | powerpc-ibm-aix4.*)
-
-    case $CXX in
-      xlC* ) SPECIAL_CXXFLAGS="-qnolm -qrtti";;
-    esac
-
-  ;;
-
-  # SGI/IRIX test
-  mips-sgi-irix* ) 
-
-    if test "${CXX}" = "CC"; then
-     # SPECIAL_CXXFLAGS="-LANG:std -LANG:ansi-for-init-scope=ON -64 -DSGI64"
-     # FFLAGS_MISC="-64"
-     SPECIAL_CXXFLAGS="-LANG:std -LANG:ansi-for-init-scope=ON"
-     FFLAGS_MISC=""
-     F77_MISC=f77
-    fi
-
-  ;;
-
-esac
-
-CXXFLAGS="${CXXFLAGS} ${SPECIAL_CXXFLAGS}"
-FFLAGS="${FFLAGS} ${SPECIAL_FFLAGS}"
-
-# Doxygen options
-DX_PDF_FEATURE(ON)
-DX_HTML_FEATURE(ON)
-DX_INIT_DOXYGEN(APPSPACK, Doxyfile, doc)
+# Set language
+AC_LANG([C++])
+AC_CANONICAL_HOST
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADERS([iostream iostream.h])
 AC_CHECK_HEADERS([iomanip iomanip.h])
 AC_CHECK_HEADERS([cmath math.h])
 AC_CHECK_HEADERS([cstdlib stdlib.h])
-AC_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_F77_LIBRARY_LDFLAGS
 if test x"${F77}" != x; then
@@ -157,11 +108,9 @@ if test x"${F77}" != x; then
 fi
 
 # can we say using std::ostream?
-AC_MSG_CHECKING(whether "using std::ostream" is okay)
-AC_COMPILE_IFELSE(
-[
-  AC_LANG_PROGRAM(
-  [[
+AC_MSG_CHECKING([whether using std ostream is okay])
+AC_COMPILE_IFELSE([
+  AC_LANG_PROGRAM([[
 #ifdef HAVE_IOSTREAM
 #include <iostream>
 #elif defined(HAVE_IOSTREAM_H)
@@ -170,21 +119,20 @@ AC_COMPILE_IFELSE(
   ]],
   [[using std::ostream;]])
 ],
-[AC_MSG_RESULT(yes)],
-[
-  AC_MSG_RESULT(no)
-  AC_DEFINE(NO_USING_STD_OSTREAM,1,[define if "using std::ostream" is not okay])
+[AC_MSG_RESULT([yes])],
+[AC_MSG_RESULT([no])
+  AC_DEFINE([NO_USING_STD_OSTREAM], [1], [define if using std ostream is not okay])
 ])
 
 # do we need "using namespace std"?
-AC_MSG_CHECKING(whether "using namespace std" is required)
+AC_MSG_CHECKING([whether using namespace std is required])
 AC_TRY_COMPILE(
-  [#include<string>],
+  [#include <string>],
   [string a;],
-  [AC_MSG_RESULT(no)],
+  [AC_MSG_RESULT([no])],
   [
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(REQUIRE_USING_NAMESPACE_STD,,[define if "using namespace std" is required])
+    AC_MSG_RESULT([yes])
+    AC_DEFINE([REQUIRE_USING_NAMESPACE_STD], [1], [define if using namespace std is required])
   ]
 )
 
@@ -192,11 +140,18 @@ AC_TRY_COMPILE(
 AC_CHECK_FUNCS([pow sqrt])
 
 # This is internal, always build
-AC_DEFINE(HAVE_CDDLIB, 1, [Always defined since libcdd is built internally.])
+AC_DEFINE([HAVE_CDDLIB], [1], [Always defined since libcdd is built internally.])
 
 # Check for MPI
-ACX_MPI([acx_have_mpi="1";AC_DEFINE(HAVE_MPI,1,[Define if you have the MPI library.])])
+ACX_MPI([acx_have_mpi="1";AC_DEFINE([HAVE_MPI], [1], [Define if you have the MPI library.])])
 AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
+
+# Perform a serial compilation if MPI compilers are not found
+if test x"${acx_have_mpi}" = x1; then
+   CPPFLAGS="${CPPFLAGS} -DHAVE_MPI"
+else
+   MPICXX="${CXX}"
+fi
 
 # Check for LAPACK/BLAS
 ACX_BLAS([], [AC_MSG_ERROR([Could not find a Blas library!])])
@@ -215,11 +170,16 @@ AC_OUTPUT
 # Print out detected build options
 AC_MSG_NOTICE([                                           ])
 AC_MSG_NOTICE([  ======================== Build Configuration =============================])
-AC_MSG_NOTICE([  C++ Compiler      : $CXX])
-AC_MSG_NOTICE([  MPI C++ Compiler  : $MPICXX])
-AC_MSG_NOTICE([  C++ Compile flags : $CXXFLAGS])
-AC_MSG_NOTICE([  BLAS              : $BLAS_LIBS])
-AC_MSG_NOTICE([  LAPACK            : $LAPACK_LIBS])
+AC_MSG_NOTICE([  Serial C Compiler   : $CC])
+AC_MSG_NOTICE([  Serial C++ Compiler : $CXX])
+if test "$acx_have_mpi" = 1; then
+  AC_MSG_NOTICE([  MPI C++ Compiler    : $MPICXX])
+else
+  AC_MSG_NOTICE([  MPI C++ Compiler    : none - doing serial build])
+fi
+AC_MSG_NOTICE([  C++ Compile flags   : $CXXFLAGS])
+AC_MSG_NOTICE([  BLAS                : $BLAS_LIBS])
+AC_MSG_NOTICE([  LAPACK              : $LAPACK_LIBS])
 AC_MSG_NOTICE([  ==========================================================================])
 AC_MSG_NOTICE([                                           ])
 
