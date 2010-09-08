@@ -27,7 +27,7 @@
 #
 # LAST MODIFICATION
 #
-#   2010-05-12
+#   2010-09-08
 #
 # COPYLEFT
 #
@@ -66,8 +66,7 @@ AC_REQUIRE([AX_CXX_CHECK_LIB])
 AC_REQUIRE([ACX_LAPACK])
 
 acx_appspack_ok=no
-acx_appspack_cdd_ok=no
-acx_appspack_default="-lappspack -lcdd"
+acx_appspack_default="-lappspack"
 
 APPSPACK_CPPFLAGS=""
 APPSPACK=""
@@ -108,22 +107,14 @@ else
    CPPFLAGS="$CPPFLAGS $APPSPACK_CPPFLAGS"
    LIBS="$APPSPACK $LAPACK_LIBS $BLAS_LIBS $acx_appspack_save_LIBS $FLIBS -lm"
 
-#   AC_CHECK_HEADERS([APPSPACK_Executor_MPI.hpp])
+   AC_CHECK_HEADERS([APPSPACK_Executor_MPI.hpp])
 
-   AX_CXX_CHECK_LIB([cdd], [dd_InitializeArow], [acx_appspack_cdd_ok=yes])
+   AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
 
-   if test $acx_appspack_cdd_ok = yes; then
-      AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
-   else
-      APPSPACK="$acx_appspack_default"
+   if test x"$acx_appspack_ok" = xno; then   
       LIBS="$acx_appspack_default $LAPACK_LIBS $BLAS_LIBS $acx_appspack_save_LIBS $FLIBS -lm"
-      AX_CXX_CHECK_LIB([cdd], [dd_InitializeArow], [acx_appspack_cdd_ok=yes])
-      if test $acx_appspack_cdd_ok = no; then
-      	 AC_MSG_WARN([Cannot link to Appspack libcdd library- did you build appspack with --enable-cddlib?])
-      else
-         AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
-      fi
-    fi
+      AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;APPSPACK="$acx_appspack_default";AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
+   fi
 
    # Restore environment
 

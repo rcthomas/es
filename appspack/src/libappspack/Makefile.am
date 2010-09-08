@@ -2,7 +2,7 @@ CXX = @MPICXX@
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/cddlib -I$(top_srcdir)/src/libappspack
 AM_LDFLAGS = -L$(top_builddir)/src/cddlib -L$(top_builddir)/src/libappspack
-AM_LIBS = $(top_builddir)/src/cddlib/libcdd.la $(LAPACK_LIBS) $(BLAS_LIBS) -lm $(FLIBS)
+AM_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) -lm $(FLIBS)
 EXTRA_CPPFLAGS =
 AM_CXXFLAGS =
 
@@ -65,5 +65,6 @@ APPSPACK_Float.cpp \
 APPSPACK_CDDLIB_Interface.c \
 APPSPACK_LAPACK_Wrappers.cpp
 libappspack_la_LDFLAGS = $(AM_LDFLAGS)
+libappspack_la_LIBADD = $(top_builddir)/src/cddlib/libcdd.la
 libappspack_la_LIBS = $(AM_LIBS)
 

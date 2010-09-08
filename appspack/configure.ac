@@ -37,7 +37,7 @@
 # This must be the first line in configure.ac.
 # Optional 3rd argument is email address for bugs.
 
-AC_INIT([appspack], [5.0.2], [appspack-developers@software.sandia.gov])
+AC_INIT([appspack], [5.0.1-synapps], [appspack-developers@software.sandia.gov])
 
 # This is to protect against accidentally specifying the wrong
 # directory with --srcdir.
