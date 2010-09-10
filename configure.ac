@@ -14,14 +14,11 @@ if test x"${CXXFLAGS}" = x; then
    CXXFLAGS="-O3"
 fi
 
-# Set language
-AC_LANG([C++])
-AC_CANONICAL_HOST
-
 # Checks for programs.
 AC_PROG_AWK
-AC_PROG_CXX
+AC_PROG_CC
 AC_PROG_F77
+AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
@@ -31,6 +28,10 @@ AC_PROG_MAKE_SET
 DX_PDF_FEATURE([ON])
 DX_HTML_FEATURE([ON])
 DX_INIT_DOXYGEN([ES], [doxygen.txt], [doc])
+
+# Set language
+AC_LANG([C++])
+AC_CANONICAL_HOST
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADERS([iostream iostream.h])
@@ -83,10 +84,6 @@ AC_CHECK_FUNCS([pow sqrt])
 AX_OPENMP([ax_have_openmp=yes;AC_DEFINE([HAVE_OPENMP], [1], [Define if OpenMP is enabled])])
 AM_CONDITIONAL([HAVE_AM_OPENMP], [test $ax_have_openmp = yes])
 
-# Check for MPI
-ACX_MPI([acx_have_mpi="1";AC_DEFINE([HAVE_MPI], [1],[Define if you have the MPI library.])])
-AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
-
 # Check for CFITSIO
 ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 
@@ -94,9 +91,15 @@ ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 ACX_BLAS([], [AC_MSG_ERROR([Could not find a Blas library])])
 ACX_LAPACK([], [AC_MSG_ERROR([Could not find a Lapack library])])
 
+# Check for MPI
+acx_have_mpi=no
+ACX_MPI([acx_have_mpi=yes;AC_DEFINE([HAVE_MPI], [1],[Define if you have the MPI library.])])
+AM_CONDITIONAL([HAVE_AM_MPI], [test $acx_have_mpi = yes])
+
 # Check for APPSPACK
-ACX_APPSPACK([acx_have_appspack="1";AC_DEFINE([HAVE_APPSPACK], [1], [Define if you have the Appspack library.])], [AC_MSG_WARN([Could not find the Appspack tools])])
-AM_CONDITIONAL([HAVE_AM_APPSPACK], [test "$acx_have_appspack" = 1])
+acx_have_appspack=no
+ACX_APPSPACK([acx_have_appspack=yes;AC_DEFINE([HAVE_APPSPACK], [1], [Define if you have the Appspack library.])], [AC_MSG_WARN([Could not find the Appspack tools- synapps disabled])])
+AM_CONDITIONAL([HAVE_AM_APPSPACK], [test $acx_have_appspack = yes])
 
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
@@ -113,7 +116,7 @@ AC_MSG_NOTICE([                                           ])
 AC_MSG_NOTICE([  ======================== Build Configuration =============================])
 AC_MSG_NOTICE([  C++ Compiler      : $CXX])
 AC_MSG_NOTICE([  MPI C++ Compiler  : $MPICXX])
-AC_MSG_NOTICE([  C++ Compile flags   : $CXXFLAGS])
+AC_MSG_NOTICE([  C++ Compile flags : $CXXFLAGS])
 if test x"${ax_have_openmp}" = xyes; then
   AC_MSG_NOTICE([  OpenMP            : Detected ($OPENMP_CXXFLAGS)])
 else
