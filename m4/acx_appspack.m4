@@ -61,9 +61,14 @@
 
 AC_DEFUN([ACX_APPSPACK], [
 AC_PREREQ(2.50)
-AC_REQUIRE([ACX_MPI])
-AC_REQUIRE([AX_CXX_CHECK_LIB])
 AC_REQUIRE([ACX_LAPACK])
+AC_REQUIRE([ACX_MPI])
+dnl
+dnl We assume that we have this macro.
+dnl The line below causes a junk line to be produced at configure
+dnl time, so we disable it here for now.
+dnl AC_REQUIRE([AX_CXX_CHECK_LIB])
+dnl
 
 acx_appspack_ok=no
 acx_appspack_default="-lappspack"

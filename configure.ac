@@ -97,6 +97,7 @@ ACX_MPI([acx_have_mpi=yes;AC_DEFINE([HAVE_MPI], [1],[Define if you have the MPI 
 AM_CONDITIONAL([HAVE_AM_MPI], [test $acx_have_mpi = yes])
 
 # Check for APPSPACK
+AC_LANG([C++])
 acx_have_appspack=no
 ACX_APPSPACK([acx_have_appspack=yes;AC_DEFINE([HAVE_APPSPACK], [1], [Define if you have the Appspack library.])], [AC_MSG_WARN([Could not find the Appspack tools- synapps disabled])])
 AM_CONDITIONAL([HAVE_AM_APPSPACK], [test $acx_have_appspack = yes])
