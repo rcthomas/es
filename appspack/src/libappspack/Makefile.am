@@ -6,7 +6,9 @@ AM_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) -lm $(FLIBS)
 EXTRA_CPPFLAGS =
 AM_CXXFLAGS =
 
-noinst_HEADERS = \
+EXTRA_DIST = APPSPACK_Config.hpp.in
+
+nodist_include_HEADERS = \
 APPSPACK_Config.hpp
 
 include_HEADERS = \
