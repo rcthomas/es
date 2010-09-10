@@ -32,6 +32,9 @@ dnl
 dnl @version $Id: acx_blas.m4,v 1.1 2005/08/05 17:47:42 tgkolda Exp $
 dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
 dnl
+dnl Modifed 2010-09-07 by Theodore S. Kisner <tskisner@lbl.gov> to 
+dnl look for OS X Accelerate framework.
+dnl
 AC_DEFUN([ACX_BLAS], [
 AC_PREREQ(2.50)
 AC_REQUIRE([AC_F77_LIBRARY_LDFLAGS])
@@ -68,6 +71,15 @@ fi
 if test $acx_blas_ok = no; then
 	save_LIBS="$LIBS"; LIBS="$LIBS"
 	AC_CHECK_FUNC($sgemm, [acx_blas_ok=yes])
+	LIBS="$save_LIBS"
+fi
+
+# BLAS in Accelerate framework?  (on newer OS X)
+if test $acx_blas_ok = no; then
+	save_LIBS="$LIBS"; LIBS="-framework Accelerate $LIBS"
+	AC_MSG_CHECKING([for $sgemm in -framework Accelerate])
+	AC_TRY_LINK_FUNC($sgemm, [acx_blas_ok=yes; BLAS_LIBS="-framework Accelerate"], [])
+	AC_MSG_RESULT($acx_blas_ok)
 	LIBS="$save_LIBS"
 fi
 

@@ -51,8 +51,18 @@ if test "x$acx_blas_ok" != xyes; then
         acx_lapack_ok=noblas
 fi
 
-# First, check LAPACK_LIBS environment variable
-if test "x$LAPACK_LIBS" != x; then
+# LAPACK linked to by default?  (is sometimes included in BLAS lib)
+if test $acx_lapack_ok = no; then
+        save_LIBS="$LIBS"; LIBS="$LIBS $BLAS_LIBS $FLIBS"
+        AC_MSG_CHECKING([for $cheev in $BLAS_LIBS])
+        AC_TRY_LINK_FUNC($cheev, [acx_lapack_ok=yes], [LAPACK_LIBS=""])
+        AC_MSG_RESULT($acx_lapack_ok)
+        LIBS="$save_LIBS"
+fi
+
+# Next, check LAPACK_LIBS environment variable
+if test $acx_lapack_ok = no; then
+   if test "x$LAPACK_LIBS" != x; then
         save_LIBS="$LIBS"; LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
         AC_MSG_CHECKING([for $cheev in $LAPACK_LIBS])
         AC_TRY_LINK_FUNC($cheev, [acx_lapack_ok=yes], [LAPACK_LIBS=""])
@@ -61,24 +71,20 @@ if test "x$LAPACK_LIBS" != x; then
         if test acx_lapack_ok = no; then
                 LAPACK_LIBS=""
         fi
-fi
-
-# LAPACK linked to by default?  (is sometimes included in BLAS lib)
-if test $acx_lapack_ok = no; then
-        save_LIBS="$LIBS"; LIBS="$LIBS $BLAS_LIBS $FLIBS"
-        AC_CHECK_FUNC($cheev, [acx_lapack_ok=yes])
-        LIBS="$save_LIBS"
+   fi
 fi
 
 # Generic LAPACK library?
-for lapack in lapack lapack_rs6k; do
+if test $acx_lapack_ok = no; then
+   for lapack in lapack lapack_rs6k; do
         if test $acx_lapack_ok = no; then
                 save_LIBS="$LIBS"; LIBS="$BLAS_LIBS $LIBS"
                 AC_CHECK_LIB($lapack, $cheev,
                     [acx_lapack_ok=yes; LAPACK_LIBS="-l$lapack"], [], [$FLIBS])
                 LIBS="$save_LIBS"
         fi
-done
+   done
+fi
 
 AC_SUBST(LAPACK_LIBS)
 

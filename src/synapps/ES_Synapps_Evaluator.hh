@@ -23,7 +23,7 @@
 #ifndef ES__SYNAPPS__EVALUATOR
 #define ES__SYNAPPS__EVALUATOR
 
-#include <APPSPACK_Evaluator_Interface.hpp>
+#include <appspack/APPSPACK_Evaluator_Interface.hpp>
 
 namespace APPSPACK
 {

@@ -6,23 +6,18 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/libes \
 -I$(top_srcdir)/src/synapps \
 -I$(top_srcdir)/external/yaml \
--I$(top_srcdir)/external/appspack \
--I$(top_srcdir)/external/appspack/cddlib \
+$(APPSPACK_CPPFLAGS) \
 $(CFITSIO_CPPFLAGS)
 
 AM_LDFLAGS = \
 -L$(top_builddir)/src/libes \
 -L$(top_builddir)/src/synapps \
--L$(top_builddir)/external/yaml \
--L$(top_builddir)/external/appspack \
--L$(top_builddir)/external/appspack/cddlib
+-L$(top_builddir)/external/yaml
 
 AM_LIBS = \
-$(top_builddir)/external/appspack/libappspack.la \
-$(top_builddir)/external/appspack/cddlib/libcdd.la \
 $(top_builddir)/src/libes/libes.la \
 $(top_builddir)/external/yaml/libyaml-cpp.la \
-$(LAPACK_LIBS) $(BLAS_LIBS) $(CFITSIO) -lm $(FLIBS)
+$(APPSPACK) $(LAPACK_LIBS) $(BLAS_LIBS) $(CFITSIO) -lm $(FLIBS)
 
 AM_CXXFLAGS =
 

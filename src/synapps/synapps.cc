@@ -23,9 +23,9 @@
 #include "ES_Synapps.hh"
 #include "ES_Synow.hh"
 
-#include <APPSPACK_GCI.hpp>                  // APPSPACK's interface to MPI.
-#include <APPSPACK_Executor_MPI.hpp>         // MPI executor.
-#include <APPSPACK_Solver.hpp>               // Solver.
+#include <appspack/APPSPACK_GCI.hpp>                  // APPSPACK's interface to MPI.
+#include <appspack/APPSPACK_Executor_MPI.hpp>         // MPI executor.
+#include <appspack/APPSPACK_Solver.hpp>               // Solver.
 
 #include <yaml-cpp/yaml.h>
 

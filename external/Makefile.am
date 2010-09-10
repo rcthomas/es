@@ -1,3 +1,3 @@
 
-SUBDIRS = yaml appspack
+SUBDIRS = yaml
 

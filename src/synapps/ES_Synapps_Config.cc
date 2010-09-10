@@ -22,9 +22,9 @@
 
 #include "ES_Synapps_Config.hh"
 
-#include <APPSPACK_Float.hpp>
-#include <APPSPACK_Vector.hpp>
-#include <APPSPACK_Parameter_List.hpp>
+#include <appspack/APPSPACK_Float.hpp>
+#include <appspack/APPSPACK_Vector.hpp>
+#include <appspack/APPSPACK_Parameter_List.hpp>
 
 #include <yaml-cpp/yaml.h>
 
