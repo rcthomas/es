@@ -160,6 +160,7 @@ ACX_LAPACK([], [AC_MSG_ERROR([Could not find a Lapack library!])])
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([doc/Makefile])
+AC_CONFIG_FILES([examples/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/cddlib/Makefile])
 AC_CONFIG_FILES([src/libappspack/Makefile])

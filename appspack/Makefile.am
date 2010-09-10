@@ -77,5 +77,5 @@ ACLOCAL_AMFLAGS = -I config
 ## #######################################################################
 ## Subdirectories to be make'd recursively
 ## #######################################################################
-SUBDIRS = src doc #examples
+SUBDIRS = src doc examples
 

@@ -29,25 +29,34 @@
 # ************************************************************************
 # @HEADER
 
-if BUILD_EXECUTABLES
+CXX = @MPICXX@
+
+AM_CPPFLAGS = -I$(top_srcdir)/src/cddlib -I$(top_srcdir)/src/libappspack
+AM_LDFLAGS = -L$(top_builddir)/src/cddlib -L$(top_builddir)/src/libappspack
+AM_LIBS = $(top_builddir)/src/libappspack/libappspack.la $(LAPACK_LIBS) $(BLAS_LIBS) -lm $(FLIBS)
+EXTRA_CPPFLAGS =
+AM_CXXFLAGS =
 
 noinst_PROGRAMS = example1 example2 example2a example3 example4 example5
 
-endif
+example1_SOURCES = example1.c
+example1_LDADD = $(AM_LIBS)
 
-example1_SOURCES = $(srcdir)/example1.c 
+example2_SOURCES = example2.cpp
+example2_LDADD = $(AM_LIBS)
 
-example2_SOURCES = $(srcdir)/example2.cpp
+example2a_SOURCES = example2a.cpp
+example2a_LDADD = $(AM_LIBS)
 
-example2a_SOURCES = $(srcdir)/example2a.cpp
+example3_SOURCES = example3.cpp
+example3_LDADD = $(AM_LIBS)
 
-example3_SOURCES = $(srcdir)/example3.cpp
+example4_SOURCES = example4.cpp
+example4_LDADD = $(AM_LIBS)
 
-example4_SOURCES = $(srcdir)/example4.cpp
+example5_SOURCES = example5.cpp
+example5_LDADD = $(AM_LIBS)
 
-example5_SOURCES = $(srcdir)/example5.cpp
-
-AM_CPPFLAGS = -I$(top_srcdir)/src 
 
 ## #######################################################################
 ## Extra files to be distributed
