@@ -42,7 +42,7 @@ AC_INIT([appspack], [5.0.1-synapps], [appspack-developers@software.sandia.gov])
 # This is to protect against accidentally specifying the wrong
 # directory with --srcdir.
 
-AC_CONFIG_SRCDIR([src/libappspack/APPSPACK/Common.hpp])
+AC_CONFIG_SRCDIR([src/libappspack/APPSPACK_Common.hpp])
 
 # Specify directory for auxillary build tools (e.g., install-sh,
 # config.sub, config.guess) and M4 files.
@@ -52,7 +52,7 @@ AC_CONFIG_MACRO_DIR([config])
 
 # Header file created by configure
 
-AM_CONFIG_HEADER([src/libappspack/APPSPACK/Config.hpp:src/libappspack/APPSPACK/Config.hpp.in])
+AM_CONFIG_HEADER([src/libappspack/APPSPACK_Config.hpp:src/libappspack/APPSPACK_Config.hpp.in])
 
 # AM_MAINTAINER_MODE turns off maintainer-only makefile targets by
 # default, and changes configure to understand a

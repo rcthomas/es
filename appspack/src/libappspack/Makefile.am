@@ -9,7 +9,7 @@ AM_CXXFLAGS =
 EXTRA_DIST = APPSPACK_Config.hpp.in
 
 lib_LTLIBRARIES = libappspack.la
-libappspack_la_includedir = $(includedir)/APPSPACK
+libappspack_la_includedir = $(includedir)/appspack
 libappspack_la_SOURCES = \
 APPSPACK_Cache_Manager.cpp \
 APPSPACK_Cache_Point.cpp \
@@ -36,37 +36,37 @@ APPSPACK_CDDLIB_Interface.c \
 APPSPACK_LAPACK_Wrappers.cpp
 
 nodist_libappspack_la_include_HEADERS = \
-APPSPACK/Config.hpp
+APPSPACK_Config.hpp
 
 libappspack_la_include_HEADERS = \
-APPSPACK/Cache_Manager.hpp \
-APPSPACK/Cache_Point.hpp \
-APPSPACK/Cache_SplayTree.hpp \
-APPSPACK/Combiner_Generic.hpp \
-APPSPACK/Common.hpp \
-APPSPACK/Constraints_Linear.hpp \
-APPSPACK/Conveyor.hpp \
-APPSPACK/Counter.hpp \
-APPSPACK/Directions.hpp \
-APPSPACK/Evaluator_Interface.hpp \
-APPSPACK/Evaluator_SystemCall.hpp \
-APPSPACK/Executor_Interface.hpp \
-APPSPACK/Executor_Serial.hpp \
-APPSPACK/Executor_MPI.hpp \
-APPSPACK/GCI.hpp \
-APPSPACK/List.hpp \
-APPSPACK/Parameter_Entry.hpp \
-APPSPACK/Parameter_List.hpp \
-APPSPACK/Point.hpp \
-APPSPACK/Print.hpp \
-APPSPACK/Solver.hpp \
-APPSPACK/Utils.hpp \
-APPSPACK/Vector.hpp \
-APPSPACK/Matrix.hpp \
-APPSPACK/Float.hpp \
-APPSPACK/CDDLIB_Interface.h \
-APPSPACK/LAPACK_Wrappers.hpp \
-APPSPACK/Common.h
+APPSPACK_Cache_Manager.hpp \
+APPSPACK_Cache_Point.hpp \
+APPSPACK_Cache_SplayTree.hpp \
+APPSPACK_Combiner_Generic.hpp \
+APPSPACK_Common.hpp \
+APPSPACK_Constraints_Linear.hpp \
+APPSPACK_Conveyor.hpp \
+APPSPACK_Counter.hpp \
+APPSPACK_Directions.hpp \
+APPSPACK_Evaluator_Interface.hpp \
+APPSPACK_Evaluator_SystemCall.hpp \
+APPSPACK_Executor_Interface.hpp \
+APPSPACK_Executor_Serial.hpp \
+APPSPACK_Executor_MPI.hpp \
+APPSPACK_GCI.hpp \
+APPSPACK_List.hpp \
+APPSPACK_Parameter_Entry.hpp \
+APPSPACK_Parameter_List.hpp \
+APPSPACK_Point.hpp \
+APPSPACK_Print.hpp \
+APPSPACK_Solver.hpp \
+APPSPACK_Utils.hpp \
+APPSPACK_Vector.hpp \
+APPSPACK_Matrix.hpp \
+APPSPACK_Float.hpp \
+APPSPACK_CDDLIB_Interface.h \
+APPSPACK_LAPACK_Wrappers.hpp \
+APPSPACK_Common.h
 
 libappspack_la_LDFLAGS = $(AM_LDFLAGS)
 libappspack_la_LIBADD = $(top_builddir)/src/cddlib/libcdd.la
