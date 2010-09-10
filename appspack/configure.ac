@@ -143,11 +143,12 @@ AC_CHECK_FUNCS([pow sqrt])
 AC_DEFINE([HAVE_CDDLIB], [1], [Always defined since libcdd is built internally.])
 
 # Check for MPI
-ACX_MPI([acx_have_mpi="1";AC_DEFINE([HAVE_MPI], [1], [Define if you have the MPI library.])])
-AM_CONDITIONAL([HAVE_AM_MPI], [test "$acx_have_mpi" = 1])
+acx_have_mpi=no
+ACX_MPI([acx_have_mpi=yes;AC_DEFINE([HAVE_MPI], [1], [Define if you have the MPI library.])], [])
+AM_CONDITIONAL([HAVE_AM_MPI], [test $acx_have_mpi = yes])
 
 # Perform a serial compilation if MPI compilers are not found
-if test x"${acx_have_mpi}" = x1; then
+if test $acx_have_mpi = yes; then
    CPPFLAGS="${CPPFLAGS} -DHAVE_MPI"
 else
    MPICXX="${CXX}"
@@ -173,7 +174,7 @@ AC_MSG_NOTICE([                                           ])
 AC_MSG_NOTICE([  ======================== Build Configuration =============================])
 AC_MSG_NOTICE([  Serial C Compiler   : $CC])
 AC_MSG_NOTICE([  Serial C++ Compiler : $CXX])
-if test "$acx_have_mpi" = 1; then
+if test $acx_have_mpi = yes; then
   AC_MSG_NOTICE([  MPI C++ Compiler    : $MPICXX])
 else
   AC_MSG_NOTICE([  MPI C++ Compiler    : none - doing serial build])
