@@ -112,7 +112,7 @@ else
    CPPFLAGS="$CPPFLAGS $APPSPACK_CPPFLAGS"
    LIBS="$APPSPACK $LAPACK_LIBS $BLAS_LIBS $acx_appspack_save_LIBS $FLIBS -lm"
 
-   AC_CHECK_HEADERS([APPSPACK_Executor_MPI.hpp])
+   AC_CHECK_HEADERS([appspack/APPSPACK_Executor_MPI.hpp])
 
    AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
 
