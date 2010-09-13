@@ -13,4 +13,4 @@ LAPACK="-L/usr/common/usg/mkl/10.2.2.025/lib/em64t -lmkl_solver_lp64 -lmkl_lapac
 CFITSIO_INC=`cmbconfig -I cfitsio`
 CFITSIO_LINK=`cmbconfig -L cfitsio`
 
-./configure CC=pgcc CXX=pgCC F77=pgf77 FLIBS="-pgf90libs -pgf77libs" --prefix=${HOME}/es-carver_pgi --with-cfitsio-cpp="${CFITSIO_INC}" --with-cfitsio-libs="${CFITSIO_LINK}" --with-blas="${LAPACK}"
+./configure CC=pgcc CXX=pgCC F77=pgf77 FLIBS=-pgf77libs --prefix=${HOME}/es-carver_pgi --with-cfitsio-cpp="${CFITSIO_INC}" --with-cfitsio-libs="${CFITSIO_LINK}" --with-blas="${LAPACK}"
