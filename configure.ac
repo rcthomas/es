@@ -126,7 +126,11 @@ fi
 AC_MSG_NOTICE([  CFITSIO           : $CFITSIO])
 AC_MSG_NOTICE([  BLAS              : $BLAS_LIBS])
 AC_MSG_NOTICE([  LAPACK            : $LAPACK_LIBS])
-AC_MSG_NOTICE([  APPSPACK          : $APPSPACK])
+if test x"${acx_have_appspack}" = xyes; then
+  AC_MSG_NOTICE([  APPSPACK          : $APPSPACK])
+else
+  AC_MSG_NOTICE([  APPSPACK          : Disabled (synapps not built)])
+fi
 AC_MSG_NOTICE([  ==========================================================================])
 AC_MSG_NOTICE([                                           ])
 

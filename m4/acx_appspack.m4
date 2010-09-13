@@ -71,10 +71,9 @@ dnl AC_REQUIRE([AX_CXX_CHECK_LIB])
 dnl
 
 acx_appspack_ok=no
-acx_appspack_default="-lappspack"
 
 APPSPACK_CPPFLAGS=""
-APPSPACK=""
+APPSPACK="-lappspack"
 
 AC_ARG_WITH(appspack-cpp, [AC_HELP_STRING([--with-appspack-cpp=<flags>], [use APPSPACK preprocessing flags <flags>.  Set to "no" to disable.])])
 
@@ -115,11 +114,6 @@ else
    AC_CHECK_HEADERS([appspack/APPSPACK_Executor_MPI.hpp])
 
    AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
-
-   if test x"$acx_appspack_ok" = xno; then   
-      LIBS="$acx_appspack_default $LAPACK_LIBS $BLAS_LIBS $acx_appspack_save_LIBS $FLIBS -lm"
-      AX_CXX_CHECK_LIB([appspack], [APPSPACK::Solver::getBestF () const], [acx_appspack_ok=yes;APPSPACK="$acx_appspack_default";AC_DEFINE(HAVE_APPSPACK,1,[Define if you have the APPSPACK library.])])
-   fi
 
    # Restore environment
 
