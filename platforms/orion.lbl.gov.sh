@@ -13,4 +13,5 @@
 
 module load acml_mp
 
-./configure --prefix=${HOME}/local --with-blas="${ACML_LINK}" --with-appspack-cpp="-I${HOME}/local/include" --with-appspack-libs="-L${HOME}/local/lib -lappspack"
+./configure --prefix=/usr/local --with-blas="${ACML_LINK}" --with-appspack-cpp="-I/usr/local/include" --with-appspack-libs="-L/usr/local/lib -lappspack"
+
