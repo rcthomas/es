@@ -27,6 +27,7 @@
 #include <fstream>
 #include <getopt.h>
 #include <cstdlib>
+#include <sstream>
 
 void operator >> ( const YAML::Node& node, ES::Synow::Setup& setup )
 {
@@ -55,18 +56,21 @@ int main( int argc, char* argv[] )
 
     // Command line.
 
-    int verbose = 0;
+    int         verbose = 0;
+    std::string target_file;
 
     while( 1 )
     {
 
         static struct option long_options[] =
         {
-            { "verbose" , no_argument, &verbose, 1   },
-            { "help"    , no_argument,        0, 'h' }
+            { "verbose" ,       no_argument, &verbose, 1   },
+            { "help"    ,       no_argument,        0, 'h' },
+            { "wl-from" , required_argument,        0, 'w' }
         };
 
         int option_index = 0;
+        std::stringstream ss;
                  
         int c = getopt_long( argc, argv, "h", long_options, &option_index );
         if( c == -1 ) break;
@@ -78,6 +82,11 @@ int main( int argc, char* argv[] )
             case 'h' :
                 usage( std::cout );
                 exit( 0 );
+            case 'w' :
+                ss << optarg;
+                ss >> target_file;
+                ss.clear();
+                break;
             case '?' :
                 usage( std::cerr );
                 exit( 137 );
@@ -114,6 +123,8 @@ int main( int argc, char* argv[] )
             yaml[ "output" ][ "min_wl"  ],
             yaml[ "output" ][ "max_wl"  ],
             yaml[ "output" ][ "wl_step" ] );
+
+    if( ! target_file.empty() ) output = ES::Spectrum::create_from_ascii_file( target_file.c_str() );
 
     ES::Spectrum reference = ES::Spectrum::create_from_spectrum( output );
 
