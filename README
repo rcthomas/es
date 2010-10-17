@@ -7,7 +7,6 @@ Contents
     * Download
     * Atomic Lines
     * Installation
-    * Documentation
     * Citing SYN++ or SYNAPPS
     * License
     * What Does ES Mean?
@@ -52,12 +51,8 @@ below.
     * LAPACK Linear Algebra Package
       Mandatory for building SYNAPPS, but not SYN++. 
 
-A word about OpenMP. SYN++ and SYNAPPS can both take advantage of OpenMP
-if you have it available with your compiler. The spectrum synthesis
-calculation can be made faster with OpenMP but don't expect it to scale
-arbitrarily (diminishing returns around 2-8 cores). In order to use
-OpenMP at the same time as running SYNAPPS you probably really need to
-know what you are doing. Contact the author if you have questions.
+Both SYN++ and SYNAPPS can use OpenMP. Read the sections on running
+SYN++ and SYNAPPS below to see how to do this.  
 
 Download
 ========
@@ -66,8 +61,8 @@ See also the section on Atomic Lines.
 
     * Current: Version 0.95. 
 
-The project is also hosted at github. If you want to collaborate, please
-contact the author.
+The project is also hosted at github. If you want to collaborate through
+github, please contact the author.
 
 Installation
 ============
@@ -104,38 +99,38 @@ will be added to the file system:
                 synapps.yaml
                 ...
 
-Most supernova researchers I know work on OS X.  Personally I use
-MacPorts to install Unix-like packages (see above for software
+Most supernova researchers I know work on Mac OS X.  Personally I like
+to use MacPorts to install Unix-like packages (see above for software
 dependencies). This works for me on Mac OS X Snow Leopard with MacPorts:
 
     $ ./configure --with-cfitsio-cpp="-I/opt/local/include" \
         --with-cfitsio-libs="-L/opt/local/lib -lcfitsio"
 
 And that was all I needed (it enables OpenMP and finds blas and lapack
-just fine).
+just fine). There are other ways.
 
 The "platforms" subdirectory may include an example shell script that 
 can help you. If you can't get it working, just contact the author.
 
-Thanks to Ted Kisner for help with the GNU build tools.
+Thanks to Ted Kisner for help with the build system.
 
 Atomic Lines
 ============
 
 In order to run the code, you will need the atomic line data files. They
 are available in the format ES needs at the website where the ES code is
-downloaded in a single tar.gz file. Once you have downloaded them, you 
+downloaded in a single tar.gz file. Once you have downloaded them, you
 unpack them into some path (I recommend placing them where the example
-YAML control files are installed). Use this path when running any of the
-ES executables. Here is an example of how you might set things up for
-all the users on your system, assuming you've downloaded the atomic data
-and have super-user privileges already:
+YAML control files are installed). Use this path when running any of
+the ES executables. Here is an example of how you might set things up
+for all the users on your system, assuming you've downloaded the atomic
+data and have super-user privileges already:
 
     $ mv es-data.tar.gz /usr/local/share
     $ cd /usr/local/share
     $ tar zxvf es-data.tar.gz
 
-Then, in one of the control files for an ES executable, you set:
+Then, in one of the control files for an ES executable, you can set:
 
     opacity :
         line_dir    : /usr/local/share/es/lines
@@ -144,18 +139,6 @@ Then, in one of the control files for an ES executable, you set:
 If you don't have super-user privileges, you could unpack the atomic
 line data files into $HOME/local/share (following the example install
 for ordinary users under the Installation section above).
-
-Documentation
-=============
-
-The most important documentation is the web page, the INSTALL, and
-README files that come with the source code. There are sample input
-files for users to orient themselves with. More detailed documentation
-can be generated from the ES source using doxygen but this is mostly
-only of interest to developers.
-
-There is also a code-description paper explaining the motivation for
-developing the code, and also outlining the technique.
 
 Citing SYN++ or SYNAPPS 
 =======================
@@ -216,5 +199,5 @@ reproduce, prepare derivative works, distribute copies to the public,
 perform publicly and display publicly, and to permit others to do so. 
 
 ========================
-Mon Oct  4 11:06:31 2010
+Sun Oct 17 13:08:50 2010
 ========================
