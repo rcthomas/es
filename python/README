@@ -1,0 +1,119 @@
+
+======================================
+Python Utilities for Your ES Work-flow
+======================================
+
+This directory contains some Python scripts and modules for simplifying
+your ES work-flow.  In particular, it helps organize and keep track of
+control files, build control files for SYN++ from SYNAPPS ones, and so
+on.  Much more is possible.
+
+Dependencies
+============
+
+To build these tools you need to install a Python YAML module, probably
+PyYaml:
+
+    http://pyyaml.org/
+
+Again, if you use Mac OS X and have MacPorts it will handle it for you.
+
+Installation
+============
+
+Some scripts and some modules will be installed.  The modules contain
+useful stuff mostly to do with formatting the YAML how I like it.  (A
+downside of most any serialization scheme.)  Installation should be as
+easy as
+
+    $ python setup.py install
+
+though if you do not have root/sudo access you could do something like
+
+    $ python setup.py install --prefix=$HOME/local
+
+Your value of the --prefix argument might be different.  No accounting
+for taste I guess.  If you set --prefix as in my case, then things may
+resemble the following:
+
+    scripts go to: $HOME/local/bin
+    modules go to: $HOME/local/lib/python2.6/site-packages
+
+Note that to use the scripts you must set the $PYTHONPATH environment
+variable to pick-up the installed modules.  For me, that is
+
+    $ export PYTHONPATH=$HOME/local/lib/python2.6/site-packages
+
+If you have that done you are good to go.
+
+Script Usage
+============
+
+Probably the most useful script here is "create_es_yaml."  Instead of
+you having to take a SYNAPPS YAML control file and manually edit it down
+to what's needed for SYN++, you can use this script.  This is useful if
+you do a fit with SYNAPPS, and you want to tweak it with SYN++.
+
+The basics:
+
+   $ create_es_yaml synapps.yaml synapps.log > syn++.yaml
+
+The required arguments are the SYNAPPS YAML control file you used to do
+a run, and the record of the STDOUT from your SYNAPPS run.  What happens
+is that the script traipses through synapps.log until it comes upon the
+last candidate best fit or the overall best fit, then reconciles what it
+sees there with the layout of the ions in synapps.yaml.  Both files are
+needed because the STDOUT log file spits out points from the minimizer,
+which aren't labeled as anything SYN++ can use.
+
+You should be able to then just run SYN++ on the created "syn++.yaml"
+control file.  
+
+Now, there are some neat options.  SYNOW users, did you ever do a fit
+and then want to just iterate over every ion turning them on or off to
+see what each one does?  It's automatic now.
+
+    $ create_es_yaml --rotate-on synapps.yaml synapps.log
+    $ create_es_yaml --rotate-off synapps.yaml synapps.log
+
+The first one will create a SYN++ YAML control file where each opacity
+profile is turned on one at a time, in succession.  The second one will
+create a control file where each opacity profile is turned off one at a
+time.  This is done by creating a control file with multiple setups,
+which SYN++ will run in succession.  For example:
+
+    $ create_es_yaml --rotate-on synapps.yaml synapps.log > syn++.yaml
+    $ syn++ --verbose syn++.yaml > out.dat
+    Calculating spectrum 1 of 13.
+    Calculating spectrum 2 of 13.
+    ...
+
+There is another option that allows you to take the last candidate best
+fit or the overall best fit and use it to create a new SYNAPPS YAML
+control file.  This is useful if your job times out, or you get
+impatient and stop SYNAPPS and you want to restart.
+
+    $ create_es_yaml --synapps synapps.yaml synapps.log > new_synapps.yaml
+
+There is at least one other script (for now), which takes a SYNAPPS YAML
+control file as input and realizes randomly generated spectra, with the
+parameter values chosen as uniform deviates between the lower and upper
+bounds of each parameter.  It respects detaching ions and leaves
+inactive ions alone.  Mostly for curiosity.
+
+Package Usage
+=============
+
+The package is called "pyES" and there are 3 modules in there for
+dealing with SYNAPPS and SYN++ YAML control files.  If you would like to
+write your own scripts using this Python framework (maybe you like to
+run SYN++ entirely from Python, and post-process the output with scipy
+and plot with matplotlib), follow the provided scripts as examples.  I
+didn't spend much time on the design, so I am sure there are some
+inconveniences and clunkers in there.
+
+Contact
+=======
+
+R. C. Thomas
+rcthomas@lbl.gov

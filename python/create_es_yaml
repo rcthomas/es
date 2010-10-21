@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+
+from pyES import Common, Synpp, Synapps
+
+import optparse
+import sys
+import yaml
+
+#- Command line.
+
+parser = optparse.OptionParser( usage = "usage: %prog [options] synapps.yaml synapps.log" )
+parser.add_option( "--synapps"   , action = "store_true", default = False, help = "Write synapps.yaml (instead of syn++.yaml) control file." )
+parser.add_option( "--rotate-on" , action = "store_true", default = False, help = "Include setups leaving only one ion on."                  )
+parser.add_option( "--rotate-off", action = "store_true", default = False, help = "Include setups leaving all but one ion on."               )
+opts, args = parser.parse_args()
+
+if len( args ) != 2 :
+    parser.error( "synapps.yaml and synapps.log are mandatory" )
+
+if opts.synapps and ( opts.rotate_on or opts.rotate_off ) :
+    parser.error( "--rotate-on/off option incompatible with --synapps" )
+
+#- Synapps control object.
+
+synapps = Synapps.Synapps.create( yaml.load( open( args[ 0 ], "r" ) ) )
+
+#- Last new min or final min in log.
+
+last_min = None
+
+for line in open( args[ 1 ], "r" ).readlines() :
+    if line.startswith( "New Min" ) or line.startswith( "Final Min" ) :
+        last_min = line.rstrip()
+
+if not last_min :
+    print >> sys.stderr, "ERROR: No 'New Min' or 'Final Min' lines found in log: %s" % args[ 1 ]
+    sys.exit( 137 )
+
+last_min = [ float( x ) for x in last_min[ last_min.find( "[" ) + 1 : last_min.find( "]" ) ].split() ]
+
+#- Compatible?
+
+num_ions = 0
+num_active_ions = 0
+for ion in synapps.config.ions :
+    num_ions += 1
+    num_active_ions += 1 if ion.active else 0
+num_params = num_active_ions * 5
+num_params += 6
+
+if num_params != len( last_min ) :
+    print >> sys.stderr, "ERROR: Incompatible synapps.yaml and synapps.log: %d and %d parameters" % ( num_params, len( last_min ) )
+    sys.exit( 137 )
+
+#- Substitute log entries into synapps control object's start slots.
+
+synapps.config.a0.start      = last_min.pop( 0 )
+synapps.config.a1.start      = last_min.pop( 0 )
+synapps.config.a2.start      = last_min.pop( 0 )
+synapps.config.v_phot.start  = last_min.pop( 0 )
+synapps.config.v_outer.start = last_min.pop( 0 )
+synapps.config.t_phot.start  = last_min.pop( 0 )
+
+j = 0
+for i in range( num_ions ) :
+    if not synapps.config.ions[ i ].active :
+        continue
+    synapps.config.ions[ i ].log_tau.start = last_min[ j + 0 * num_ions ]
+    synapps.config.ions[ i ].v_min.start   = last_min[ j + 1 * num_ions ]
+    synapps.config.ions[ i ].v_max.start   = last_min[ j + 2 * num_ions ]
+    synapps.config.ions[ i ].aux.start     = last_min[ j + 3 * num_ions ]
+    synapps.config.ions[ i ].temp.start    = last_min[ j + 4 * num_ions ]
+    j += 1
+
+#- Output synapps control file if user wanted.
+
+if opts.synapps :
+    print synapps
+    sys.exit( 0 )
+
+#- Otherwise output a syn++ yaml control file.
+
+output   = Synpp.Output.create()
+grid     = synapps.grid
+opacity  = synapps.opacity
+source   = synapps.source
+spectrum = synapps.spectrum
+
+setups = [ Synpp.Setup.create() ]
+setups[ 0 ].a0      = synapps.config.a0.start
+setups[ 0 ].a1      = synapps.config.a1.start
+setups[ 0 ].a2      = synapps.config.a2.start
+setups[ 0 ].v_phot  = synapps.config.v_phot.start
+setups[ 0 ].v_outer = synapps.config.v_outer.start
+setups[ 0 ].t_phot  = synapps.config.t_phot.start
+for ion in synapps.config.ions :
+    setups[ 0 ].ions.append( Synpp.Ion( ion.ion, ion.active, ion.log_tau.start, ion.v_min.start, ion.v_max.start, ion.aux.start, ion.temp.start ) )
+
+#- Handle single-ion rotation.
+
+if opts.rotate_on or opts.rotate_off :
+    for i in range( len( synapps.config.ions ) ) :
+        j = i + 1
+        setups.append( Synpp.Setup.create() )
+        setups[ j ].a0      = synapps.config.a0.start
+        setups[ j ].a1      = synapps.config.a1.start
+        setups[ j ].a2      = synapps.config.a2.start
+        setups[ j ].v_phot  = synapps.config.v_phot.start
+        setups[ j ].v_outer = synapps.config.v_outer.start
+        setups[ j ].t_phot  = synapps.config.t_phot.start
+        for k, ion in enumerate( synapps.config.ions ) :
+            active = k == j - 1
+            if opts.rotate_off :
+                active = False if active else True
+            setups[ j ].ions.append( Synpp.Ion( ion.ion, active, ion.log_tau.start, ion.v_min.start, ion.v_max.start, ion.aux.start, ion.temp.start ) )
+
+print Synpp.Synpp( output, grid, opacity, source, spectrum, setups )
+
