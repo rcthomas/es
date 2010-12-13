@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.64])
-AC_INIT([ES], [0.96], [rcthomas@lbl.gov])
+AC_INIT([ES], [0.97], [rcthomas@lbl.gov])
 AC_CONFIG_SRCDIR([src/libes/ES_Accelerator.cc])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])

@@ -1,6 +1,13 @@
 
+2010-12-13  R. C. Thomas    <rcthomas@lbl.gov>
+
+* Version 0.97
+* Upgraded yaml-cpp to version 0.2.5.
+* Fixed bug(s) in create_es_yaml.
+
 2010-10-22  R. C. Thomas    <rcthomas@lbl.gov>
 
+* Version 0.96
 * Added Python workflow tools.
 
 2010-10-17  R. C. Thomas    <rcthomas@lbl.gov>
