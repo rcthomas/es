@@ -68,38 +68,3 @@ if __name__ == "__main__" :
     #- Output.
 
     print Synpp.Synpp( output, grid, opacity, source, spectrum, setups )
-
-
-
-### #- Otherwise output a syn++ yaml control file.
-### 
-### setups = [ Synpp.Setup.create() ]
-### setups[ 0 ].a0      = synapps.config.a0.start
-### setups[ 0 ].a1      = synapps.config.a1.start
-### setups[ 0 ].a2      = synapps.config.a2.start
-### setups[ 0 ].v_phot  = synapps.config.v_phot.start
-### setups[ 0 ].v_outer = synapps.config.v_outer.start
-### setups[ 0 ].t_phot  = synapps.config.t_phot.start
-### for ion in synapps.config.ions :
-###     setups[ 0 ].ions.append( Synpp.Ion( ion.ion, ion.active, ion.log_tau.start, ion.v_min.start, ion.v_max.start, ion.aux.start, ion.temp.start ) )
-### 
-### #- Handle single-ion rotation.
-### 
-### if opts.rotate_on or opts.rotate_off :
-###     for i in range( len( synapps.config.ions ) ) :
-###         j = i + 1
-###         setups.append( Synpp.Setup.create() )
-###         setups[ j ].a0      = synapps.config.a0.start
-###         setups[ j ].a1      = synapps.config.a1.start
-###         setups[ j ].a2      = synapps.config.a2.start
-###         setups[ j ].v_phot  = synapps.config.v_phot.start
-###         setups[ j ].v_outer = synapps.config.v_outer.start
-###         setups[ j ].t_phot  = synapps.config.t_phot.start
-###         for k, ion in enumerate( synapps.config.ions ) :
-###             active = k == j - 1
-###             if opts.rotate_off :
-###                 active = False if active else True
-###             setups[ j ].ions.append( Synpp.Ion( ion.ion, active, ion.log_tau.start, ion.v_min.start, ion.v_max.start, ion.aux.start, ion.temp.start ) )
-### 
-### print Synpp.Synpp( output, grid, opacity, source, spectrum, setups )
-### 

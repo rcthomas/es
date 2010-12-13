@@ -65,11 +65,11 @@ j = 0
 for i in range( num_ions ) :
     if not synapps.config.ions[ i ].active :
         continue
-    synapps.config.ions[ i ].log_tau.start = last_min[ j + 0 * num_ions ]
-    synapps.config.ions[ i ].v_min.start   = last_min[ j + 1 * num_ions ]
-    synapps.config.ions[ i ].v_max.start   = last_min[ j + 2 * num_ions ]
-    synapps.config.ions[ i ].aux.start     = last_min[ j + 3 * num_ions ]
-    synapps.config.ions[ i ].temp.start    = last_min[ j + 4 * num_ions ]
+    synapps.config.ions[ i ].log_tau.start = last_min[ j + 0 * num_active_ions ]
+    synapps.config.ions[ i ].v_min.start   = last_min[ j + 1 * num_active_ions ]
+    synapps.config.ions[ i ].v_max.start   = last_min[ j + 2 * num_active_ions ]
+    synapps.config.ions[ i ].aux.start     = last_min[ j + 3 * num_active_ions ]
+    synapps.config.ions[ i ].temp.start    = last_min[ j + 4 * num_active_ions ]
     j += 1
 
 #- Output synapps control file if user wanted.
