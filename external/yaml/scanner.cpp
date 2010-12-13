@@ -1,19 +1,22 @@
-#include "crt.h"
 #include "scanner.h"
 #include "token.h"
 #include "exceptions.h"
 #include "exp.h"
 #include <cassert>
+#include <memory>
 
 namespace YAML
 {
 	Scanner::Scanner(std::istream& in)
-		: INPUT(in), m_startedStream(false), m_endedStream(false), m_simpleKeyAllowed(false)
+		: INPUT(in), m_startedStream(false), m_endedStream(false), m_simpleKeyAllowed(false), m_canBeJSONFlow(false)
 	{
 	}
 
 	Scanner::~Scanner()
 	{
+		for(unsigned i=0;i<m_indentRefs.size();i++)
+			delete m_indentRefs[i];
+		m_indentRefs.clear();
 	}
 
 	// empty
@@ -116,10 +119,10 @@ namespace YAML
 			return ScanDirective();
 
 		// document token
-		if(INPUT.column() == 0 && Exp::DocStart.Matches(INPUT))
+		if(INPUT.column() == 0 && Exp::DocStart().Matches(INPUT))
 			return ScanDocStart();
 
-		if(INPUT.column() == 0 && Exp::DocEnd.Matches(INPUT))
+		if(INPUT.column() == 0 && Exp::DocEnd().Matches(INPUT))
 			return ScanDocEnd();
 
 		// flow start/end/entry
@@ -133,13 +136,13 @@ namespace YAML
 			return ScanFlowEntry();
 
 		// block/map stuff
-		if(Exp::BlockEntry.Matches(INPUT))
+		if(Exp::BlockEntry().Matches(INPUT))
 			return ScanBlockEntry();
 
-		if((InBlockContext() ? Exp::Key : Exp::KeyInFlow).Matches(INPUT))
+		if((InBlockContext() ? Exp::Key() : Exp::KeyInFlow()).Matches(INPUT))
 			return ScanKey();
 
-		if((InBlockContext() ? Exp::Value : Exp::ValueInFlow).Matches(INPUT))
+		if(GetValueRegex().Matches(INPUT))
 			return ScanValue();
 
 		// alias/anchor
@@ -158,7 +161,7 @@ namespace YAML
 			return ScanQuotedScalar();
 
 		// plain scalars
-		if((InBlockContext() ? Exp::PlainScalar : Exp::PlainScalarInFlow).Matches(INPUT))
+		if((InBlockContext() ? Exp::PlainScalar() : Exp::PlainScalarInFlow()).Matches(INPUT))
 			return ScanPlainScalar();
 
 		// don't know what it is!
@@ -172,24 +175,24 @@ namespace YAML
 		while(1) {
 			// first eat whitespace
 			while(INPUT && IsWhitespaceToBeEaten(INPUT.peek())) {
-				if(InBlockContext() && Exp::Tab.Matches(INPUT))
+				if(InBlockContext() && Exp::Tab().Matches(INPUT))
 					m_simpleKeyAllowed = false;
 				INPUT.eat(1);
 			}
 
 			// then eat a comment
-			if(Exp::Comment.Matches(INPUT)) {
+			if(Exp::Comment().Matches(INPUT)) {
 				// eat until line break
-				while(INPUT && !Exp::Break.Matches(INPUT))
+				while(INPUT && !Exp::Break().Matches(INPUT))
 					INPUT.eat(1);
 			}
 
 			// if it's NOT a line break, then we're done!
-			if(!Exp::Break.Matches(INPUT))
+			if(!Exp::Break().Matches(INPUT))
 				break;
 
 			// otherwise, let's eat the line break and keep going
-			int n = Exp::Break.Match(INPUT);
+			int n = Exp::Break().Match(INPUT);
 			INPUT.eat(n);
 
 			// oh yeah, and let's get rid of that simple key
@@ -223,13 +226,25 @@ namespace YAML
 		return false;
 	}
 
+	// GetValueRegex
+	// . Get the appropriate regex to check if it's a value token
+	const RegEx& Scanner::GetValueRegex() const
+	{
+		if(InBlockContext())
+			return Exp::Value();
+		
+		return m_canBeJSONFlow ? Exp::ValueInJSONFlow() : Exp::ValueInFlow();
+	}
+
 	// StartStream
 	// . Set the initial conditions for starting a stream.
 	void Scanner::StartStream()
 	{
 		m_startedStream = true;
 		m_simpleKeyAllowed = true;
-		m_indents.push(IndentMarker(-1, IndentMarker::NONE));
+		IndentMarker *pIndent = new IndentMarker(-1, IndentMarker::NONE);
+		m_indentRefs.push_back(pIndent);
+		m_indents.push(pIndent);
 		m_anchors.clear();
 	}
 
@@ -248,6 +263,22 @@ namespace YAML
 		m_endedStream = true;
 	}
 
+	Token *Scanner::PushToken(Token::TYPE type)
+	{
+		m_tokens.push(Token(type, INPUT.mark()));
+		return &m_tokens.back();
+	}
+
+	Token::TYPE Scanner::GetStartTokenFor(IndentMarker::INDENT_TYPE type) const
+	{
+		switch(type) {
+			case IndentMarker::SEQ: return Token::BLOCK_SEQ_START;
+			case IndentMarker::MAP: return Token::BLOCK_MAP_START;
+			case IndentMarker::NONE: assert(false); break;
+		}
+		assert(false);
+	}
+
 	// PushIndentTo
 	// . Pushes an indentation onto the stack, and enqueues the
 	//   proper token (sequence start or mapping start).
@@ -258,8 +289,9 @@ namespace YAML
 		if(InFlowContext())
 			return 0;
 		
-		IndentMarker indent(column, type);
-		const IndentMarker& lastIndent = m_indents.top();
+		std::auto_ptr<IndentMarker> pIndent(new IndentMarker(column, type));
+		IndentMarker& indent = *pIndent;
+		const IndentMarker& lastIndent = *m_indents.top();
 
 		// is this actually an indentation?
 		if(indent.column < lastIndent.column)
@@ -268,22 +300,18 @@ namespace YAML
 			return 0;
 
 		// push a start token
-		if(type == IndentMarker::SEQ)
-			m_tokens.push(Token(Token::BLOCK_SEQ_START, INPUT.mark()));
-		else if(type == IndentMarker::MAP)
-			m_tokens.push(Token(Token::BLOCK_MAP_START, INPUT.mark()));
-		else
-			assert(false);
-		indent.pStartToken = &m_tokens.back();
+		indent.pStartToken = PushToken(GetStartTokenFor(type));
 
 		// and then the indent
-		m_indents.push(indent);
-		return &m_indents.top();
+		m_indents.push(&indent);
+		m_indentRefs.push_back(pIndent.release());
+		return m_indentRefs.back();
 	}
 
 	// PopIndentToHere
 	// . Pops indentations off the stack until we reach the current indentation level,
 	//   and enqueues the proper token each time.
+	// . Then pops all invalid indentations off.
 	void Scanner::PopIndentToHere()
 	{
 		// are we in flow?
@@ -292,14 +320,17 @@ namespace YAML
 
 		// now pop away
 		while(!m_indents.empty()) {
-			const IndentMarker& indent = m_indents.top();
+			const IndentMarker& indent = *m_indents.top();
 			if(indent.column < INPUT.column())
 				break;
-			if(indent.column == INPUT.column() && !(indent.type == IndentMarker::SEQ && !Exp::BlockEntry.Matches(INPUT)))
+			if(indent.column == INPUT.column() && !(indent.type == IndentMarker::SEQ && !Exp::BlockEntry().Matches(INPUT)))
 				break;
 				
 			PopIndent();
 		}
+		
+		while(!m_indents.empty() && m_indents.top()->status == IndentMarker::INVALID)
+			PopIndent();
 	}
 	
 	// PopAllIndents
@@ -313,7 +344,7 @@ namespace YAML
 
 		// now pop away
 		while(!m_indents.empty()) {
-			const IndentMarker& indent = m_indents.top();
+			const IndentMarker& indent = *m_indents.top();
 			if(indent.type == IndentMarker::NONE)
 				break;
 			
@@ -325,17 +356,17 @@ namespace YAML
 	// . Pops a single indent, pushing the proper token
 	void Scanner::PopIndent()
 	{
-		IndentMarker indent = m_indents.top();
-		IndentMarker::INDENT_TYPE type = indent.type;
+		const IndentMarker& indent = *m_indents.top();
 		m_indents.pop();
-		if(!indent.isValid) {
+
+		if(indent.status != IndentMarker::VALID) {
 			InvalidateSimpleKey();
 			return;
 		}
 		
-		if(type == IndentMarker::SEQ)
+		if(indent.type == IndentMarker::SEQ)
 			m_tokens.push(Token(Token::BLOCK_SEQ_END, INPUT.mark()));
-		else if(type == IndentMarker::MAP)
+		else if(indent.type == IndentMarker::MAP)
 			m_tokens.push(Token(Token::BLOCK_MAP_END, INPUT.mark()));
 	}
 
@@ -344,7 +375,7 @@ namespace YAML
 	{
 		if(m_indents.empty())
 			return 0;
-		return m_indents.top().column;
+		return m_indents.top()->column;
 	}
 
 	// Save
@@ -389,3 +420,4 @@ namespace YAML
 		m_anchors.clear();
 	}
 }
+

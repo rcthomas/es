@@ -1,4 +1,3 @@
-#include "crt.h"
 #include "scanner.h"
 #include "token.h"
 #include "exceptions.h"
@@ -13,9 +12,11 @@ namespace YAML
 
 	void Scanner::SimpleKey::Validate()
 	{
-		// Note: pIndent will *not* be garbage here; see below
+		// Note: pIndent will *not* be garbage here;
+		//       we "garbage collect" them so we can
+		//       always refer to them
 		if(pIndent)
-			pIndent->isValid = true;
+			pIndent->status = IndentMarker::VALID;
 		if(pMapStart)
 			pMapStart->status = Token::VALID;
 		if(pKey)
@@ -24,8 +25,8 @@ namespace YAML
 
 	void Scanner::SimpleKey::Invalidate()
 	{
-		// Note: pIndent might be a garbage pointer here, but that's ok
-		//       An indent will only be popped if the simple key is invalid
+		if(pIndent)
+			pIndent->status = IndentMarker::INVALID;
 		if(pMapStart)
 			pMapStart->status = Token::INVALID;
 		if(pKey)
@@ -36,9 +37,6 @@ namespace YAML
 	bool Scanner::CanInsertPotentialSimpleKey() const
 	{
 		if(!m_simpleKeyAllowed)
-			return false;
-		
-		if(InFlowContext() && m_flows.top() != FLOW_MAP)
 			return false;
 
 		return !ExistsActiveSimpleKey();
@@ -67,11 +65,13 @@ namespace YAML
 		SimpleKey key(INPUT.mark(), GetFlowLevel());
 
 		// first add a map start, if necessary
-		key.pIndent = PushIndentTo(INPUT.column(), IndentMarker::MAP);
-		if(key.pIndent) {
-			key.pIndent->isValid = false;
-			key.pMapStart = key.pIndent->pStartToken;
-			key.pMapStart->status = Token::UNVERIFIED;
+		if(InBlockContext()) {
+			key.pIndent = PushIndentTo(INPUT.column(), IndentMarker::MAP);
+			if(key.pIndent) {
+				key.pIndent->status = IndentMarker::UNKNOWN;
+				key.pMapStart = key.pIndent->pStartToken;
+				key.pMapStart->status = Token::UNVERIFIED;
+			}
 		}
 
 		// then add the (now unverified) key
@@ -136,3 +136,4 @@ namespace YAML
 			m_simpleKeys.pop();
 	}
 }
+

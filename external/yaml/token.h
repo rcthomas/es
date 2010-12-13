@@ -24,6 +24,7 @@ namespace YAML
 		"FLOW_MAP_START",
 		"FLOW_SEQ_END",
 		"FLOW_MAP_END",
+		"FLOW_MAP_COMPACT",
 		"FLOW_ENTRY",
 		"KEY",
 		"VALUE",
@@ -49,6 +50,7 @@ namespace YAML
 			FLOW_MAP_START,
 			FLOW_SEQ_END,
 			FLOW_MAP_END,
+			FLOW_MAP_COMPACT,
 			FLOW_ENTRY,
 			KEY,
 			VALUE,
@@ -59,7 +61,7 @@ namespace YAML
 		};
 				
 		// data
-		Token(TYPE type_, const Mark& mark_): status(VALID), type(type_), mark(mark_) {}
+		Token(TYPE type_, const Mark& mark_): status(VALID), type(type_), mark(mark_), data(0) {}
 
 		friend std::ostream& operator << (std::ostream& out, const Token& token) {
 			out << TokenNames[token.type] << std::string(": ") << token.value;
@@ -73,6 +75,7 @@ namespace YAML
 		Mark mark;
 		std::string value;
 		std::vector <std::string> params;
+		int data;
 	};
 }
 

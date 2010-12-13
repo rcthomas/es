@@ -16,6 +16,7 @@
 namespace YAML
 {
 	class Node;
+	class RegEx;
 
 	class Scanner
 	{
@@ -36,11 +37,12 @@ namespace YAML
 	private:
 		struct IndentMarker {
 			enum INDENT_TYPE { MAP, SEQ, NONE };
-			IndentMarker(int column_, INDENT_TYPE type_): column(column_), type(type_), isValid(true), pStartToken(0) {}
+			enum STATUS { VALID, INVALID, UNKNOWN };
+			IndentMarker(int column_, INDENT_TYPE type_): column(column_), type(type_), status(VALID), pStartToken(0) {}
 		
 			int column;
 			INDENT_TYPE type;
-			bool isValid;
+			STATUS status;
 			Token *pStartToken;
 		};
 		
@@ -53,11 +55,13 @@ namespace YAML
 		void ScanToNextToken();
 		void StartStream();
 		void EndStream();
+		Token *PushToken(Token::TYPE type);
 		
 		bool InFlowContext() const { return !m_flows.empty(); }
 		bool InBlockContext() const { return m_flows.empty(); }
 		int GetFlowLevel() const { return m_flows.size(); }
 		
+		Token::TYPE GetStartTokenFor(IndentMarker::INDENT_TYPE type) const;
 		IndentMarker *PushIndentTo(int column, IndentMarker::INDENT_TYPE type);
 		void PopIndentToHere();
 		void PopAllIndents();
@@ -75,6 +79,7 @@ namespace YAML
 		void ThrowParserException(const std::string& msg) const;
 
 		bool IsWhitespaceToBeEaten(char ch);
+		const RegEx& GetValueRegex() const;
 
 		struct SimpleKey {
 			SimpleKey(const Mark& mark_, int flowLevel_);
@@ -117,11 +122,14 @@ namespace YAML
 		// state info
 		bool m_startedStream, m_endedStream;
 		bool m_simpleKeyAllowed;
+		bool m_canBeJSONFlow;
 		std::stack <SimpleKey> m_simpleKeys;
-		std::stack <IndentMarker> m_indents;
+		std::stack <IndentMarker *> m_indents;
+		std::vector <IndentMarker *> m_indentRefs; // for "garbage collection"
 		std::stack <FLOW_MARKER> m_flows;
 		std::map <std::string, const Node *> m_anchors;
 	};
 }
 
 #endif // SCANNER_H_62B23520_7C8E_11DE_8A39_0800200C9A66
+

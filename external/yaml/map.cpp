@@ -1,11 +1,9 @@
-#include "crt.h"
 #include "map.h"
 #include "node.h"
 #include "scanner.h"
 #include "token.h"
 #include "exceptions.h"
 #include "emitter.h"
-#include <memory>
 
 namespace YAML
 {
@@ -18,7 +16,7 @@ namespace YAML
 		for(node_map::const_iterator it=data.begin();it!=data.end();++it) {
 			std::auto_ptr<Node> pKey = it->first->Clone();
 			std::auto_ptr<Node> pValue = it->second->Clone();
-			m_data[pKey.release()] = pValue.release();
+			AddEntry(pKey, pValue);
 		}
 	}
 
@@ -58,7 +56,7 @@ namespace YAML
 		return m_data.size();
 	}
 
-	void Map::Parse(Scanner *pScanner, const ParserState& state)
+	void Map::Parse(Scanner *pScanner, ParserState& state)
 	{
 		Clear();
 
@@ -66,14 +64,17 @@ namespace YAML
 		switch(pScanner->peek().type) {
 			case Token::BLOCK_MAP_START: ParseBlock(pScanner, state); break;
 			case Token::FLOW_MAP_START: ParseFlow(pScanner, state); break;
+			case Token::KEY: ParseCompact(pScanner, state); break;
+			case Token::VALUE: ParseCompactWithNoKey(pScanner, state); break;
 			default: break;
 		}
 	}
 
-	void Map::ParseBlock(Scanner *pScanner, const ParserState& state)
+	void Map::ParseBlock(Scanner *pScanner, ParserState& state)
 	{
 		// eat start token
 		pScanner->pop();
+		state.PushCollectionType(ParserState::BLOCK_MAP);
 
 		while(1) {
 			if(pScanner->empty())
@@ -102,15 +103,17 @@ namespace YAML
 				pValue->Parse(pScanner, state);
 			}
 
-			// assign the map with the actual pointers
-			m_data[pKey.release()] = pValue.release();
+			AddEntry(pKey, pValue);
 		}
+
+		state.PopCollectionType(ParserState::BLOCK_MAP);
 	}
 
-	void Map::ParseFlow(Scanner *pScanner, const ParserState& state)
+	void Map::ParseFlow(Scanner *pScanner, ParserState& state)
 	{
 		// eat start token
 		pScanner->pop();
+		state.PushCollectionType(ParserState::FLOW_MAP);
 
 		while(1) {
 			if(pScanner->empty())
@@ -144,9 +147,55 @@ namespace YAML
 			else if(nextToken.type != Token::FLOW_MAP_END)
 				throw ParserException(nextToken.mark, ErrorMsg::END_OF_MAP_FLOW);
 
-			// assign the map with the actual pointers
-			m_data[pKey.release()] = pValue.release();
+			AddEntry(pKey, pValue);
 		}
+
+		state.PopCollectionType(ParserState::FLOW_MAP);
+	}
+
+	// ParseCompact
+	// . Single "key: value" pair in a flow sequence
+	void Map::ParseCompact(Scanner *pScanner, ParserState& state)
+	{
+		state.PushCollectionType(ParserState::COMPACT_MAP);
+		std::auto_ptr <Node> pKey(new Node), pValue(new Node);
+
+		// grab key
+		pScanner->pop();
+		pKey->Parse(pScanner, state);
+			
+		// now grab value (optional)
+		if(!pScanner->empty() && pScanner->peek().type == Token::VALUE) {
+			pScanner->pop();
+			pValue->Parse(pScanner, state);
+		}
+			
+		AddEntry(pKey, pValue);
+		state.PopCollectionType(ParserState::COMPACT_MAP);
+	}
+	
+	// ParseCompactWithNoKey
+	// . Single ": value" pair in a flow sequence
+	void Map::ParseCompactWithNoKey(Scanner *pScanner, ParserState& state)
+	{
+		state.PushCollectionType(ParserState::COMPACT_MAP);
+		std::auto_ptr <Node> pKey(new Node), pValue(new Node);
+
+		// grab value
+		pScanner->pop();
+		pValue->Parse(pScanner, state);
+
+		AddEntry(pKey, pValue);
+		state.PopCollectionType(ParserState::COMPACT_MAP);
+	}
+	
+	void Map::AddEntry(std::auto_ptr<Node> pKey, std::auto_ptr<Node> pValue)
+	{
+		node_map::const_iterator it = m_data.find(pKey.get());
+		if(it != m_data.end())
+			return;
+		
+		m_data[pKey.release()] = pValue.release();
 	}
 
 	void Map::Write(Emitter& out) const

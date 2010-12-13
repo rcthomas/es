@@ -1,9 +1,10 @@
-#include "crt.h"
 #include "scanner.h"
 #include "token.h"
 #include "exceptions.h"
 #include "exp.h"
 #include "scanscalar.h"
+#include "scantag.h"
+#include "tag.h"
 #include <sstream>
 
 namespace YAML
@@ -23,36 +24,34 @@ namespace YAML
 		PopAllSimpleKeys();
 
 		m_simpleKeyAllowed = false;
+		m_canBeJSONFlow = false;
 
 		// store pos and eat indicator
-		Mark mark = INPUT.mark();
+		Token token(Token::DIRECTIVE, INPUT.mark());
 		INPUT.eat(1);
 
 		// read name
-		while(INPUT && !Exp::BlankOrBreak.Matches(INPUT))
-			name += INPUT.get();
+		while(INPUT && !Exp::BlankOrBreak().Matches(INPUT))
+			token.value += INPUT.get();
 
 		// read parameters
 		while(1) {
 			// first get rid of whitespace
-			while(Exp::Blank.Matches(INPUT))
+			while(Exp::Blank().Matches(INPUT))
 				INPUT.eat(1);
 
 			// break on newline or comment
-			if(!INPUT || Exp::Break.Matches(INPUT) || Exp::Comment.Matches(INPUT))
+			if(!INPUT || Exp::Break().Matches(INPUT) || Exp::Comment().Matches(INPUT))
 				break;
 
 			// now read parameter
 			std::string param;
-			while(INPUT && !Exp::BlankOrBreak.Matches(INPUT))
+			while(INPUT && !Exp::BlankOrBreak().Matches(INPUT))
 				param += INPUT.get();
 
-			params.push_back(param);
+			token.params.push_back(param);
 		}
 		
-		Token token(Token::DIRECTIVE, mark);
-		token.value = name;
-		token.params = params;
 		m_tokens.push(token);
 	}
 
@@ -62,6 +61,7 @@ namespace YAML
 		PopAllIndents();
 		PopAllSimpleKeys();
 		m_simpleKeyAllowed = false;
+		m_canBeJSONFlow = false;
 
 		// eat
 		Mark mark = INPUT.mark();
@@ -75,6 +75,7 @@ namespace YAML
 		PopAllIndents();
 		PopAllSimpleKeys();
 		m_simpleKeyAllowed = false;
+		m_canBeJSONFlow = false;
 
 		// eat
 		Mark mark = INPUT.mark();
@@ -88,6 +89,7 @@ namespace YAML
 		// flows can be simple keys
 		InsertPotentialSimpleKey();
 		m_simpleKeyAllowed = true;
+		m_canBeJSONFlow = false;
 
 		// eat
 		Mark mark = INPUT.mark();
@@ -105,10 +107,15 @@ namespace YAML
 			throw ParserException(INPUT.mark(), ErrorMsg::FLOW_END);
 
 		// we might have a solo entry in the flow context
-		if(VerifySimpleKey())
-			m_tokens.push(Token(Token::VALUE, INPUT.mark()));
+		if(InFlowContext()) {
+			if(m_flows.top() == FLOW_MAP && VerifySimpleKey())
+				m_tokens.push(Token(Token::VALUE, INPUT.mark()));
+			else if(m_flows.top() == FLOW_SEQ)
+				InvalidateSimpleKey();
+		}
 
 		m_simpleKeyAllowed = false;
+		m_canBeJSONFlow = true;
 
 		// eat
 		Mark mark = INPUT.mark();
@@ -127,11 +134,16 @@ namespace YAML
 	// FlowEntry
 	void Scanner::ScanFlowEntry()
 	{
-		 // we might have a solo entry in the flow context
-		if(VerifySimpleKey())
-			m_tokens.push(Token(Token::VALUE, INPUT.mark()));
+		// we might have a solo entry in the flow context
+		if(InFlowContext()) {
+			if(m_flows.top() == FLOW_MAP && VerifySimpleKey())
+				m_tokens.push(Token(Token::VALUE, INPUT.mark()));
+			else if(m_flows.top() == FLOW_SEQ)
+				InvalidateSimpleKey();
+		}
 		
 		m_simpleKeyAllowed = true;
+		m_canBeJSONFlow = false;
 
 		// eat
 		Mark mark = INPUT.mark();
@@ -152,6 +164,7 @@ namespace YAML
 
 		PushIndentTo(INPUT.column(), IndentMarker::SEQ);
 		m_simpleKeyAllowed = true;
+		m_canBeJSONFlow = false;
 
 		// eat
 		Mark mark = INPUT.mark();
@@ -184,6 +197,7 @@ namespace YAML
 	{
 		// and check that simple key
 		bool isSimpleKey = VerifySimpleKey();
+		m_canBeJSONFlow = false;
 		
 		if(isSimpleKey) {
 			// can't follow a simple key with another simple key (dunno why, though - it seems fine)
@@ -216,6 +230,7 @@ namespace YAML
 		// insert a potential simple key
 		InsertPotentialSimpleKey();
 		m_simpleKeyAllowed = false;
+		m_canBeJSONFlow = false;
 
 		// eat the indicator
 		Mark mark = INPUT.mark();
@@ -223,7 +238,7 @@ namespace YAML
 		alias = (indicator == Keys::Alias);
 
 		// now eat the content
-		while(Exp::AlphaNumeric.Matches(INPUT))
+		while(Exp::AlphaNumeric().Matches(INPUT))
 			name += INPUT.get();
 
 		// we need to have read SOMETHING!
@@ -231,7 +246,7 @@ namespace YAML
 			throw ParserException(INPUT.mark(), alias ? ErrorMsg::ALIAS_NOT_FOUND : ErrorMsg::ANCHOR_NOT_FOUND);
 
 		// and needs to end correctly
-		if(INPUT && !Exp::AnchorEnd.Matches(INPUT))
+		if(INPUT && !Exp::AnchorEnd().Matches(INPUT))
 			throw ParserException(INPUT.mark(), alias ? ErrorMsg::CHAR_IN_ALIAS : ErrorMsg::CHAR_IN_ANCHOR);
 
 		// and we're done
@@ -243,37 +258,35 @@ namespace YAML
 	// Tag
 	void Scanner::ScanTag()
 	{
-		std::string handle, suffix;
-
 		// insert a potential simple key
 		InsertPotentialSimpleKey();
 		m_simpleKeyAllowed = false;
+		m_canBeJSONFlow = false;
+
+		Token token(Token::TAG, INPUT.mark());
 
 		// eat the indicator
-		Mark mark = INPUT.mark();
-		handle += INPUT.get();
+		INPUT.get();
+		
+		if(INPUT && INPUT.peek() == Keys::VerbatimTagStart){
+			std::string tag = ScanVerbatimTag(INPUT);
 
-		// read the handle
-		while(INPUT && INPUT.peek() != Keys::Tag && !Exp::BlankOrBreak.Matches(INPUT))
-			handle += INPUT.get();
-
-		// is there a suffix?
-		if(INPUT.peek() == Keys::Tag) {
-			// eat the indicator
-			handle += INPUT.get();
-
-			// then read it
-			while(INPUT && !Exp::BlankOrBreak.Matches(INPUT))
-				suffix += INPUT.get();
+			token.value = tag;
+			token.data = Tag::VERBATIM;
 		} else {
-			// this is a bit weird: we keep just the '!' as the handle and move the rest to the suffix
-			suffix = handle.substr(1);
-			handle = "!";
+			bool canBeHandle;
+			token.value = ScanTagHandle(INPUT, canBeHandle);
+			token.data = (token.value.empty() ? Tag::SECONDARY_HANDLE : Tag::PRIMARY_HANDLE);
+			
+			// is there a suffix?
+			if(canBeHandle && INPUT.peek() == Keys::Tag) {
+				// eat the indicator
+				INPUT.get();
+				token.params.push_back(ScanTagSuffix(INPUT));
+				token.data = Tag::NAMED_HANDLE;
+			}
 		}
 
-		Token token(Token::TAG, mark);
-		token.value = handle;
-		token.params.push_back(suffix);
 		m_tokens.push(token);
 	}
 
@@ -284,7 +297,7 @@ namespace YAML
 
 		// set up the scanning parameters
 		ScanScalarParams params;
-		params.end = (InFlowContext() ? Exp::EndScalarInFlow : Exp::EndScalar) || (Exp::BlankOrBreak + Exp::Comment);
+		params.end = (InFlowContext() ? Exp::EndScalarInFlow() : Exp::EndScalar()) || (Exp::BlankOrBreak() + Exp::Comment());
 		params.eatEnd = false;
 		params.indent = (InFlowContext() ? 0 : GetTopIndent() + 1);
 		params.fold = FOLD_FLOW;
@@ -302,6 +315,7 @@ namespace YAML
 
 		// can have a simple key only if we ended the scalar by starting a new line
 		m_simpleKeyAllowed = params.leadingSpaces;
+		m_canBeJSONFlow = false;
 
 		// finally, check and see if we ended on an illegal character
 		//if(Exp::IllegalCharInScalar.Matches(INPUT))
@@ -323,7 +337,7 @@ namespace YAML
 
 		// setup the scanning parameters
 		ScanScalarParams params;
-		params.end = (single ? RegEx(quote) && !Exp::EscSingleQuote : RegEx(quote));
+		params.end = (single ? RegEx(quote) && !Exp::EscSingleQuote() : RegEx(quote));
 		params.eatEnd = true;
 		params.escape = (single ? '\'' : '\\');
 		params.indent = 0;
@@ -344,6 +358,7 @@ namespace YAML
 		// and scan
 		scalar = ScanScalar(INPUT, params);
 		m_simpleKeyAllowed = false;
+		m_canBeJSONFlow = true;
 
 		Token token(Token::SCALAR, mark);
 		token.value = scalar;
@@ -369,14 +384,14 @@ namespace YAML
 
 		// eat chomping/indentation indicators
 		params.chomp = CLIP;
-		int n = Exp::Chomp.Match(INPUT);
+		int n = Exp::Chomp().Match(INPUT);
 		for(int i=0;i<n;i++) {
 			char ch = INPUT.get();
 			if(ch == '+')
 				params.chomp = KEEP;
 			else if(ch == '-')
 				params.chomp = STRIP;
-			else if(Exp::Digit.Matches(ch)) {
+			else if(Exp::Digit().Matches(ch)) {
 				if(ch == '0')
 					throw ParserException(INPUT.mark(), ErrorMsg::ZERO_INDENT_IN_BLOCK);
 
@@ -386,16 +401,16 @@ namespace YAML
 		}
 
 		// now eat whitespace
-		while(Exp::Blank.Matches(INPUT))
+		while(Exp::Blank().Matches(INPUT))
 			INPUT.eat(1);
 
 		// and comments to the end of the line
-		if(Exp::Comment.Matches(INPUT))
-			while(INPUT && !Exp::Break.Matches(INPUT))
+		if(Exp::Comment().Matches(INPUT))
+			while(INPUT && !Exp::Break().Matches(INPUT))
 				INPUT.eat(1);
 
 		// if it's not a line break, then we ran into a bad character inline
-		if(INPUT && !Exp::Break.Matches(INPUT))
+		if(INPUT && !Exp::Break().Matches(INPUT))
 			throw ParserException(INPUT.mark(), ErrorMsg::CHAR_IN_BLOCK);
 
 		// set the initial indentation
@@ -410,6 +425,7 @@ namespace YAML
 
 		// simple keys always ok after block scalars (since we're gonna start a new line anyways)
 		m_simpleKeyAllowed = true;
+		m_canBeJSONFlow = false;
 
 		Token token(Token::SCALAR, mark);
 		token.value = scalar;

@@ -23,12 +23,12 @@ namespace YAML
 	class Content
 	{
 	public:
-		Content();
-		virtual ~Content();
+		Content() {}
+		virtual ~Content() {}
 		
 		virtual Content *Clone() const = 0;
 
-		virtual void Parse(Scanner *pScanner, const ParserState& state) = 0;
+		virtual void Parse(Scanner *pScanner, ParserState& state) = 0;
 		virtual void Write(Emitter& out) const = 0;
 
 		virtual bool GetBegin(std::vector <Node *>::const_iterator&) const { return false; }

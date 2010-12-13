@@ -5,6 +5,7 @@
 
 
 #include "mark.h"
+#include "traits.h"
 #include <exception>
 #include <string>
 #include <sstream>
@@ -17,7 +18,12 @@ namespace YAML
 		const std::string YAML_DIRECTIVE_ARGS    = "YAML directives must have exactly one argument";
 		const std::string YAML_VERSION           = "bad YAML version: ";
 		const std::string YAML_MAJOR_VERSION     = "YAML major version too large";
+		const std::string REPEATED_YAML_DIRECTIVE= "repeated YAML directive";
 		const std::string TAG_DIRECTIVE_ARGS     = "TAG directives must have exactly two arguments";
+		const std::string REPEATED_TAG_DIRECTIVE = "repeated TAG directive";
+		const std::string CHAR_IN_TAG_HANDLE     = "illegal character found while scanning tag handle";
+		const std::string TAG_WITH_NO_SUFFIX     = "tag handle with no suffix";
+		const std::string END_OF_VERBATIM_TAG    = "end of verbatim tag not found";
 		const std::string END_OF_MAP             = "end of map not found";
 		const std::string END_OF_MAP_FLOW        = "end of map flow not found";
 		const std::string END_OF_SEQ             = "end of sequence not found";
@@ -57,10 +63,27 @@ namespace YAML
 		const std::string SINGLE_QUOTED_CHAR     = "invalid character in single-quoted string";
 		const std::string INVALID_ANCHOR         = "invalid anchor";
 		const std::string INVALID_ALIAS          = "invalid alias";
+		const std::string INVALID_TAG            = "invalid tag";
 		const std::string EXPECTED_KEY_TOKEN     = "expected key token";
 		const std::string EXPECTED_VALUE_TOKEN   = "expected value token";
 		const std::string UNEXPECTED_KEY_TOKEN   = "unexpected key token";
 		const std::string UNEXPECTED_VALUE_TOKEN = "unexpected value token";
+
+		template <typename T>
+		inline const std::string KEY_NOT_FOUND_WITH_KEY(const T&, typename disable_if<is_numeric<T> >::type * = 0) {
+			return KEY_NOT_FOUND;
+		}
+
+		inline const std::string KEY_NOT_FOUND_WITH_KEY(const std::string& key) {
+			return KEY_NOT_FOUND + ": " + key;
+		}
+		
+		template <typename T>
+		inline const std::string KEY_NOT_FOUND_WITH_KEY(const T& key, typename enable_if<is_numeric<T> >::type * = 0) {
+			std::stringstream stream;
+			stream << KEY_NOT_FOUND << ": " << key;
+			return stream.str();
+		}
 	}
 
 	class Exception: public std::exception {
@@ -102,22 +125,23 @@ namespace YAML
 
 	class KeyNotFound: public RepresentationException {
 	public:
-		KeyNotFound(const Mark& mark_)
-			: RepresentationException(mark_, ErrorMsg::KEY_NOT_FOUND) {}
+		template <typename T>
+		KeyNotFound(const Mark& mark_, const T& key_)
+			: RepresentationException(mark_, ErrorMsg::KEY_NOT_FOUND_WITH_KEY(key_)) {}
 	};
-
+	
 	template <typename T>
 	class TypedKeyNotFound: public KeyNotFound {
 	public:
 		TypedKeyNotFound(const Mark& mark_, const T& key_)
-			: KeyNotFound(mark_), key(key_) {}
-		~TypedKeyNotFound() throw() {}
+			: KeyNotFound(mark_, key_), key(key_) {}
+		virtual ~TypedKeyNotFound() throw() {}
 
 		T key;
 	};
 
 	template <typename T>
-	TypedKeyNotFound <T> MakeTypedKeyNotFound(const Mark& mark, const T& key) {
+	inline TypedKeyNotFound <T> MakeTypedKeyNotFound(const Mark& mark, const T& key) {
 		return TypedKeyNotFound <T> (mark, key);
 	}
 
