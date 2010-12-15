@@ -45,24 +45,26 @@ ES::Synapps::Evaluator::Evaluator( ES::Synow::Grid& grid, ES::Spectrum& target, 
         _setup->active[ i ] = true;
     }
 
-    // Apply additional weight-factor to target spectrum.
+    // Objective function weight factor all 1 if no regions specified.
 
-    if( region_weight.empty() ) return;
+    if( region_weight.empty() )
+    {
+        _weight.resize( _target->size(), 1.0 );
+        return;
+    }
 
-    std::vector< double > weight( _target->size(), 0.0 );
+    // Objective function weight factor in case of specified fit regions.
+
+    _weight.resize( _target->size(), 0.0 );
+
     for( size_t ir = 0; ir < region_weight.size(); ++ ir )
     {
         for( size_t iw = 0; iw < _target->size(); ++ iw )
         {
             if( _target->wl( iw ) < region_lower[ ir ] ) continue;
             if( _target->wl( iw ) > region_upper[ ir ] ) break;
-            weight[ iw ] = region_weight[ ir ];
+            _weight[ iw ] = region_weight[ ir ];
         }
-    }
-
-    for( size_t i = 0; i < _target->size(); ++ i )
-    {
-        _target->flux_error( i ) = weight[ i ] <= 0 ? -1.0 : _target->flux_error( i ) / weight[ i ];
     }
 
 }
@@ -75,8 +77,7 @@ void ES::Synapps::Evaluator::operator() ( int tag, const APPSPACK::Vector& x, AP
     double score = 0.0;
     for( size_t i = 0; i < _output->size(); ++ i )
     {
-        if( _target->flux_error( i ) <= 0.0 ) continue;
-        double term = fabs( ( _output->flux( i ) - _target->flux( i ) ) / _target->flux_error( i ) );
+        double term = _weight[ i ] * fabs( ( _output->flux( i ) - _target->flux( i ) ) / _target->flux_error( i ) );
         score += pow( term, _vector_norm );
     }
     score = pow( score, 1.0 / _vector_norm );

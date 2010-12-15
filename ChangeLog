@@ -4,6 +4,8 @@
 * Version 0.97
 * Upgraded yaml-cpp to version 0.2.5.
 * Fixed bug(s) in create_es_yaml.
+* Added example directory with demo spectrum in it.
+* Changed weighting convention.
 
 2010-10-22  R. C. Thomas    <rcthomas@lbl.gov>
 

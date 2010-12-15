@@ -77,19 +77,17 @@ namespace ES
 
                 /// Prints information about the evaluator object.
 
-                virtual void print() const
-                {
-                    std::cout << "Hello" << std::endl;
-                }
+                virtual void print() const {}
 
             private :
 
-                ES::Synow::Setup*  _setup;      ///< Elementary supernova setup.
-                ES::Synow::Grid*   _grid;       ///< Elementary supernova grid.
-                ES::Spectrum*      _target;     ///< Target spectrum to be fit.
-                ES::Spectrum*      _output;     ///< Synthesized spectrum fit to the target.
+                ES::Synow::Setup*       _setup;         ///< Elementary supernova setup.
+                ES::Synow::Grid*        _grid;          ///< Elementary supernova grid.
+                ES::Spectrum*           _target;        ///< Target spectrum to be fit.
+                ES::Spectrum*           _output;        ///< Synthesized spectrum fit to the target.
 
-                double   _vector_norm;          ///< Norm between observed and synthesized spectrum.
+                double                  _vector_norm;   ///< Norm between observed and synthesized spectrum.
+                std::vector< double >   _weight;        ///< Weight vector for objective function.
 
         };
 
