@@ -52,10 +52,9 @@ namespace YAML
 		int operator,(flag, flag);
 		
 		template<typename T>
-		char operator,(flag, T const&);
+		void operator,(flag, T const&);
 		
 		char operator,(int, flag);
-		int operator,(char, flag);
 	}
 
 	template <typename T>

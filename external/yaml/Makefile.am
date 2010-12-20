@@ -6,6 +6,7 @@ AM_CFLAGS =
 
 nobase_noinst_HEADERS = \
 yaml-cpp/conversion.h \
+yaml-cpp/crt.h \
 yaml-cpp/emitter.h \
 yaml-cpp/emittermanip.h \
 yaml-cpp/exceptions.h \
@@ -19,9 +20,8 @@ yaml-cpp/noncopyable.h \
 yaml-cpp/null.h \
 yaml-cpp/ostream.h \
 yaml-cpp/parser.h \
+yaml-cpp/parserstate.h \
 yaml-cpp/stlemitter.h \
-yaml-cpp/stlnode.h \
-yaml-cpp/traits.h \
 yaml-cpp/yaml.h
 
 noinst_HEADERS = \
@@ -34,24 +34,22 @@ indentation.h \
 iterpriv.h \
 ltnode.h \
 map.h \
-parserstate.h \
 regex.h \
 regeximpl.h \
 scalar.h \
 scanner.h \
 scanscalar.h \
-scantag.h \
 sequence.h \
 setting.h \
-stream.h \
 streamcharsource.h \
+stream.h \
 stringsource.h \
-tag.h \
 token.h
 
 noinst_LTLIBRARIES = libyaml-cpp.la
 libyaml_cpp_la_SOURCES = \
 aliascontent.cpp \
+content.cpp \
 conversion.cpp \
 emitter.cpp \
 emitterstate.cpp \
@@ -68,10 +66,9 @@ regex.cpp \
 scalar.cpp \
 scanner.cpp \
 scanscalar.cpp \
-scantag.cpp \
 scantoken.cpp \
 sequence.cpp \
 simplekey.cpp \
-stream.cpp \
-tag.cpp
+stream.cpp
 libyaml_cpp_la_LIBADD = $(AM_LIBS)
+

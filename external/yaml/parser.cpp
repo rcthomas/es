@@ -1,8 +1,8 @@
+#include "crt.h"
 #include "parser.h"
 #include "scanner.h"
 #include "token.h"
 #include "exceptions.h"
-#include "parserstate.h"
 #include <sstream>
 #include <cstdio>
 
@@ -29,7 +29,7 @@ namespace YAML
 	void Parser::Load(std::istream& in)
 	{
 		m_pScanner.reset(new Scanner(in));
-		m_pState.reset(new ParserState);
+		m_state.Reset();
 	}
 
 	// GetNextDocument
@@ -55,7 +55,7 @@ namespace YAML
 			m_pScanner->pop();
 
 		// now parse our root node
-		document.Parse(m_pScanner.get(), *m_pState);
+		document.Parse(m_pScanner.get(), m_state);
 
 		// and finally eat any doc ends we see
 		while(!m_pScanner->empty() && m_pScanner->peek().type == Token::DOC_END)
@@ -84,59 +84,51 @@ namespace YAML
 			// we keep the directives from the last document if none are specified;
 			// but if any directives are specific, then we reset them
 			if(!readDirective)
-				m_pState.reset(new ParserState);
+				m_state.Reset();
 
 			readDirective = true;
-			HandleDirective(token);
+			HandleDirective(&token);
 			m_pScanner->pop();
 		}
 	}
 
-	void Parser::HandleDirective(const Token& token)
+	void Parser::HandleDirective(Token *pToken)
 	{
-		if(token.value == "YAML")
-			HandleYamlDirective(token);
-		else if(token.value == "TAG")
-			HandleTagDirective(token);
+		if(pToken->value == "YAML")
+			HandleYamlDirective(pToken);
+		else if(pToken->value == "TAG")
+			HandleTagDirective(pToken);
 	}
 
 	// HandleYamlDirective
 	// . Should be of the form 'major.minor' (like a version number)
-	void Parser::HandleYamlDirective(const Token& token)
+	void Parser::HandleYamlDirective(Token *pToken)
 	{
-		if(token.params.size() != 1)
-			throw ParserException(token.mark, ErrorMsg::YAML_DIRECTIVE_ARGS);
-		
-		if(!m_pState->version.isDefault)
-			throw ParserException(token.mark, ErrorMsg::REPEATED_YAML_DIRECTIVE);
+		if(pToken->params.size() != 1)
+			throw ParserException(pToken->mark, ErrorMsg::YAML_DIRECTIVE_ARGS);
 
-		std::stringstream str(token.params[0]);
-		str >> m_pState->version.major;
+		std::stringstream str(pToken->params[0]);
+		str >> m_state.version.major;
 		str.get();
-		str >> m_pState->version.minor;
+		str >> m_state.version.minor;
 		if(!str || str.peek() != EOF)
-			throw ParserException(token.mark, ErrorMsg::YAML_VERSION + token.params[0]);
+			throw ParserException(pToken->mark, ErrorMsg::YAML_VERSION + pToken->params[0]);
 
-		if(m_pState->version.major > 1)
-			throw ParserException(token.mark, ErrorMsg::YAML_MAJOR_VERSION);
+		if(m_state.version.major > 1)
+			throw ParserException(pToken->mark, ErrorMsg::YAML_MAJOR_VERSION);
 
-		m_pState->version.isDefault = false;
 		// TODO: warning on major == 1, minor > 2?
 	}
 
 	// HandleTagDirective
 	// . Should be of the form 'handle prefix', where 'handle' is converted to 'prefix' in the file.
-	void Parser::HandleTagDirective(const Token& token)
+	void Parser::HandleTagDirective(Token *pToken)
 	{
-		if(token.params.size() != 2)
-			throw ParserException(token.mark, ErrorMsg::TAG_DIRECTIVE_ARGS);
+		if(pToken->params.size() != 2)
+			throw ParserException(pToken->mark, ErrorMsg::TAG_DIRECTIVE_ARGS);
 
-		const std::string& handle = token.params[0];
-		const std::string& prefix = token.params[1];
-		if(m_pState->tags.find(handle) != m_pState->tags.end())
-			throw ParserException(token.mark, ErrorMsg::REPEATED_TAG_DIRECTIVE);
-		
-		m_pState->tags[handle] = prefix;
+		std::string handle = pToken->params[0], prefix = pToken->params[1];
+		m_state.tags[handle] = prefix;
 	}
 
 	void Parser::PrintTokens(std::ostream& out)
