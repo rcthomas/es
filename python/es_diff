@@ -1,0 +1,161 @@
+#!/usr/bin/env python
+
+doc = """
+This script first runs something like
+
+    create_es_yaml --rotate-off synapps.yaml synapps.log > syn++.yaml
+
+to generate a SYN++ input file.  Then, it runs the equivalent of
+
+    syn++ --verbose --wl-from=target.dat syn++.yaml > syn++.dat
+
+where "target.dat" has been deduced from the "synapps.yaml" input file.
+The output is then collected, plots produced, metrics calculated, etc.
+
+In the above, the names "syn++.yaml" and "syn++.dat" can be controlled 
+through the "--prefix" option.
+"""
+
+from pyES import Common, Synpp, Synapps
+
+import matplotlib        as mpl
+import matplotlib.ticker as mtk
+import matplotlib.pyplot as plt
+import scipy
+
+import optparse
+import subprocess
+import sys
+import yaml
+
+#- Plot tweaks.
+
+mpl.rc( "text", usetex = True )
+mpl.rc( "font", family = "serif" )
+mpl.rcParams[ "axes.color_cycle" ] = [ 'c', 'm', 'y', 'k' ]
+
+#- Command line.
+
+optparse.OptionParser.format_epilog = lambda self, formatter: self.epilog
+parser = optparse.OptionParser( usage = "usage: %prog [options] synapps.yaml synapps.log", epilog = doc )
+parser.add_option( "-p", "--prefix", help = "temp and plot file prefix [%default]", default = "syn++", type = "string" )
+parser.add_option( "-f", "--format", help = "plot format, if any [%default]", default = None, type = "string" )
+opts, args = parser.parse_args()
+
+if len( args ) != 2 :
+    parser.error( "synapps.yaml and synapps.log are mandatory" )
+
+synapps_yaml, synapps_log = args
+
+#- Target file and active ions labels from synapps yaml.
+
+synapps = Synapps.Synapps.create( yaml.load( open( args[ 0 ], "r" ) ) )
+
+target_file = synapps.evaluator.target_file
+
+target = dict( wl = list(), flux = list(), error = list() )
+stream = open( "%s" % target_file, "r" )
+for line in stream :
+    if line.startswith( "#" ) :
+        continue
+    wl, flux, error = [ float( x ) for x in line.split() ]
+    target[ "wl"    ].append( wl    )
+    target[ "flux"  ].append( flux  )
+    target[ "error" ].append( error )
+stream.close()
+target[ "wl"    ] = scipy.array( target[ "wl"    ] )
+target[ "flux"  ] = scipy.array( target[ "flux"  ] )
+target[ "error" ] = scipy.array( target[ "error" ] )
+
+active_ions = list()
+for ion in synapps.config.ions :
+    if not ion.active :
+        continue
+    active_ions.append( str( ion.ion ) )
+
+uniq_ions = set( active_ions )
+for ion in uniq_ions :
+    counter = 0
+    for i, active_ion in enumerate( active_ions ) :
+        if active_ion != ion :
+            continue
+        counter += 1
+        active_ions[ i ] = "%s\_%d" % ( active_ion, counter )
+
+#- Run create_es_yaml, write output.
+
+command = "create_es_yaml --rotate-off %s %s" % ( synapps_yaml, synapps_log )
+process = subprocess.Popen( command.split(), stdout = subprocess.PIPE )
+
+stream = open( "%s.yaml" % opts.prefix, "w" )
+for line in process.stdout :
+    stream.write( line )
+stream.close()
+
+#- Run syn++, capture and write output.
+
+command = "syn++ --verbose --wl-from=%s %s" % ( target_file, "%s.yaml" % opts.prefix )
+process = subprocess.Popen( command.split(), stdout = subprocess.PIPE )
+
+spectra = list()
+
+spectra.append( dict( wl = list(), flux = list() ) )
+
+stream = open( "%s.dat" % opts.prefix, "w" )
+for line in process.stdout :
+    try :
+        wl, flux, err = [ float( x ) for x in line.split() ]
+        spectra[ -1 ][ "wl"   ].append( wl   )
+        spectra[ -1 ][ "flux" ].append( flux )
+    except :
+        spectra[ -1 ][ "wl"   ] = scipy.array( spectra[ -1 ][ "wl"   ] )
+        spectra[ -1 ][ "flux" ] = scipy.array( spectra[ -1 ][ "flux" ] )
+        spectra.append( dict( wl = list(), flux = list() ) )
+    stream.write( line )
+stream.close()
+
+spectra.pop()
+
+#- Subtract all ion-off fits from the first one.
+
+all_ions = spectra.pop( 0 )
+
+for ion, spectrum in zip( active_ions, spectra ) :
+    diff = scipy.absolute( all_ions[ "flux" ] - spectrum[ "flux" ] )
+    dev  = scipy.sum( diff )
+    plt.semilogx(   target[ "wl" ],   target[ "flux" ], "k", lw = 2 )
+    plt.semilogx( all_ions[ "wl" ], all_ions[ "flux" ], "r", lw = 2 )
+    plt.semilogx( spectrum[ "wl" ], spectrum[ "flux" ], "b", lw = 2 )
+    thresh = diff > 0.01 * all_ions[ "flux" ]
+    plt.fill_between( all_ions[ "wl" ], all_ions[ "flux" ], spectrum[ "flux" ], thresh, color = "r", alpha = 0.3 )
+
+    plt.title( r"%s: %.4f" % ( ion, dev ), size = "xx-large" )
+
+    xticks = 1000 * scipy.array( [ 3, 4, 5, 6, 7, 8, 9, 10 ] )
+    plt.gca().set_xlim( ( xticks[ 0 ], xticks[ -1 ] ) )
+    plt.xticks( xticks, [ ( str( xx ) if xx != 9000 else "" ) for xx in xticks ], size = "x-large" )
+    plt.xlabel( r"Rest Frame Wavelength (\AA)", size = "xx-large" )
+
+    plt.yticks( visible = False )
+    plt.ylabel( r"Relative Flux ($F_\lambda$) + Const.", size = "xx-large" )
+    
+    for spine in plt.gca().spines.values() :
+        spine.set_linewidth( 2 )
+    
+    plt.gca().xaxis.set_minor_locator( mtk.MultipleLocator( 100 ) )
+    
+    for line in plt.gca().xaxis.get_ticklines():
+        line.set_markeredgewidth( 2 )
+    for line in plt.gca().yaxis.get_ticklines():
+        line.set_markeredgewidth( 2 )
+    for line in plt.gca().xaxis.get_minor_ticks():
+        line.tick1line.set_markeredgewidth( 2 )
+        line.tick2line.set_markeredgewidth( 2 )
+
+    if opts.format :
+        output = "%s_%s.%s" % ( opts.prefix, ion, opts.format )
+        output = output.replace( "\\", "" )
+        plt.savefig( output )
+        plt.clf()
+    else :
+        plt.show()

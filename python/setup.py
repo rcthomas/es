@@ -8,5 +8,5 @@ setup(  name            = 'pyES',
         author_email    = 'rcthomas@lbl.gov',
         url             = 'http://c3.lbl.gov/es',
         packages        = [ 'pyES' ],
-        scripts         = [ 'create_es_yaml', 'random_es_yaml' ],
+        scripts         = [ 'create_es_yaml', 'random_es_yaml', 'es_diff' ],
      )
