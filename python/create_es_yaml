@@ -9,13 +9,17 @@ import yaml
 #- Command line.
 
 parser = optparse.OptionParser( usage = "usage: %prog [options] synapps.yaml synapps.log" )
-parser.add_option( "--synapps"   , action = "store_true", default = False, help = "Write synapps.yaml (instead of syn++.yaml) control file." )
-parser.add_option( "--rotate-on" , action = "store_true", default = False, help = "Include setups leaving only one ion on."                  )
-parser.add_option( "--rotate-off", action = "store_true", default = False, help = "Include setups leaving all but one ion on."               )
+parser.add_option( "--synapps"     , action = "store_true", default = False, help = "Write synapps.yaml (instead of syn++.yaml) control file." )
+parser.add_option( "--rotate-on"   , action = "store_true", default = False, help = "Include setups leaving only one ion on."                  )
+parser.add_option( "--rotate-off"  , action = "store_true", default = False, help = "Include setups leaving all but one ion on."               )
+parser.add_option( "--replace-yaml", action = "store_true", default = False, help = "Overwrite synapps.yaml with new one (forces --synapps)."  )
 opts, args = parser.parse_args()
 
 if len( args ) != 2 :
     parser.error( "synapps.yaml and synapps.log are mandatory" )
+
+if opts.replace_yaml :
+    opts.synapps = True
 
 if opts.synapps and ( opts.rotate_on or opts.rotate_off ) :
     parser.error( "--rotate-on/off option incompatible with --synapps" )
@@ -75,7 +79,10 @@ for i in range( num_ions ) :
 #- Output synapps control file if user wanted.
 
 if opts.synapps :
-    print synapps
+    stream = open( args[ 0 ], "w" ) if opts.replace_yaml else sys.stdout
+    stream.write( "%s" % synapps )
+    if opts.replace_yaml :
+        stream.close()
     sys.exit( 0 )
 
 #- Otherwise output a syn++ yaml control file.

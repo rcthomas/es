@@ -69,6 +69,7 @@ ES::Spectrum ES::Spectrum::create_from_ascii_file( const char* file )
     ES::Spectrum spectrum;
     std::ifstream stream;
     stream.open( file );
+    if( ! stream.is_open() ) throw ES::Exception( "Unable to open spectrum file: '" + std::string( file ) + "'" );
     stream >> spectrum;
     stream.close();
     return spectrum;
