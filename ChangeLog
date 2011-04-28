@@ -4,6 +4,7 @@
 * Version 0.98
 * Added es_diff script to python dir.
 * Added --replace-yaml to create_es_yaml.
+* Added --(de)activate to create_es_yaml.
 * ES::Spectrum::create_from_ascii_file() throws if a file open fails.
 
 2010-12-21  R. C. Thomas    <rcthomas@lbl.gov>
