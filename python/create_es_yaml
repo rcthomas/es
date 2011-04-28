@@ -13,6 +13,8 @@ parser.add_option( "--synapps"     , action = "store_true", default = False, hel
 parser.add_option( "--rotate-on"   , action = "store_true", default = False, help = "Include setups leaving only one ion on."                  )
 parser.add_option( "--rotate-off"  , action = "store_true", default = False, help = "Include setups leaving all but one ion on."               )
 parser.add_option( "--replace-yaml", action = "store_true", default = False, help = "Overwrite synapps.yaml with new one (forces --synapps)."  )
+parser.add_option( "--activate"                           , default = None , help = "Activate only the ions at these indices."                 )
+parser.add_option( "--deactivate"                         , default = None , help = "Deactivate ions at these indices, leave others active."   )
 opts, args = parser.parse_args()
 
 if len( args ) != 2 :
@@ -21,8 +23,20 @@ if len( args ) != 2 :
 if opts.replace_yaml :
     opts.synapps = True
 
+if opts.rotate_on and opts.rotate_off :
+    parser.error( "--rotate-on/off, there can be only one!" )
+
+if opts.activate and opts.deactivate :
+    parser.error( "--(de)activate, there can be only one!" )
+
+if ( opts.rotate_on or opts.rotate_off ) and ( opts.activate or opts.deactivate ) :
+    parser.error( "--rotate-on/off and --(de)activate option incompatible" )
+
 if opts.synapps and ( opts.rotate_on or opts.rotate_off ) :
     parser.error( "--rotate-on/off option incompatible with --synapps" )
+
+if opts.synapps and ( opts.activate or opts.deactivate ) :
+    parser.error( "--(de)activate option incompatible with --synapps" )
 
 #- Synapps control object.
 
@@ -93,6 +107,16 @@ opacity  = synapps.opacity
 source   = synapps.source
 spectrum = synapps.spectrum
 
+component_mask = [ True for ion in synapps.config.ions ]
+if opts.activate :
+    indices = [ int( x ) for x in opts.activate.split( "," ) ]
+    for i, ion in enumerate( synapps.config.ions ) :
+        component_mask[ i ] = i in indices
+if opts.deactivate :
+    indices = [ int( x ) for x in opts.deactivate.split( "," ) ]
+    for i, ion in enumerate( synapps.config.ions ) :
+        component_mask[ i ] = i not in indices
+
 setups = [ Synpp.Setup.create() ]
 setups[ 0 ].a0      = synapps.config.a0.start
 setups[ 0 ].a1      = synapps.config.a1.start
@@ -100,7 +124,9 @@ setups[ 0 ].a2      = synapps.config.a2.start
 setups[ 0 ].v_phot  = synapps.config.v_phot.start
 setups[ 0 ].v_outer = synapps.config.v_outer.start
 setups[ 0 ].t_phot  = synapps.config.t_phot.start
-for ion in synapps.config.ions :
+for i, ion in enumerate( synapps.config.ions ) :
+    if opts.activate or opts.deactivate :
+        ion.active = component_mask[ i ]
     setups[ 0 ].ions.append( Synpp.Ion( ion.ion, ion.active, ion.log_tau.start, ion.v_min.start, ion.v_max.start, ion.aux.start, ion.temp.start ) )
 
 #- Handle single-ion rotation.
