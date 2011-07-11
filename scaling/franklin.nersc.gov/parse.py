@@ -18,7 +18,7 @@ for run in sys.argv[ 1 : ] :
             cached_evals = int( line.rstrip().split()[ -1 ] )
             continue
     try :
-        start_time = os.path.getmtime( run + "/" + run + ".yaml" )
+        start_time = os.path.getmtime( run + "/" + run + ".yaml" )  # should parse the *.e?????? in the future for this.
     except OSError :
         start_time = None
     try :
