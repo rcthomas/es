@@ -8,7 +8,7 @@ import yaml
 
 #- Command line.
 
-parser = optparse.OptionParser( usage = "usage: %prog [options] synapps.yaml synapps.log" )
+parser = optparse.OptionParser( usage = "usage: %prog [options] synapps.yaml [synapps.log]" )
 parser.add_option( "--synapps"     , action = "store_true", default = False, help = "Write synapps.yaml (instead of syn++.yaml) control file." )
 parser.add_option( "--rotate-on"   , action = "store_true", default = False, help = "Include setups leaving only one ion on."                  )
 parser.add_option( "--rotate-off"  , action = "store_true", default = False, help = "Include setups leaving all but one ion on."               )
@@ -17,8 +17,8 @@ parser.add_option( "--activate"                           , default = None , hel
 parser.add_option( "--deactivate"                         , default = None , help = "Deactivate ions at these indices, leave others active."   )
 opts, args = parser.parse_args()
 
-if len( args ) != 2 :
-    parser.error( "synapps.yaml and synapps.log are mandatory" )
+if len( args ) < 1 :
+    parser.error( "synapps.yaml is mandatory" )
 
 if opts.replace_yaml :
     opts.synapps = True
@@ -42,53 +42,54 @@ if opts.synapps and ( opts.activate or opts.deactivate ) :
 
 synapps = Synapps.Synapps.create( yaml.load( open( args[ 0 ], "r" ) ) )
 
-#- Last new min or final min in log.
+#- If a log is supplied, find the last new min or final min listed.
 
-last_min = None
+if args[ 1 ] :
 
-for line in open( args[ 1 ], "r" ).readlines() :
-    if line.startswith( "New Min" ) or line.startswith( "Final Min" ) :
-        last_min = line.rstrip()
+    #- Parse to find last min..
 
-if not last_min :
-    print >> sys.stderr, "ERROR: No 'New Min' or 'Final Min' lines found in log: %s" % args[ 1 ]
-    sys.exit( 137 )
+    last_min = None
+    for line in open( args[ 1 ], "r" ).readlines() :
+        if line.startswith( "New Min" ) or line.startswith( "Final Min" ) :
+            last_min = line.rstrip()
+    if not last_min :
+        print >> sys.stderr, "ERROR: No 'New Min' or 'Final Min' lines found in log: %s" % args[ 1 ]
+        sys.exit( 137 )
+    last_min = [ float( x ) for x in last_min[ last_min.find( "[" ) + 1 : last_min.find( "]" ) ].split() ]
 
-last_min = [ float( x ) for x in last_min[ last_min.find( "[" ) + 1 : last_min.find( "]" ) ].split() ]
+    #- Is the log compatible with the YAML control file?
+    
+    num_ions = 0
+    num_active_ions = 0
+    for ion in synapps.config.ions :
+        num_ions += 1
+        num_active_ions += 1 if ion.active else 0
+    num_params = num_active_ions * 5
+    num_params += 6
+    
+    if num_params != len( last_min ) :
+        print >> sys.stderr, "ERROR: Incompatible synapps.yaml and synapps.log: %d and %d parameters" % ( num_params, len( last_min ) )
+        sys.exit( 137 )
 
-#- Compatible?
-
-num_ions = 0
-num_active_ions = 0
-for ion in synapps.config.ions :
-    num_ions += 1
-    num_active_ions += 1 if ion.active else 0
-num_params = num_active_ions * 5
-num_params += 6
-
-if num_params != len( last_min ) :
-    print >> sys.stderr, "ERROR: Incompatible synapps.yaml and synapps.log: %d and %d parameters" % ( num_params, len( last_min ) )
-    sys.exit( 137 )
-
-#- Substitute log entries into synapps control object's start slots.
-
-synapps.config.a0.start      = last_min.pop( 0 )
-synapps.config.a1.start      = last_min.pop( 0 )
-synapps.config.a2.start      = last_min.pop( 0 )
-synapps.config.v_phot.start  = last_min.pop( 0 )
-synapps.config.v_outer.start = last_min.pop( 0 )
-synapps.config.t_phot.start  = last_min.pop( 0 )
-
-j = 0
-for i in range( num_ions ) :
-    if not synapps.config.ions[ i ].active :
-        continue
-    synapps.config.ions[ i ].log_tau.start = last_min[ j + 0 * num_active_ions ]
-    synapps.config.ions[ i ].v_min.start   = last_min[ j + 1 * num_active_ions ]
-    synapps.config.ions[ i ].v_max.start   = last_min[ j + 2 * num_active_ions ]
-    synapps.config.ions[ i ].aux.start     = last_min[ j + 3 * num_active_ions ]
-    synapps.config.ions[ i ].temp.start    = last_min[ j + 4 * num_active_ions ]
-    j += 1
+    #- Substitute log entries into synapps control object's start slots.
+    
+    synapps.config.a0.start      = last_min.pop( 0 )
+    synapps.config.a1.start      = last_min.pop( 0 )
+    synapps.config.a2.start      = last_min.pop( 0 )
+    synapps.config.v_phot.start  = last_min.pop( 0 )
+    synapps.config.v_outer.start = last_min.pop( 0 )
+    synapps.config.t_phot.start  = last_min.pop( 0 )
+    
+    j = 0
+    for i in range( num_ions ) :
+        if not synapps.config.ions[ i ].active :
+            continue
+        synapps.config.ions[ i ].log_tau.start = last_min[ j + 0 * num_active_ions ]
+        synapps.config.ions[ i ].v_min.start   = last_min[ j + 1 * num_active_ions ]
+        synapps.config.ions[ i ].v_max.start   = last_min[ j + 2 * num_active_ions ]
+        synapps.config.ions[ i ].aux.start     = last_min[ j + 3 * num_active_ions ]
+        synapps.config.ions[ i ].temp.start    = last_min[ j + 4 * num_active_ions ]
+        j += 1
 
 #- Output synapps control file if user wanted.
 
