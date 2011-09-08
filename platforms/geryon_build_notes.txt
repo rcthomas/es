@@ -1,0 +1,121 @@
+
+Below are some notes that Jason Quinn (jason.lee.quinn@gmail.com) used
+when compiling ES on the geryon linux cluster at PUC in Santiago, Chile.
+It may be of use to others as well.
+
+Download the needed files.
+Place them in directories as implied below.
+
+~/appspack/appspack-5.0.1-C3.tar.gz
+~/BLAS/blas.tgz
+~/cfitsio/cfitsio3280.tar.gz
+~/lapack/lapack-3.3.1.tgz
+~/openmpi/openmpi-1.4.3.tar.bz2
+~/es/es-0.97.tar.gz
+~/es/es-data.tar.gz
+
+I use a somewhat goofy choice for the local directories.
+This is easily changed to whatever the user wants.
+
+=================================
+CFITSIO (compiles with no issues)
+=================================
+
+cd /home/${USER}/cfitsio/
+tar -zxvf cfitsio3280.tar.gz
+cd cfitsio
+mkdir cfitsio_local
+./configure --prefix=/home/${USER}/cfitsio/cfitsio/cfitsio_local
+make
+make install
+
+==============================
+BLAS (compiles with no issues)
+==============================
+
+cd /home/${USER}/BLAS/
+tar -zxvf blas.tgz
+cd BLAS
+make
+
+======================
+LAPACK (requires BLAS)
+======================
+
+cd /home/${USER}/lapack
+tar -zxvf lapack-3.3.1.tgz
+cd lapack-3.3.1
+cp make.inc.example make.inc
+ln -s /home/${USER}/BLAS/BLAS/blas_LINUX.a .
+make
+
+=====================================================================
+OPENMPI Couldn't get to work on our system so I now skip this section
+====================================================================
+
+echo I could not get ES to run using a local MPI, only the one already installed on the system.
+echo In theory you should just use this line
+echo      MPICXX=/home/${USER}/openmpi/openmpi-1.4.3/openmpi_local/bin/mpicxx
+echo in place of
+echo      MPICXX=/usr/local/bin/mpicxx
+echo in the appspack and ES configurations.
+
+cd /home/${USER}/openmpi/
+tar -jxvf openmpi-1.4.3.tar.bz2
+cd openmpi-1.4.3
+mkdir openmpi_local
+./configure --prefix=/home/${USER}/openmpi/openmpi-1.4.3/openmpi_local
+make
+make install
+setenv LD_LIBRARY_PATH /home/${USER}/openmpi/openmpi-1.4.3/openmpi_local/lib:/usr/local/lib
+
+===================================================================
+APPSPACK (get special SYNAPPS version. requires lapack and openmpi)
+===================================================================
+
+cd /home/${USER}/appspack
+tar -zxvf appspack-5.0.1-C3.tar.gz
+cd appspack-5.0.1-C3
+mkdir appspack_local
+./configure --prefix=/home/${USER}/appspack/appspack-5.0.1-C3/appspack_local \
+            --with-blas=/home/${USER}/BLAS/BLAS/blas_LINUX.a \
+            --with-lapack=/home/${USER}/lapack/lapack-3.3.1/lapack_LINUX.a \
+            MPICXX=/usr/local/bin/mpicxx \
+            CXXFLAGS="-DMPICH_IGNORE_CXX_SEEK"
+make
+make install
+
+==
+ES
+==
+
+cd /home/${USER}/es
+tar -zxvf es-0.97.tar.gz
+tar -zxvf es-data.tar.gz
+cd es-0.97
+mkdir es_local
+./configure --prefix=/home/${USER}/es/es-0.97/es_local \
+            --with-blas=/home/${USER}/BLAS/BLAS/blas_LINUX.a \
+            --with-lapack=/home/${USER}/lapack/lapack-3.3.1/lapack_LINUX.a \
+            --with-cfitsio-cpp="-I/home/${USER}/cfitsio/cfitsio/cfitsio_local/include" \
+            --with-cfitsio-libs="-L/home/${USER}/cfitsio/cfitsio/cfitsio_local/lib -lcfitsio" \
+            --with-appspack-cpp="-I/home/${USER}/appspack/appspack-5.0.1-C3/appspack_local/include" \
+            --with-appspack-libs="-L/home/${USER}/appspack/appspack-5.0.1-C3/appspack_local/lib -lappspack" \
+            MPICXX=/usr/local/bin/mpicxx \
+            CXXFLAGS="-DMPICH_IGNORE_CXX_SEEK"
+make
+make install
+
+cd /home/${USER}/es/es-0.97/python
+mkdir espython_local
+python setup.py install --prefix=/home/${USER}/es/es-0.97/python/espython_local
+
+echo Copy /home/${USER}/es/es-0.97/src/synapps/synapps.yaml somewhere for your job. Edit this stuff:
+echo       /home/${USER}/es/es-data/lines
+echo       /home/${USER}/es/es-data/refs.dat
+echo       target.dat
+echo       target.fit
+echo       target.cache
+
+
+
