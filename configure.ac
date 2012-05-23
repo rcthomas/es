@@ -88,8 +88,10 @@ AM_CONDITIONAL([HAVE_AM_OPENMP], [test $ax_have_openmp = yes])
 ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 
 # Check for LAPACK/BLAS
-ACX_BLAS([], [AC_MSG_ERROR([Could not find a Blas library])])
-ACX_LAPACK([], [AC_MSG_ERROR([Could not find a Lapack library])])
+acx_have_lapack=no
+ACX_BLAS
+ACX_LAPACK([acx_have_lapack=yes;AC_DEFINE([HAVE_LAPACK], [1], [Define if you have the Lapack library.])], [AC_MSG_WARN([Could not find a Lapack library- synapps disabled])])
+AM_CONDITIONAL([HAVE_AM_LAPACK], [test $acx_have_lapack = yes])
 
 # Check for MPI
 acx_have_mpi=no
@@ -97,7 +99,6 @@ ACX_MPI([acx_have_mpi=yes;AC_DEFINE([HAVE_MPI], [1],[Define if you have the MPI 
 AM_CONDITIONAL([HAVE_AM_MPI], [test $acx_have_mpi = yes])
 
 # Check for APPSPACK
-AC_LANG([C++])
 acx_have_appspack=no
 ACX_APPSPACK([acx_have_appspack=yes;AC_DEFINE([HAVE_APPSPACK], [1], [Define if you have the Appspack library.])], [AC_MSG_WARN([Could not find the Appspack tools- synapps disabled])])
 AM_CONDITIONAL([HAVE_AM_APPSPACK], [test $acx_have_appspack = yes])
