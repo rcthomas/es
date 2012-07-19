@@ -29,6 +29,7 @@
 #define ES__GENERIC__GRID
 
 #include <vector>
+#include <cstring>
 
 namespace ES
 {
