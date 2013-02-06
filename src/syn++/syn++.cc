@@ -1,4 +1,4 @@
-// 
+//
 // File    : syn++.cc
 // ------------------
 //
@@ -22,12 +22,20 @@
 // is granted for itself and others acting on its behalf a paid-up,
 // nonexclusive, irrevocable, worldwide license in the Software to
 // reproduce, prepare derivative works, distribute copies to the public,
-// perform publicly and display publicly, and to permit others to do so. 
+// perform publicly and display publicly, and to permit others to do so.
 //
 
 #include "ES_Synow.hh"
 
 #include <yaml-cpp/yaml.h>
+
+#include <config.h>
+
+#ifdef USE_GUI
+#include <gtkmm.h>
+#include <Python.h>
+#include <fstream>
+#endif
 
 #include <fstream>
 #include <getopt.h>
@@ -56,8 +64,161 @@ void usage( std::ostream& stream )
     stream << "usage: syn++ [--verbose] control.yaml" << std::endl;
 }
 
+#ifdef USE_GUI
+/* pointers for all the widgets */
+Gtk::Window *pWindow = 0;
+Gtk::Button *pQuitButton = 0, *pPlotSpecBtn = 0;
+Gtk::SpinButton *pv_phot_spinbtn = 0, *pT_phot_spinbtn = 0, *pv_outer_spinbtn = 0,
+                *pmin_wl_spinbtn = 0, *pmax_wl_spinbtn = 0, *pwl_step_spinbtn = 0;
+Gtk::SpinButton *p_s01_kid_spinbtn    = 0, *p_s02_kid_spinbtn    = 0,
+                *p_s01_logtau_spinbtn = 0, *p_s02_logtau_spinbtn = 0,
+                *p_s01_v_min_spinbtn  = 0, *p_s02_v_min_spinbtn  = 0,
+                *p_s01_v_max_spinbtn  = 0, *p_s02_v_max_spinbtn  = 0,
+                *p_s01_aux_spinbtn    = 0, *p_s02_aux_spinbtn    = 0,
+                *p_s01_T_ex_spinbtn   = 0, *p_s02_T_ex_spinbtn   = 0;
+Gtk::CheckButton *p_s01_active_checkbtn = 0, *p_s02_active_checkbtn = 0;
+
+static void quit_syngui() {
+    if (pWindow) {
+        pWindow->hide();
+    }
+}
+
+static void plot_spectrum() {
+    ES::Spectrum output = ES::Spectrum::create_from_range_and_step(
+            pmin_wl_spinbtn->get_value(),
+            pmax_wl_spinbtn->get_value(),
+            pwl_step_spinbtn->get_value() );
+
+    ES::Spectrum reference = ES::Spectrum::create_from_spectrum( output );
+
+    ES::Synow::Grid grid = ES::Synow::Grid::create(
+            pmin_wl_spinbtn->get_value(),
+            pmax_wl_spinbtn->get_value(),
+            0.3,  // TODO: fix this later
+            100,  // TODO: fix this later
+            60.0 ); // TODO: fix this later
+
+    ES::Synow::Opacity opacity( grid,
+            "/home/brian/es-data/lines", // TODO: fix this later
+            "/home/brian/es-data/refs.dat", // TODO: fix this later
+            "exp", // TODO: fix this later
+            6.0, // TODO: fix this later
+            -2.0 ); // TODO: fix this later
+
+    ES::Synow::Source source( grid,
+            10 ); // TODO: fix this later
+
+    ES::Synow::Spectrum spectrum( grid, output, reference,
+            60, // TODO: fix this later
+            true ); // TODO: fix this later
+
+    ES::Synow::Setup setup;
+    setup.a0 = 1.0; // TODO: fix this later
+    setup.a1 = 0.0; // TODO: fix this later
+    setup.a2 = 0.0; // TODO: fix this later
+    setup.v_phot = pv_phot_spinbtn->get_value();
+    setup.v_outer = pv_outer_spinbtn->get_value();
+    setup.t_phot = pT_phot_spinbtn->get_value();
+
+    setup.ions.push_back(p_s01_kid_spinbtn->get_value());
+    setup.ions.push_back(p_s02_kid_spinbtn->get_value());
+
+    setup.active.push_back(p_s01_active_checkbtn->get_active());
+    setup.active.push_back(p_s02_active_checkbtn->get_active());
+
+    setup.log_tau.push_back(p_s01_logtau_spinbtn->get_value());
+    setup.log_tau.push_back(p_s02_logtau_spinbtn->get_value());
+
+    setup.v_min.push_back(p_s01_v_min_spinbtn->get_value());
+    setup.v_min.push_back(p_s02_v_min_spinbtn->get_value());
+
+    setup.v_max.push_back(p_s01_v_max_spinbtn->get_value());
+    setup.v_max.push_back(p_s02_v_max_spinbtn->get_value());
+
+    setup.aux.push_back(p_s01_aux_spinbtn->get_value());
+    setup.aux.push_back(p_s02_aux_spinbtn->get_value());
+
+    setup.temp.push_back(p_s01_T_ex_spinbtn->get_value());
+    setup.temp.push_back(p_s02_T_ex_spinbtn->get_value());
+
+    grid( setup );
+
+    std::ofstream tmp_spec_output;
+    tmp_spec_output.open("tmp.spec");
+    tmp_spec_output << output << std::endl;
+
+    PyRun_SimpleString("wl, f, err = np.loadtxt('tmp.spec', unpack=True)");
+    PyRun_SimpleString("plt.plot(wl, f)");
+    PyRun_SimpleString("plt.show()");
+
+    tmp_spec_output.close();
+}
+#endif
+
 int main( int argc, char* argv[] )
 {
+#ifdef USE_GUI
+ /* make sure to call this FIRST, otherwise you'll get spammed with errors about
+  * 'you forgot to call g_type_init()!' */
+    Gtk::Main kit(argc, argv);
+
+    Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create();
+
+    try {
+        builder->add_from_file("syn++-gui-gtk2.glade");
+    } catch(const Glib::FileError& ex) {
+        std::cerr << "FileError: " << ex.what() << std::endl;
+        return 1;
+    } catch(const Glib::MarkupError& ex) {
+        std::cerr << "MarkupError: " << ex.what() << std::endl;
+        return 1;
+    } catch(const Gtk::BuilderError& ex) {
+        std::cerr << "BuilderError: " << ex.what() << std::endl;
+        return 1;
+    }
+
+    builder->get_widget("syn++-gui_window", pWindow);
+
+    builder->get_widget("quit_btn", pQuitButton);
+    if (pQuitButton) {
+        pQuitButton->signal_clicked().connect (sigc::ptr_fun(quit_syngui));
+    }
+
+    builder->get_widget("plot_spec_btn", pPlotSpecBtn);
+    if (pPlotSpecBtn) {
+        pPlotSpecBtn->signal_clicked().connect (sigc::ptr_fun(plot_spectrum));
+    }
+
+    builder->get_widget("s01_kid_spinbtn", p_s01_kid_spinbtn);
+    builder->get_widget("s01_active_checkbtn", p_s01_active_checkbtn);
+    builder->get_widget("s01_logtau_spinbtn", p_s01_logtau_spinbtn);
+    builder->get_widget("s01_v_min_spinbtn", p_s01_v_min_spinbtn);
+    builder->get_widget("s01_v_max_spinbtn", p_s01_v_max_spinbtn);
+    builder->get_widget("s01_aux_spinbtn", p_s01_aux_spinbtn);
+    builder->get_widget("s01_T_ex_spinbtn", p_s01_T_ex_spinbtn);
+
+    builder->get_widget("s02_kid_spinbtn", p_s02_kid_spinbtn);
+    builder->get_widget("s02_active_checkbtn", p_s02_active_checkbtn);
+    builder->get_widget("s02_logtau_spinbtn", p_s02_logtau_spinbtn);
+    builder->get_widget("s02_v_min_spinbtn", p_s02_v_min_spinbtn);
+    builder->get_widget("s02_v_max_spinbtn", p_s02_v_max_spinbtn);
+    builder->get_widget("s02_aux_spinbtn", p_s02_aux_spinbtn);
+    builder->get_widget("s02_T_ex_spinbtn", p_s02_T_ex_spinbtn);
+
+    builder->get_widget("v_phot_spinbtn", pv_phot_spinbtn);
+    builder->get_widget("T_phot_spinbtn", pT_phot_spinbtn);
+    builder->get_widget("v_outer_spinbtn", pv_outer_spinbtn);
+    builder->get_widget("min_wl_spinbtn", pmin_wl_spinbtn);
+    builder->get_widget("max_wl_spinbtn", pmax_wl_spinbtn);
+    builder->get_widget("wl_step_spinbtn", pwl_step_spinbtn);
+
+    Py_Initialize();
+    PyRun_SimpleString("import pylab as plt");
+    PyRun_SimpleString("import numpy as np");
+
+    kit.run(*pWindow);
+#endif
 
     // Command line.
 
@@ -76,7 +237,7 @@ int main( int argc, char* argv[] )
 
         int option_index = 0;
         std::stringstream ss;
-                 
+
         int c = getopt_long( argc, argv, "h", long_options, &option_index );
         if( c == -1 ) break;
 
@@ -113,6 +274,7 @@ int main( int argc, char* argv[] )
 
     YAML::Node yaml;
 
+#ifndef USE_GUI
     {
         std::ifstream  stream( argv[ optind ++ ] );
         YAML::Parser   parser( stream );
@@ -121,7 +283,7 @@ int main( int argc, char* argv[] )
     }
 
     // Output spectrum.  Here we create from range and step size, but
-    // other methods are supported.  See the named constructors in 
+    // other methods are supported.  See the named constructors in
     // ES::Spectrum.
 
     ES::Spectrum output = ES::Spectrum::create_from_range_and_step(
@@ -135,10 +297,10 @@ int main( int argc, char* argv[] )
 
     // Grid object.
 
-    ES::Synow::Grid grid = ES::Synow::Grid::create( 
+    ES::Synow::Grid grid = ES::Synow::Grid::create(
             yaml[ "output" ][ "min_wl"      ],
             yaml[ "output" ][ "max_wl"      ],
-            yaml[ "grid"   ][ "bin_width"   ], 
+            yaml[ "grid"   ][ "bin_width"   ],
             yaml[ "grid"   ][ "v_size"      ],
             yaml[ "grid"   ][ "v_outer_max" ] );
 
@@ -176,6 +338,35 @@ int main( int argc, char* argv[] )
         grid( setup );
         std::cout << output << std::endl;
     }
+#endif
+
+#ifdef USE_GUI
+    delete pWindow;
+    delete pQuitButton;
+    delete pPlotSpecBtn;
+    delete pv_phot_spinbtn;
+    delete pT_phot_spinbtn;
+    delete pv_outer_spinbtn;
+    delete pmin_wl_spinbtn;
+    delete pmax_wl_spinbtn;
+    delete pwl_step_spinbtn;
+
+    delete p_s01_kid_spinbtn;
+    delete p_s01_active_checkbtn;
+    delete p_s01_logtau_spinbtn;
+    delete p_s01_v_min_spinbtn;
+    delete p_s01_v_max_spinbtn;
+    delete p_s01_aux_spinbtn;
+    delete p_s01_T_ex_spinbtn;
+
+    delete p_s02_kid_spinbtn;
+    delete p_s02_active_checkbtn;
+    delete p_s02_logtau_spinbtn;
+    delete p_s02_v_min_spinbtn;
+    delete p_s02_v_max_spinbtn;
+    delete p_s02_aux_spinbtn;
+    delete p_s02_T_ex_spinbtn;
+#endif
 
     return 0;
 }

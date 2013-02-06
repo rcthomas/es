@@ -103,6 +103,16 @@ acx_have_appspack=no
 ACX_APPSPACK([acx_have_appspack=yes;AC_DEFINE([HAVE_APPSPACK], [1], [Define if you have the Appspack library.])], [AC_MSG_WARN([Could not find the Appspack tools- synapps disabled])])
 AM_CONDITIONAL([HAVE_AM_APPSPACK], [test $acx_have_appspack = yes])
 
+# Check for gtkmm and Python C bindings (to build GUI and plot results, respectively)
+gui=no
+AC_ARG_ENABLE([gui], AS_HELP_STRING([--enable-gui], [Enable GTK+-2.0-based GUI]), [gui=yes])
+AS_IF([test "x$gui" = "xyes"], [
+       PKG_CHECK_MODULES(gtkmm, gtkmm-2.4 >= 2.24.0)
+       PKG_CHECK_MODULES(python, python-2.7 >= 2.7)
+       AC_DEFINE([USE_GUI], [1], [Use the GTK+-2.0-based GUI.])
+       AC_DEFINE([HAVE_PYTHON], [1], [Have Python 2.7 C bindings.])
+])
+
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])

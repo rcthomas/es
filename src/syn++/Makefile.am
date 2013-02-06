@@ -1,5 +1,5 @@
-AM_CPPFLAGS = -I$(top_srcdir)/src/libes -I$(top_srcdir)/src/syn++ -I$(top_srcdir)/external/yaml $(CFITSIO_CPPFLAGS)
-AM_LDFLAGS = -L$(top_builddir)/src/libes -L$(top_builddir)/src/syn++ -L$(top_builddir)/external/yaml
+AM_CPPFLAGS = -I$(top_srcdir)/src/libes -I$(top_srcdir)/src/syn++ -I$(top_srcdir)/external/yaml $(CFITSIO_CPPFLAGS) $(gtkmm_CFLAGS) $(python_CFLAGS)
+AM_LDFLAGS = -L$(top_builddir)/src/libes -L$(top_builddir)/src/syn++ -L$(top_builddir)/external/yaml $(gtkmm_LIBS) $(python_LIBS)
 AM_LIBS = $(top_builddir)/external/yaml/libyaml-cpp.la $(CFITSIO) -lm
 AM_CXXFLAGS =
 
