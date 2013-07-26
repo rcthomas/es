@@ -1,4 +1,4 @@
-// 
+//
 // File    : synapps.cc
 // --------------------
 //
@@ -22,7 +22,7 @@
 // is granted for itself and others acting on its behalf a paid-up,
 // nonexclusive, irrevocable, worldwide license in the Software to
 // reproduce, prepare derivative works, distribute copies to the public,
-// perform publicly and display publicly, and to permit others to do so. 
+// perform publicly and display publicly, and to permit others to do so.
 //
 
 #include "ES_Synapps.hh"
@@ -61,19 +61,12 @@ int main( int argc, char* argv[] )
 
     // Configuration in this application comes from a YAML file.
 
-    YAML::Node yaml;
+    YAML::Node yaml = YAML::LoadFile( argv [ 1 ] );
 
-    {
-        std::ifstream  stream( argv[ 1 ] );
-        YAML::Parser   parser( stream );
-        parser.GetNextDocument( yaml );
-        stream.close();
-    }
-
-    // Target and output spectra.  The output spectrum is sampled 
+    // Target and output spectra.  The output spectrum is sampled
     // at the same wavelengths as the target spectrum.
 
-    std::string target_file = yaml[ "evaluator" ][ "target_file" ];
+    std::string target_file = yaml[ "evaluator" ][ "target_file" ].as<std::string>();
     ES::Spectrum target    = ES::Spectrum::create_from_ascii_file( target_file.c_str() );
     ES::Spectrum output    = ES::Spectrum::create_from_spectrum( target );
     ES::Spectrum reference = ES::Spectrum::create_from_spectrum( target );
@@ -82,32 +75,32 @@ int main( int argc, char* argv[] )
 
     // Grid object.
 
-    ES::Synow::Grid grid = ES::Synow::Grid::create( 
+    ES::Synow::Grid grid = ES::Synow::Grid::create(
             target.min_wl(),
             target.max_wl(),
-            yaml[ "grid"   ][ "bin_width"   ], 
-            yaml[ "grid"   ][ "v_size"      ],
-            yaml[ "grid"   ][ "v_outer_max" ] );
+            yaml[ "grid"   ][ "bin_width"   ].as<double>(),
+            yaml[ "grid"   ][ "v_size"      ].as<int>(),
+            yaml[ "grid"   ][ "v_outer_max" ].as<double>() );
 
     // Opacity operator.
 
     ES::Synow::Opacity opacity( grid,
-            yaml[ "opacity" ][ "line_dir"    ],
-            yaml[ "opacity" ][ "ref_file"    ],
-            yaml[ "opacity" ][ "form"        ],
-            yaml[ "opacity" ][ "v_ref"       ],
-            yaml[ "opacity" ][ "log_tau_min" ] );
+            yaml[ "opacity" ][ "line_dir"    ].as<std::string>(),
+            yaml[ "opacity" ][ "ref_file"    ].as<std::string>(),
+            yaml[ "opacity" ][ "form"        ].as<std::string>(),
+            yaml[ "opacity" ][ "v_ref"       ].as<double>(),
+            yaml[ "opacity" ][ "log_tau_min" ].as<double>() );
 
     // Source operator.
 
     ES::Synow::Source source( grid,
-            yaml[ "source" ][ "mu_size" ] );
+            yaml[ "source" ][ "mu_size" ].as<int>() );
 
     // Spectrum operator.
 
     ES::Synow::Spectrum spectrum( grid, output, reference,
-            yaml[ "spectrum" ][ "p_size"  ],
-            yaml[ "spectrum" ][ "flatten" ] );
+            yaml[ "spectrum" ][ "p_size"  ].as<int>(),
+            yaml[ "spectrum" ][ "flatten" ].as<bool>() );
 
     // Evaluator.
 
@@ -115,7 +108,7 @@ int main( int argc, char* argv[] )
     for( size_t i = 0; i < yaml[ "config" ][ "active" ].size(); ++ i )
     {
         if( ! yaml[ "config" ][ "active" ][ i ] ) continue;
-        ions.push_back( yaml[ "config" ][ "ions" ][ i ] );
+        ions.push_back( yaml[ "config" ][ "ions" ][ i ].as<int>() );
     }
 
     std::vector< double > region_weight;
@@ -124,13 +117,13 @@ int main( int argc, char* argv[] )
     for( size_t i = 0; i < yaml[ "evaluator" ][ "regions" ][ "apply" ].size(); ++ i )
     {
         if( ! yaml[ "evaluator" ][ "regions" ][ "apply" ][ i ] ) continue;
-        region_weight.push_back( yaml[ "evaluator" ][ "regions" ][ "weight" ][ i ] );
-        region_lower.push_back ( yaml[ "evaluator" ][ "regions" ][ "lower"  ][ i ] );
-        region_upper.push_back ( yaml[ "evaluator" ][ "regions" ][ "upper"  ][ i ] );
+        region_weight.push_back( yaml[ "evaluator" ][ "regions" ][ "weight" ][ i ].as<double>() );
+        region_lower.push_back ( yaml[ "evaluator" ][ "regions" ][ "lower"  ][ i ].as<double>() );
+        region_upper.push_back ( yaml[ "evaluator" ][ "regions" ][ "upper"  ][ i ].as<double>() );
     }
 
     ES::Synapps::Evaluator evaluator( grid, target, output, ions, region_weight, region_lower, region_upper,
-            yaml[ "evaluator" ][ "vector_norm" ] );
+            yaml[ "evaluator" ][ "vector_norm" ].as<double>() );
 
     // Master section.
 
@@ -146,7 +139,7 @@ int main( int argc, char* argv[] )
         APPSPACK::Solver              solver( config.params.sublist( "Solver" ), executor, linear );
 //      APPSPACK::Solver::State       state = solver.solve();
         APPSPACK::Solver::State       state;
-      
+
         // Signal handler, wrapping solver.
 
         signal( SIGTERM, signal_handler );
