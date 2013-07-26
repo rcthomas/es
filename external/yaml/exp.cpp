@@ -1,6 +1,5 @@
-#include "crt.h"
 #include "exp.h"
-#include "exceptions.h"
+#include "yaml-cpp/exceptions.h"
 #include <sstream>
 
 namespace YAML
@@ -108,7 +107,7 @@ namespace YAML
 			}
 
 			std::stringstream msg;
-			throw ParserException(in.mark(), ErrorMsg::INVALID_ESCAPE + ch);
+			throw ParserException(in.mark(), std::string(ErrorMsg::INVALID_ESCAPE) + ch);
 		}
 	}
 }

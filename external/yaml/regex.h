@@ -1,7 +1,9 @@
-#pragma once
-
 #ifndef REGEX_H_62B23520_7C8E_11DE_8A39_0800200C9A66
 #define REGEX_H_62B23520_7C8E_11DE_8A39_0800200C9A66
+
+#if defined(_MSC_VER) || (defined(__GNUC__) && (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)) // GCC supports "pragma once" correctly since 3.4
+#pragma once
+#endif
 
 
 #include <vector>
@@ -37,12 +39,12 @@ namespace YAML
 
 		int Match(const std::string& str) const;
 		int Match(const Stream& in) const;
+		template <typename Source> int Match(const Source& source) const;
 
 	private:
 		RegEx(REGEX_OP op);
 		
 		template <typename Source> bool IsValidSource(const Source& source) const;
-		template <typename Source> int Match(const Source& source) const;
 		template <typename Source> int MatchUnchecked(const Source& source) const;
 
 		template <typename Source> int MatchOpEmpty(const Source& source) const;

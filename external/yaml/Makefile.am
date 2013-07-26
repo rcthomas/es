@@ -1,74 +1,80 @@
-AM_CPPFLAGS = -I$(top_srcdir)/external/yaml -I$(top_srcdir)/external/yaml/yaml-cpp
+AM_CPPFLAGS = -I$(top_srcdir)/external/yaml -I$(top_srcdir)/external/yaml/yaml-cpp -I$(top_srcdir)/external/yaml-cpp/boost
 AM_LDFLAGS = -L$(top_builddir)/external/yaml
 AM_LIBS = -lm
 EXTRA_CPPFLAGS =
 AM_CFLAGS =
 
 nobase_noinst_HEADERS = \
-yaml-cpp/conversion.h \
-yaml-cpp/crt.h \
+yaml-cpp/anchor.h \
+yaml-cpp/binary.h \
+yaml-cpp/dll.h \
+yaml-cpp/emitfromevents.h \
 yaml-cpp/emitter.h \
+yaml-cpp/emitterdef.h \
 yaml-cpp/emittermanip.h \
+yaml-cpp/eventhandler.h \
 yaml-cpp/exceptions.h \
-yaml-cpp/iterator.h \
 yaml-cpp/mark.h \
-yaml-cpp/node.h \
-yaml-cpp/nodeimpl.h \
-yaml-cpp/nodereadimpl.h \
-yaml-cpp/nodeutil.h \
 yaml-cpp/noncopyable.h \
 yaml-cpp/null.h \
-yaml-cpp/ostream.h \
+yaml-cpp/ostream_wrapper.h \
 yaml-cpp/parser.h \
-yaml-cpp/parserstate.h \
 yaml-cpp/stlemitter.h \
+yaml-cpp/traits.h \
 yaml-cpp/yaml.h
 
 noinst_HEADERS = \
-aliascontent.h \
-content.h \
+collectionstack.h \
+directives.h \
 emitterstate.h \
 emitterutils.h \
 exp.h \
 indentation.h \
-iterpriv.h \
-ltnode.h \
-map.h \
+nodebuilder.h \
+nodeevents.h \
+ptr_stack.h \
+ptr_vector.h \
 regex.h \
 regeximpl.h \
-scalar.h \
 scanner.h \
 scanscalar.h \
-sequence.h \
+scantag.h \
 setting.h \
-streamcharsource.h \
+singledocparser.h \
 stream.h \
+streamcharsource.h \
 stringsource.h \
+tag.h \
 token.h
 
 noinst_LTLIBRARIES = libyaml-cpp.la
 libyaml_cpp_la_SOURCES = \
-aliascontent.cpp \
-content.cpp \
-conversion.cpp \
+binary.cpp \
+convert.cpp \
+directives.cpp \
+emit.cpp \
+emitfromevents.cpp \
 emitter.cpp \
 emitterstate.cpp \
 emitterutils.cpp \
 exp.cpp \
-iterator.cpp \
-map.cpp \
+memory.cpp \
 node.cpp \
+node_data.cpp \
+nodebuilder.cpp \
+nodeevents.cpp \
 null.cpp \
-ostream.cpp \
+ostream_wrapper.cpp \
+parse.cpp \
 parser.cpp \
-parserstate.cpp \
 regex.cpp \
-scalar.cpp \
 scanner.cpp \
 scanscalar.cpp \
+scantag.cpp \
 scantoken.cpp \
-sequence.cpp \
 simplekey.cpp \
-stream.cpp
+singledocparser.cpp \
+stream.cpp \
+tag.cpp
 libyaml_cpp_la_LIBADD = $(AM_LIBS)
 
