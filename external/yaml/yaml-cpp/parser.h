@@ -1,24 +1,24 @@
-#pragma once
-
 #ifndef PARSER_H_62B23520_7C8E_11DE_8A39_0800200C9A66
 #define PARSER_H_62B23520_7C8E_11DE_8A39_0800200C9A66
 
+#if defined(_MSC_VER) || (defined(__GNUC__) && (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)) // GCC supports "pragma once" correctly since 3.4
+#pragma once
+#endif
 
-#include "node.h"
-#include "parserstate.h"
-#include "noncopyable.h"
+
+#include "yaml-cpp/dll.h"
+#include "yaml-cpp/noncopyable.h"
 #include <ios>
-#include <string>
-#include <vector>
-#include <map>
 #include <memory>
 
 namespace YAML
 {
-	class Scanner;
+	struct Directives;
 	struct Token;
+	class EventHandler;
+	class Scanner;
 
-	class Parser: private noncopyable
+	class YAML_CPP_API Parser: private noncopyable
 	{
 	public:
 		Parser();
@@ -28,18 +28,19 @@ namespace YAML
 		operator bool() const;
 
 		void Load(std::istream& in);
-		bool GetNextDocument(Node& document);
+		bool HandleNextDocument(EventHandler& eventHandler);
+
 		void PrintTokens(std::ostream& out);
 
 	private:
 		void ParseDirectives();
-		void HandleDirective(Token *pToken);
-		void HandleYamlDirective(Token *pToken);
-		void HandleTagDirective(Token *pToken);
-
+		void HandleDirective(const Token& token);
+		void HandleYamlDirective(const Token& token);
+		void HandleTagDirective(const Token& token);
+		
 	private:
 		std::auto_ptr<Scanner> m_pScanner;
-		ParserState m_state;
+		std::auto_ptr<Directives> m_pDirectives;
 	};
 }
 
