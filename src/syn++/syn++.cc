@@ -1,4 +1,4 @@
-// 
+//
 // File    : syn++.cc
 // ------------------
 //
@@ -22,7 +22,7 @@
 // is granted for itself and others acting on its behalf a paid-up,
 // nonexclusive, irrevocable, worldwide license in the Software to
 // reproduce, prepare derivative works, distribute copies to the public,
-// perform publicly and display publicly, and to permit others to do so. 
+// perform publicly and display publicly, and to permit others to do so.
 //
 
 #include "ES_Synow.hh"
@@ -36,19 +36,19 @@
 
 void operator >> ( const YAML::Node& node, ES::Synow::Setup& setup )
 {
-    node[ "a0"      ] >> setup.a0;
-    node[ "a1"      ] >> setup.a1;
-    node[ "a2"      ] >> setup.a2;
-    node[ "v_phot"  ] >> setup.v_phot;
-    node[ "v_outer" ] >> setup.v_outer;
-    node[ "t_phot"  ] >> setup.t_phot;
-    for( size_t i = 0; i < node[ "ions"    ].size(); ++ i ) setup.ions.push_back( node[ "ions" ][ i ] );
-    for( size_t i = 0; i < node[ "active"  ].size(); ++ i ) setup.active.push_back( node[ "active" ][ i ] );
-    for( size_t i = 0; i < node[ "log_tau" ].size(); ++ i ) setup.log_tau.push_back( node[ "log_tau" ][ i ] );
-    for( size_t i = 0; i < node[ "v_min"   ].size(); ++ i ) setup.v_min.push_back( node[ "v_min" ][ i ] );
-    for( size_t i = 0; i < node[ "v_max"   ].size(); ++ i ) setup.v_max.push_back( node[ "v_max" ][ i ] );
-    for( size_t i = 0; i < node[ "aux"     ].size(); ++ i ) setup.aux.push_back( node[ "aux" ][ i ] );
-    for( size_t i = 0; i < node[ "temp"    ].size(); ++ i ) setup.temp.push_back( node[ "temp" ][ i ] );
+    setup.a0      = node[ "a0"      ].as<double>();
+    setup.a1      = node[ "a1"      ].as<double>();
+    setup.a2      = node[ "a2"      ].as<double>();
+    setup.v_phot  = node[ "v_phot"  ].as<double>();
+    setup.v_outer = node[ "v_outer" ].as<double>();
+    setup.t_phot  = node[ "t_phot"  ].as<double>();
+    for( size_t i = 0; i < node[ "ions"    ].size(); ++ i ) setup.ions.push_back(    node[ "ions"    ][ i ].as<int>()    );
+    for( size_t i = 0; i < node[ "active"  ].size(); ++ i ) setup.active.push_back(  node[ "active"  ][ i ].as<bool>()   );
+    for( size_t i = 0; i < node[ "log_tau" ].size(); ++ i ) setup.log_tau.push_back( node[ "log_tau" ][ i ].as<double>() );
+    for( size_t i = 0; i < node[ "v_min"   ].size(); ++ i ) setup.v_min.push_back(   node[ "v_min"   ][ i ].as<double>() );
+    for( size_t i = 0; i < node[ "v_max"   ].size(); ++ i ) setup.v_max.push_back(   node[ "v_max"   ][ i ].as<double>() );
+    for( size_t i = 0; i < node[ "aux"     ].size(); ++ i ) setup.aux.push_back(     node[ "aux"     ][ i ].as<double>() );
+    for( size_t i = 0; i < node[ "temp"    ].size(); ++ i ) setup.temp.push_back(    node[ "temp"    ][ i ].as<double>() );
 }
 
 void usage( std::ostream& stream )
@@ -76,7 +76,7 @@ int main( int argc, char* argv[] )
 
         int option_index = 0;
         std::stringstream ss;
-                 
+
         int c = getopt_long( argc, argv, "h", long_options, &option_index );
         if( c == -1 ) break;
 
@@ -111,23 +111,16 @@ int main( int argc, char* argv[] )
 
     // Configuration in this application comes from a YAML file.
 
-    YAML::Node yaml;
-
-    {
-        std::ifstream  stream( argv[ optind ++ ] );
-        YAML::Parser   parser( stream );
-        parser.GetNextDocument( yaml );
-        stream.close();
-    }
+    YAML::Node yaml = YAML::LoadFile( argv[ optind ++ ] );
 
     // Output spectrum.  Here we create from range and step size, but
-    // other methods are supported.  See the named constructors in 
+    // other methods are supported.  See the named constructors in
     // ES::Spectrum.
 
     ES::Spectrum output = ES::Spectrum::create_from_range_and_step(
-            yaml[ "output" ][ "min_wl"  ],
-            yaml[ "output" ][ "max_wl"  ],
-            yaml[ "output" ][ "wl_step" ] );
+            yaml[ "output" ][ "min_wl"  ].as<double>(),
+            yaml[ "output" ][ "max_wl"  ].as<double>(),
+            yaml[ "output" ][ "wl_step" ].as<double>() );
 
     if( ! target_file.empty() ) output = ES::Spectrum::create_from_ascii_file( target_file.c_str() );
 
@@ -135,39 +128,39 @@ int main( int argc, char* argv[] )
 
     // Grid object.
 
-    ES::Synow::Grid grid = ES::Synow::Grid::create( 
-            yaml[ "output" ][ "min_wl"      ],
-            yaml[ "output" ][ "max_wl"      ],
-            yaml[ "grid"   ][ "bin_width"   ], 
-            yaml[ "grid"   ][ "v_size"      ],
-            yaml[ "grid"   ][ "v_outer_max" ] );
+    ES::Synow::Grid grid = ES::Synow::Grid::create(
+            yaml[ "output" ][ "min_wl"      ].as<double>(),
+            yaml[ "output" ][ "max_wl"      ].as<double>(),
+            yaml[ "grid"   ][ "bin_width"   ].as<double>(),
+            yaml[ "grid"   ][ "v_size"      ].as<double>(),
+            yaml[ "grid"   ][ "v_outer_max" ].as<double>() );
 
     // Opacity operator.
 
     ES::Synow::Opacity opacity( grid,
-            yaml[ "opacity" ][ "line_dir"    ],
-            yaml[ "opacity" ][ "ref_file"    ],
-            yaml[ "opacity" ][ "form"        ],
-            yaml[ "opacity" ][ "v_ref"       ],
-            yaml[ "opacity" ][ "log_tau_min" ] );
+            yaml[ "opacity" ][ "line_dir"    ].as<std::string>(),
+            yaml[ "opacity" ][ "ref_file"    ].as<std::string>(),
+            yaml[ "opacity" ][ "form"        ].as<std::string>(),
+            yaml[ "opacity" ][ "v_ref"       ].as<double>(),
+            yaml[ "opacity" ][ "log_tau_min" ].as<double>() );
 
     // Source operator.
 
     ES::Synow::Source source( grid,
-            yaml[ "source" ][ "mu_size" ] );
+            yaml[ "source" ][ "mu_size" ].as<int>() );
 
     // Spectrum operator.
 
     ES::Synow::Spectrum spectrum( grid, output, reference,
-            yaml[ "spectrum" ][ "p_size"  ],
-            yaml[ "spectrum" ][ "flatten" ] );
+            yaml[ "spectrum" ][ "p_size"  ].as<int>(),
+            yaml[ "spectrum" ][ "flatten" ].as<bool>() );
 
     // Attach setups one by one.
 
     int count = 0;
 
     const YAML::Node& setups = yaml[ "setups" ];
-    for( YAML::Iterator iter = setups.begin(); iter != setups.end(); ++ iter )
+    for( YAML::const_iterator iter = setups.begin(); iter != setups.end(); ++ iter )
     {
         ++ count;
         if( verbose ) std::cerr << "computing spectrum " << count << " of " << setups.size() << std::endl;
