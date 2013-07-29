@@ -1,4 +1,4 @@
-// 
+//
 // File    : ES_Synapps_Config.cc
 // ------------------------------
 //
@@ -22,7 +22,7 @@
 // is granted for itself and others acting on its behalf a paid-up,
 // nonexclusive, irrevocable, worldwide license in the Software to
 // reproduce, prepare derivative works, distribute copies to the public,
-// perform publicly and display publicly, and to permit others to do so. 
+// perform publicly and display publicly, and to permit others to do so.
 //
 
 #include "ES_Synapps_Config.hh"
@@ -38,8 +38,8 @@
 ES::Synapps::Config::Config( const YAML::Node& config )
 {
 
-    config[ "fit_file" ] >> fit_file;
-    std::string cache_file = config[ "cache_file" ];
+    fit_file = config[ "fit_file" ].as<std::string>();
+    std::string cache_file = config[ "cache_file" ].as<std::string>();
 
 //  params.sublist( "Solver" ).setParameter( "Debug"                , 4 );
     params.sublist( "Solver" ).setParameter( "Cache Input File"     , cache_file );
@@ -64,22 +64,22 @@ ES::Synapps::Config::Config( const YAML::Node& config )
 
     // Initial value.
 
-    buffer[ 0 ] = config[ "a0"      ][ "start" ];
-    buffer[ 1 ] = config[ "a1"      ][ "start" ];
-    buffer[ 2 ] = config[ "a2"      ][ "start" ];
-    buffer[ 3 ] = config[ "v_phot"  ][ "start" ];
-    buffer[ 4 ] = config[ "v_outer" ][ "start" ];
-    buffer[ 5 ] = config[ "t_phot"  ][ "start" ];
+    buffer[ 0 ] = config[ "a0"      ][ "start" ].as<double>();
+    buffer[ 1 ] = config[ "a1"      ][ "start" ].as<double>();
+    buffer[ 2 ] = config[ "a2"      ][ "start" ].as<double>();
+    buffer[ 3 ] = config[ "v_phot"  ][ "start" ].as<double>();
+    buffer[ 4 ] = config[ "v_outer" ][ "start" ].as<double>();
+    buffer[ 5 ] = config[ "t_phot"  ][ "start" ].as<double>();
 
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
-        buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "start" ][ i ];
-        buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "start" ][ i ];
-        buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "start" ][ i ];
-        buffer[ j + 3 * num_ions ] = config[ "aux"     ][ "start" ][ i ];
-        buffer[ j + 4 * num_ions ] = config[ "temp"    ][ "start" ][ i ];
+        buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "start" ][ i ].as<double>();
+        buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "start" ][ i ].as<double>();
+        buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "start" ][ i ].as<double>();
+        buffer[ j + 3 * num_ions ] = config[ "aux"     ][ "start" ][ i ].as<double>();
+        buffer[ j + 4 * num_ions ] = config[ "temp"    ][ "start" ][ i ].as<double>();
         ++ j;
     }
 
@@ -87,22 +87,22 @@ ES::Synapps::Config::Config( const YAML::Node& config )
 
     // Lower boundary.
 
-    buffer[ 0 ] = config[ "a0"      ][ "lower" ];
-    buffer[ 1 ] = config[ "a1"      ][ "lower" ];
-    buffer[ 2 ] = config[ "a2"      ][ "lower" ];
-    buffer[ 3 ] = config[ "v_phot"  ][ "lower" ];
-    buffer[ 4 ] = config[ "v_outer" ][ "lower" ];
-    buffer[ 5 ] = config[ "t_phot"  ][ "lower" ];
+    buffer[ 0 ] = config[ "a0"      ][ "lower" ].as<double>();
+    buffer[ 1 ] = config[ "a1"      ][ "lower" ].as<double>();
+    buffer[ 2 ] = config[ "a2"      ][ "lower" ].as<double>();
+    buffer[ 3 ] = config[ "v_phot"  ][ "lower" ].as<double>();
+    buffer[ 4 ] = config[ "v_outer" ][ "lower" ].as<double>();
+    buffer[ 5 ] = config[ "t_phot"  ][ "lower" ].as<double>();
 
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
-        buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "lower" ][ i ];
-        buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "lower" ][ i ];
-        buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "lower" ][ i ];
-        buffer[ j + 3 * num_ions ] = config[ "aux"     ][ "lower" ][ i ];
-        buffer[ j + 4 * num_ions ] = config[ "temp"    ][ "lower" ][ i ];
+        buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "lower" ][ i ].as<double>();
+        buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "lower" ][ i ].as<double>();
+        buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "lower" ][ i ].as<double>();
+        buffer[ j + 3 * num_ions ] = config[ "aux"     ][ "lower" ][ i ].as<double>();
+        buffer[ j + 4 * num_ions ] = config[ "temp"    ][ "lower" ][ i ].as<double>();
         ++ j;
     }
 
@@ -110,22 +110,22 @@ ES::Synapps::Config::Config( const YAML::Node& config )
 
     // Upper boundary.
 
-    buffer[ 0 ] = config[ "a0"      ][ "upper" ];
-    buffer[ 1 ] = config[ "a1"      ][ "upper" ];
-    buffer[ 2 ] = config[ "a2"      ][ "upper" ];
-    buffer[ 3 ] = config[ "v_phot"  ][ "upper" ];
-    buffer[ 4 ] = config[ "v_outer" ][ "upper" ];
-    buffer[ 5 ] = config[ "t_phot"  ][ "upper" ];
+    buffer[ 0 ] = config[ "a0"      ][ "upper" ].as<double>();
+    buffer[ 1 ] = config[ "a1"      ][ "upper" ].as<double>();
+    buffer[ 2 ] = config[ "a2"      ][ "upper" ].as<double>();
+    buffer[ 3 ] = config[ "v_phot"  ][ "upper" ].as<double>();
+    buffer[ 4 ] = config[ "v_outer" ][ "upper" ].as<double>();
+    buffer[ 5 ] = config[ "t_phot"  ][ "upper" ].as<double>();
 
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
-        buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "upper" ][ i ];
-        buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "upper" ][ i ];
-        buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "upper" ][ i ];
-        buffer[ j + 3 * num_ions ] = config[ "aux"     ][ "upper" ][ i ];
-        buffer[ j + 4 * num_ions ] = config[ "temp"    ][ "upper" ][ i ];
+        buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "upper" ][ i ].as<double>();
+        buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "upper" ][ i ].as<double>();
+        buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "upper" ][ i ].as<double>();
+        buffer[ j + 3 * num_ions ] = config[ "aux"     ][ "upper" ][ i ].as<double>();
+        buffer[ j + 4 * num_ions ] = config[ "temp"    ][ "upper" ][ i ].as<double>();
         ++ j;
     }
 
@@ -133,22 +133,22 @@ ES::Synapps::Config::Config( const YAML::Node& config )
 
     // Parameter scalings.
 
-    buffer[ 0 ] = config[ "a0"      ][ "scale" ];
-    buffer[ 1 ] = config[ "a1"      ][ "scale" ];
-    buffer[ 2 ] = config[ "a2"      ][ "scale" ];
-    buffer[ 3 ] = config[ "v_phot"  ][ "scale" ];
-    buffer[ 4 ] = config[ "v_outer" ][ "scale" ];
-    buffer[ 5 ] = config[ "t_phot"  ][ "scale" ];
+    buffer[ 0 ] = config[ "a0"      ][ "scale" ].as<double>();
+    buffer[ 1 ] = config[ "a1"      ][ "scale" ].as<double>();
+    buffer[ 2 ] = config[ "a2"      ][ "scale" ].as<double>();
+    buffer[ 3 ] = config[ "v_phot"  ][ "scale" ].as<double>();
+    buffer[ 4 ] = config[ "v_outer" ][ "scale" ].as<double>();
+    buffer[ 5 ] = config[ "t_phot"  ][ "scale" ].as<double>();
 
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
-        buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "scale" ][ i ];
-        buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "scale" ][ i ];
-        buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "scale" ][ i ];
-        buffer[ j + 3 * num_ions ] = config[ "aux"     ][ "scale" ][ i ];
-        buffer[ j + 4 * num_ions ] = config[ "temp"    ][ "scale" ][ i ];
+        buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "scale" ][ i ].as<double>();
+        buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "scale" ][ i ].as<double>();
+        buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "scale" ][ i ].as<double>();
+        buffer[ j + 3 * num_ions ] = config[ "aux"     ][ "scale" ][ i ].as<double>();
+        buffer[ j + 4 * num_ions ] = config[ "temp"    ][ "scale" ][ i ].as<double>();
         ++ j;
     }
 
@@ -231,14 +231,14 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
         if( ! config[ "active" ][ i ] ) continue;
-        if( done.find( config[ "ions" ][ i ] ) == done.end() )
+        if( done.find( config[ "ions" ][ i ].as<int>() ) == done.end() )
         {
-            int ion = config[ "ions" ][ i ];
+            int ion = config[ "ions" ][ i ].as<int>();
             int jj = 6;
             for( size_t ii = 0; ii < config[ "active" ].size(); ++ ii )
             {
                 if( ! config[ "active" ][ ii ] ) continue;
-                if( ii > i && config[ "ions" ][ ii ] == ion )
+                if( ii > i && config[ "ions" ][ ii ].as<int>() == ion )
                 {
                     buffer.zero();
                     buffer[ j  + 4 * num_ions ] = - 1.0;
@@ -249,7 +249,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
                 ++ jj;
             }
         }
-        done.insert( config[ "ions" ][ i ] );
+        done.insert( config[ "ions" ][ i ].as<int>() );
         ++ j;
     }
 
@@ -260,7 +260,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         buffer.zero();
         buffer[ 0 ] = 1.0;
         eq_matrix.addRow( buffer );
-        eq_bound.push_back( config[ "a0" ][ "start" ] );
+        eq_bound.push_back( config[ "a0" ][ "start" ].as<double>() );
     }
 
     if( config[ "a1" ][ "fixed" ] )
@@ -268,7 +268,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         buffer.zero();
         buffer[ 1 ] = 1.0;
         eq_matrix.addRow( buffer );
-        eq_bound.push_back( config[ "a1" ][ "start" ] );
+        eq_bound.push_back( config[ "a1" ][ "start" ].as<double>() );
     }
 
     if( config[ "a2" ][ "fixed" ] )
@@ -276,7 +276,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         buffer.zero();
         buffer[ 2 ] = 1.0;
         eq_matrix.addRow( buffer );
-        eq_bound.push_back( config[ "a2" ][ "start" ] );
+        eq_bound.push_back( config[ "a2" ][ "start" ].as<double>() );
     }
 
     if( config[ "v_phot" ][ "fixed" ] )
@@ -284,7 +284,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         buffer.zero();
         buffer[ 3 ] = 1.0;
         eq_matrix.addRow( buffer );
-        eq_bound.push_back( config[ "v_phot" ][ "start" ] );
+        eq_bound.push_back( config[ "v_phot" ][ "start" ].as<double>() );
     }
 
     if( config[ "v_outer" ][ "fixed" ] )
@@ -292,7 +292,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         buffer.zero();
         buffer[ 4 ] = 1.0;
         eq_matrix.addRow( buffer );
-        eq_bound.push_back( config[ "v_outer" ][ "start" ] );
+        eq_bound.push_back( config[ "v_outer" ][ "start" ].as<double>() );
     }
 
     if( config[ "t_phot" ][ "fixed" ] )
@@ -300,7 +300,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         buffer.zero();
         buffer[ 5 ] = 1.0;
         eq_matrix.addRow( buffer );
-        eq_bound.push_back( config[ "t_phot" ][ "start" ] );
+        eq_bound.push_back( config[ "t_phot" ][ "start" ].as<double>() );
     }
 
     j = 6;
@@ -312,7 +312,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
             buffer.zero();
             buffer[ j + 0 * num_ions ] = 1.0;
             eq_matrix.addRow( buffer );
-            eq_bound.push_back( config[ "log_tau" ][ "start" ][ i ] );
+            eq_bound.push_back( config[ "log_tau" ][ "start" ][ i ].as<double>() );
         }
         ++ j;
     }
@@ -326,7 +326,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
             buffer.zero();
             buffer[ j + 1 * num_ions ] = 1.0;
             eq_matrix.addRow( buffer );
-            eq_bound.push_back( config[ "v_min" ][ "start" ][ i ] );
+            eq_bound.push_back( config[ "v_min" ][ "start" ][ i ].as<double>() );
         }
         ++ j;
     }
@@ -340,7 +340,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
             buffer.zero();
             buffer[ j + 2 * num_ions ] = 1.0;
             eq_matrix.addRow( buffer );
-            eq_bound.push_back( config[ "v_max" ][ "start" ][ i ] );
+            eq_bound.push_back( config[ "v_max" ][ "start" ][ i ].as<double>() );
         }
         ++ j;
     }
@@ -354,7 +354,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
             buffer.zero();
             buffer[ j + 3 * num_ions ] = 1.0;
             eq_matrix.addRow( buffer );
-            eq_bound.push_back( config[ "aux"   ][ "start" ][ i ] );
+            eq_bound.push_back( config[ "aux"   ][ "start" ][ i ].as<double>() );
         }
         ++ j;
     }
@@ -368,7 +368,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
             buffer.zero();
             buffer[ j + 4 * num_ions ] = 1.0;
             eq_matrix.addRow( buffer );
-            eq_bound.push_back( config[ "temp"  ][ "start" ][ i ] );
+            eq_bound.push_back( config[ "temp"  ][ "start" ][ i ].as<double>() );
         }
         ++ j;
     }
