@@ -116,7 +116,7 @@ int main( int argc, char* argv[] )
     std::vector< double > region_upper;
     for( size_t i = 0; i < yaml[ "evaluator" ][ "regions" ][ "apply" ].size(); ++ i )
     {
-        if( ! yaml[ "evaluator" ][ "regions" ][ "apply" ][ i ] ) continue;
+        if( ! yaml[ "evaluator" ][ "regions" ][ "apply" ][ i ].as<bool>() ) continue;
         region_weight.push_back( yaml[ "evaluator" ][ "regions" ][ "weight" ][ i ].as<double>() );
         region_lower.push_back ( yaml[ "evaluator" ][ "regions" ][ "lower"  ][ i ].as<double>() );
         region_upper.push_back ( yaml[ "evaluator" ][ "regions" ][ "upper"  ][ i ].as<double>() );
