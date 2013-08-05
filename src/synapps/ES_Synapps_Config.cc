@@ -51,7 +51,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     int num_ions = 0;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        num_ions += config[ "active" ][ i ] ? 1 : 0;
+        num_ions += config[ "active" ][ i ].as<bool>() ? 1 : 0;
     }
 
     APPSPACK::Vector buffer( 6 + 5 * num_ions );
@@ -74,7 +74,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "start" ][ i ].as<double>();
         buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "start" ][ i ].as<double>();
         buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "start" ][ i ].as<double>();
@@ -97,7 +97,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "lower" ][ i ].as<double>();
         buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "lower" ][ i ].as<double>();
         buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "lower" ][ i ].as<double>();
@@ -120,7 +120,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "upper" ][ i ].as<double>();
         buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "upper" ][ i ].as<double>();
         buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "upper" ][ i ].as<double>();
@@ -143,7 +143,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         buffer[ j + 0 * num_ions ] = config[ "log_tau" ][ "scale" ][ i ].as<double>();
         buffer[ j + 1 * num_ions ] = config[ "v_min"   ][ "scale" ][ i ].as<double>();
         buffer[ j + 2 * num_ions ] = config[ "v_max"   ][ "scale" ][ i ].as<double>();
@@ -166,7 +166,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         buffer.zero();
         buffer[ 3 ] = - 1.0;
         buffer[ j + 1 * num_ions ] = 1.0;
@@ -179,7 +179,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         buffer.zero();
         buffer[ j + 1 * num_ions ] = - 1.0;
         buffer[ j + 2 * num_ions ] =   1.0;
@@ -192,7 +192,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         buffer.zero();
         buffer[ j + 2 * num_ions ] = - 1.0;
         buffer[ 4 ] = 1.0;
@@ -211,7 +211,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         if( ! config[ "detach" ][ i ] )
         {
             buffer.zero();
@@ -230,14 +230,14 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
         if( done.find( config[ "ions" ][ i ].as<int>() ) == done.end() )
         {
             int ion = config[ "ions" ][ i ].as<int>();
             int jj = 6;
             for( size_t ii = 0; ii < config[ "active" ].size(); ++ ii )
             {
-                if( ! config[ "active" ][ ii ] ) continue;
+                if( ! config[ "active" ][ ii ].as<bool>() ) continue;
                 if( ii > i && config[ "ions" ][ ii ].as<int>() == ion )
                 {
                     buffer.zero();
@@ -255,7 +255,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
 
     // Equality constraints: Any fixed individual parameters.
 
-    if( config[ "a0" ][ "fixed" ] )
+    if( config[ "a0" ][ "fixed" ].as<bool>() )
     {
         buffer.zero();
         buffer[ 0 ] = 1.0;
@@ -263,7 +263,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         eq_bound.push_back( config[ "a0" ][ "start" ].as<double>() );
     }
 
-    if( config[ "a1" ][ "fixed" ] )
+    if( config[ "a1" ][ "fixed" ].as<bool>() )
     {
         buffer.zero();
         buffer[ 1 ] = 1.0;
@@ -271,7 +271,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         eq_bound.push_back( config[ "a1" ][ "start" ].as<double>() );
     }
 
-    if( config[ "a2" ][ "fixed" ] )
+    if( config[ "a2" ][ "fixed" ].as<bool>() )
     {
         buffer.zero();
         buffer[ 2 ] = 1.0;
@@ -279,7 +279,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         eq_bound.push_back( config[ "a2" ][ "start" ].as<double>() );
     }
 
-    if( config[ "v_phot" ][ "fixed" ] )
+    if( config[ "v_phot" ][ "fixed" ].as<bool>() )
     {
         buffer.zero();
         buffer[ 3 ] = 1.0;
@@ -287,7 +287,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         eq_bound.push_back( config[ "v_phot" ][ "start" ].as<double>() );
     }
 
-    if( config[ "v_outer" ][ "fixed" ] )
+    if( config[ "v_outer" ][ "fixed" ].as<bool>() )
     {
         buffer.zero();
         buffer[ 4 ] = 1.0;
@@ -295,7 +295,7 @@ ES::Synapps::Config::Config( const YAML::Node& config )
         eq_bound.push_back( config[ "v_outer" ][ "start" ].as<double>() );
     }
 
-    if( config[ "t_phot" ][ "fixed" ] )
+    if( config[ "t_phot" ][ "fixed" ].as<bool>() )
     {
         buffer.zero();
         buffer[ 5 ] = 1.0;
@@ -306,8 +306,8 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
-        if( config[ "log_tau" ][ "fixed" ][ i ] )
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
+        if( config[ "log_tau" ][ "fixed" ][ i ].as<bool>() )
         {
             buffer.zero();
             buffer[ j + 0 * num_ions ] = 1.0;
@@ -320,8 +320,8 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
-        if( config[ "v_min" ][ "fixed" ][ i ] )
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
+        if( config[ "v_min" ][ "fixed" ][ i ].as<bool>() )
         {
             buffer.zero();
             buffer[ j + 1 * num_ions ] = 1.0;
@@ -334,8 +334,8 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
-        if( config[ "v_max" ][ "fixed" ][ i ] )
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
+        if( config[ "v_max" ][ "fixed" ][ i ].as<bool>() )
         {
             buffer.zero();
             buffer[ j + 2 * num_ions ] = 1.0;
@@ -348,8 +348,8 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
-        if( config[ "aux" ][ "fixed" ][ i ] )
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
+        if( config[ "aux" ][ "fixed" ][ i ].as<bool>() )
         {
             buffer.zero();
             buffer[ j + 3 * num_ions ] = 1.0;
@@ -362,8 +362,8 @@ ES::Synapps::Config::Config( const YAML::Node& config )
     j = 6;
     for( size_t i = 0; i < config[ "active" ].size(); ++ i )
     {
-        if( ! config[ "active" ][ i ] ) continue;
-        if( config[ "temp" ][ "fixed" ][ i ] )
+        if( ! config[ "active" ][ i ].as<bool>() ) continue;
+        if( config[ "temp" ][ "fixed" ][ i ].as<bool>() )
         {
             buffer.zero();
             buffer[ j + 4 * num_ions ] = 1.0;
