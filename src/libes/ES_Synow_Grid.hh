@@ -66,10 +66,15 @@ namespace ES
 
                 static Grid create( double const min_output_wl, double const max_output_wl, double const bin_width, 
                         int const v_size, double const v_outer_max );
+                static Grid create( double const min_output_wl, double const max_output_wl, double const bin_width, 
+                        int const v_size, double const * velocities_ );
 
                 /// Constructor.
 
+				Grid(void);
+				Grid( const Grid & i_cRHO);
                 Grid( double const min_wl_, double const max_wl_, double const bin_width_, int const v_size_ );
+                Grid( double const min_wl_, double const max_wl_, double const bin_width_, int const v_size_ , double const * velocities_, bool bRecompute_wl_range = false);
 
                 /// Destructor.
 
@@ -88,6 +93,7 @@ namespace ES
                 double*        wl;            ///< Wavelengths of opacity/source bin centers in Angstroms.
                 double*        v;             ///< Velocity grid in kkm/s.
                 double*        tau;           ///< Sobolev opacity table.
+				bool           v_user;        ///< Velocity grid was specified by user
                 double*        src;           ///< Source function table.
                 ES::Blackbody* bb;            ///< Photosphere blackbody function.
 
@@ -95,6 +101,7 @@ namespace ES
 
                 /// Zero-out wavelength/velocity axes and opacity/source tables.
 
+				void _zeroptr(void);
                 void _zero();
 
         };
