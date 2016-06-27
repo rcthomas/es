@@ -96,12 +96,12 @@ void ES::LineManager::load( int const ion, std::vector< ES::Line >& lines )
     for( int i = 0; i < (int) nrows; ++ i )
     {
         i_wl     = int( buffer[ i ] & 0xFFFFFFFF );
-        wl       = 10.0 * exp( i_wl * rlog );
+        wl       = 10.0 * exp( i_wl * rlog ); // AA
         if( wl < _min_wl || wl > _max_wl ) continue;
         i_el     = short( ( buffer[ i ] >> 32 ) & 0x0000FFFF );
         i_gf     = short( ( buffer[ i ] >> 48 ) & 0xFFFF );
         gf       = exp( ltth * double( i_gf - 16384 ) );               
-        el       = exp( ltth * double( i_el - 16384 ) ) * const_hc_EV;
+        el       = exp( ltth * double( i_el - 16384 ) ) * const_hc_EV; // eV
         lines.push_back( ES::Line( ion, wl, gf, el ) );
     }
 
