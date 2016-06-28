@@ -77,6 +77,9 @@ namespace ES
                 std::vector< double > aux;       ///< Opacity profile length-scale parameter (kkm/s).
                 std::vector< double > temp;      ///< Boltzmann excitation temperature in kK.
 				std::vector< std::vector<double> > user_profile; //user specified opacity profile: optical depth vs. velocity.  Velocity must be monotonically increasing.
+
+				Setup(void);					///< Constructor
+				Setup(unsigned int num_ions);	///< Constructor, with # of ions specified as a parameter
         };
 
     }
