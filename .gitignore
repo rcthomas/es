@@ -27,3 +27,5 @@ depcomp
 install-sh
 libtool
 ltmain.sh
+compile
+
