@@ -28,13 +28,13 @@
 #include "ES_Blackbody.hh"
 #include "ES_Synow_Grid.hh"
 #include "ES_Synow_Setup.hh"
+#include "ES_Constants.hh"
 
 #include <cmath>
 #include <iostream>
 
 #define B_MARGIN_FACTOR 3
 #define R_MARGIN_FACTOR 1
-#define C_KKMS          299.792
 #if __cplusplus <= 199711L
 #define nullptr NULL
 #endif
@@ -82,7 +82,7 @@ ES::Synow::Grid::Grid( const ES::Synow::Grid & i_cRHO) :
 {
 	_zeroptr();
 	// determine wl size and allocate wl
-    wl_size = int( log( max_wl / min_wl ) / log( 1.0 + bin_width / C_KKMS ) + 0.5 );
+    wl_size = int( log( max_wl / min_wl ) / log( 1.0 + bin_width * ES::_inv_c ) + 0.5 );
     wl  = new double[ wl_size ];
 	if (wl == nullptr)
 		std::cerr << "synow: unable to allocate wl in grid." << std::endl;
@@ -139,7 +139,7 @@ ES::Synow::Grid::Grid( double const min_wl_, double const max_wl_, double const 
 {
 	_zeroptr();
 	// determine wl size and allocate wl
-    wl_size = int( log( max_wl / min_wl ) / log( 1.0 + bin_width / C_KKMS ) + 0.5 );
+    wl_size = int( log( max_wl / min_wl ) / log( 1.0 + bin_width * ES::_inv_c ) + 0.5 );
     wl  = new double[ wl_size ];
 	if (wl == nullptr)
 		std::cerr << "synow: unable to allocate wl in grid." << std::endl;
@@ -202,13 +202,13 @@ ES::Synow::Grid::Grid( double const min_wl_, double const max_wl_, double const 
 				exit(137);
 			}
 			double v_outer_max = velocities_[v_size - 1];
-			if (v_outer_max > C_KKMS)
+			if (v_outer_max > ES::_c)
 			{
-				v_outer_max = C_KKMS; // make sure that v_outer < c!
+				v_outer_max = ES::_c; // make sure that v_outer < c!
 				std::cerr << "synow: WARNING:  v_outer limited to c." << std::endl;
 			}
-			min_wl = min_wl_ / ( 1.0 + B_MARGIN_FACTOR * v_outer_max / C_KKMS );
-			max_wl = max_wl_ * ( 1.0 + R_MARGIN_FACTOR * v_outer_max / C_KKMS );
+			min_wl = min_wl_ / ( 1.0 + B_MARGIN_FACTOR * v_outer_max * ES::_inv_c );
+			max_wl = max_wl_ * ( 1.0 + R_MARGIN_FACTOR * v_outer_max * ES::_inv_c );
 		}
 		else
 		{
@@ -217,7 +217,7 @@ ES::Synow::Grid::Grid( double const min_wl_, double const max_wl_, double const 
 		}
 	}
 	_zeroptr();
-    wl_size = int( log( max_wl / min_wl ) / log( 1.0 + bin_width / C_KKMS ) + 0.5 );
+    wl_size = int( log( max_wl / min_wl ) / log( 1.0 + bin_width * ES::_inv_c ) + 0.5 );
     wl  = new double[ wl_size ];
 	if (wl == nullptr)
 		std::cerr << "synow: unable to allocate wl in grid." << std::endl;
@@ -278,13 +278,13 @@ ES::Synow::Grid ES::Synow::Grid::create( double const min_output_wl, double cons
 {
 	double v_outer_max_lcl = v_outer_max;
 	// make sure the maximum velocity is physical
-	if (v_outer_max_lcl > C_KKMS)
+	if (v_outer_max_lcl > ES::_c)
 	{
-		v_outer_max_lcl = C_KKMS; // make sure that v_outer < c!
+		v_outer_max_lcl = ES::_c; // make sure that v_outer < c!
 		std::cerr << "syn++: WARNING:  v_outer limited to c." << std::endl;
 	}
-    double min_wl = min_output_wl / ( 1.0 + B_MARGIN_FACTOR * v_outer_max_lcl / C_KKMS );
-    double max_wl = max_output_wl * ( 1.0 + R_MARGIN_FACTOR * v_outer_max_lcl / C_KKMS );
+    double min_wl = min_output_wl / ( 1.0 + B_MARGIN_FACTOR * v_outer_max_lcl * ES::_inv_c );
+    double max_wl = max_output_wl * ( 1.0 + R_MARGIN_FACTOR * v_outer_max_lcl * ES::_inv_c );
     ES::Synow::Grid grid( min_wl, max_wl, bin_width, v_size );
     return grid;
 }
@@ -325,13 +325,13 @@ ES::Synow::Grid ES::Synow::Grid::create( double const &min_output_wl, double con
 			exit(137);
 		}
 		double dV_Outer_Max_Lcl = velocities_[v_size - 1];
-		if (dV_Outer_Max_Lcl > C_KKMS)
+		if (dV_Outer_Max_Lcl > ES::_c)
 		{
-			dV_Outer_Max_Lcl = C_KKMS; // make sure that v_outer < c!
+			dV_Outer_Max_Lcl = ES::_c; // make sure that v_outer < c!
 			std::cerr << "synow: WARNING:  v_outer limited to c." << std::endl;
 		}
-		double min_wl = min_output_wl / ( 1.0 + B_MARGIN_FACTOR * dV_Outer_Max_Lcl / C_KKMS );
-		double max_wl = max_output_wl * ( 1.0 + R_MARGIN_FACTOR * dV_Outer_Max_Lcl / C_KKMS );
+		double min_wl = min_output_wl / ( 1.0 + B_MARGIN_FACTOR * dV_Outer_Max_Lcl * ES::_inv_c );
+		double max_wl = max_output_wl * ( 1.0 + R_MARGIN_FACTOR * dV_Outer_Max_Lcl * ES::_inv_c );
 		ES::Synow::Grid grid( min_wl, max_wl, bin_width, v_size, velocities_ );
 		return grid;
 	}

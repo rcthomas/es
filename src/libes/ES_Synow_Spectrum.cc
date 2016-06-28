@@ -30,6 +30,7 @@
 #include "ES_Synow_Grid.hh"
 #include "ES_Synow_Setup.hh"
 #include "ES_Blackbody.hh"
+#include "ES_Constants.hh"
 
 #include <cmath>
 #include <algorithm>
@@ -78,8 +79,8 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
     for( int ip = 0; ip < p_outer; ++ ip )
     {
         _p[ ip ] = p_init + ip * p_step;
-        _max_shift[ ip ] = 1.0 + sqrt( v_outer * v_outer - _p[ ip ] * _p[ ip ] ) / 299.792;
-        _min_shift[ ip ] = ip < _p_size ? 1.0 + sqrt( v_phot  * v_phot  - _p[ ip ] * _p[ ip ] ) / 299.792 : 1.0 / _max_shift[ ip ];
+        _max_shift[ ip ] = 1.0 + sqrt( v_outer * v_outer - _p[ ip ] * _p[ ip ] ) * ES::_inv_c;
+        _min_shift[ ip ] = ip < _p_size ? 1.0 + sqrt( v_phot  * v_phot  - _p[ ip ] * _p[ ip ] ) * ES::_inv_c : 1.0 / _max_shift[ ip ];
     }
 
     // Compute.
@@ -116,7 +117,7 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
             {
                 if( zs < _min_shift[ ip ] ) continue;
                 if( zs > _max_shift[ ip ] ) continue;
-                double z  = ( 1.0 - zs ) * 299.792;
+                double z  = ( 1.0 - zs ) * ES::_c;
                 double vv = sqrt( z * z + _p[ ip ] * _p[ ip ] );
                 int    il = int( ( vv - v_phot ) / v_step );
                 int    iu = il + 1;

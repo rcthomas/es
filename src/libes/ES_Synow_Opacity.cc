@@ -30,6 +30,7 @@
 #include "ES_Synow_Grid.hh"
 #include "ES_Synow_Setup.hh"
 #include "ES_Line.hh"
+#include "ES_Constants.hh"
 
 #include <cmath>
 #include <fstream>
@@ -141,7 +142,7 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
     // Initialize the first bin limits, and step the line 
     // iterator up to the first line in the bin.
 
-    double factor = 1.0 + _grid->bin_width / 299.792;
+    double factor = 1.0 + _grid->bin_width * ES::_inv_c;
     double min_wl = _grid->min_wl;
     double max_wl = min_wl * factor;
     int    offset = 0;
