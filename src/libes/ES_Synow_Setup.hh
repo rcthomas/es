@@ -58,6 +58,8 @@ namespace ES
 
                 bool operator() ( const std::vector< double >& x );
 
+				enum profile_type {form_default,form_exp, form_power, form_user_profile};
+
                 std::vector< int  > ions;        ///< Ion code table.
                 std::vector< bool > active;      ///< Masks ions on or off.
 
@@ -67,12 +69,14 @@ namespace ES
                 double v_phot;                   ///< Ejecta velocity at photosphere in kkm/s.
                 double v_outer;                  ///< Ejecta velocity at edge of line forming region in kkm/s.
                 double t_phot;                   ///< Photosphere blackbody temperature in kK.
+				bool    additive_opacities;      ///< opacities for ions of the same type are additive. If this flag is not set the opacity of the last instance is used above the v_min specified for the last instance
+				std::vector< profile_type > form; /// < type of tau vs v profile to use
                 std::vector< double > log_tau;   ///< Opacity parameter (natural logarithm).
                 std::vector< double > v_min;     ///< Minimum velocity for opacity parameter in kkm/s.
                 std::vector< double > v_max;     ///< Minimum velocity for opacity parameter in kkm/s.
                 std::vector< double > aux;       ///< Opacity profile length-scale parameter (kkm/s).
                 std::vector< double > temp;      ///< Boltzmann excitation temperature in kK.
-
+				std::vector< std::vector<double> > user_profile; //user specified opacity profile: optical depth vs. velocity.  Velocity must be monotonically increasing.
         };
 
     }

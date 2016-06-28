@@ -36,6 +36,8 @@ void ES::Synow::Setup::resize( int const num_ions )
     v_max.resize  ( num_ions );
     aux.resize    ( num_ions );
     temp.resize   ( num_ions );
+    form.resize   ( num_ions );
+	user_profile.resize (num_ions);
 }
 
 bool ES::Synow::Setup::operator() ( const std::vector< double >& x )
