@@ -176,7 +176,7 @@ void ES::Synow::Source::operator() ( const ES::Synow::Setup& setup )
                 start = std::upper_bound( _grid->wl, _grid->wl + wl_used, _grid->wl[ iw ] * _shift[ i ] ) - _grid->wl;
                 for( ib = start; ib < iw; ++ ib )
                 {
-                    d  = ( _grid->wl[ iw ] / _grid->wl[ ib ] - 1.0 ) * 299.792;
+                    d  = ( _grid->wl[ iw ] / _grid->wl[ ib ] - 1.0 ) * ES::_c;
                     vd = sqrt( v * v + d * d - 2.0 * v * d * _mu[ i ] );
 					if (_grid->v_user)
 			        	il = int( ( vd - _grid->v[0] ) / v_step );
