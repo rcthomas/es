@@ -35,6 +35,11 @@
 #include <cmath>
 #include <algorithm>
 
+#if __cplusplus <= 199711L
+#define nullptr NULL
+#endif
+
+
 ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::Spectrum& reference, 
         int const p_size, bool const flatten ) :
     ES::Synow::Operator( grid ),
@@ -44,6 +49,10 @@ ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::
     _p_size( p_size ), 
     _p_total( 5 * p_size )
 {
+	_in = nullptr;
+	_p = nullptr;
+	_min_shift = nullptr;
+	_max_shift = nullptr;
     _alloc( false );
 }
 
@@ -75,7 +84,7 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
         _p_total = 2 * p_outer;
         _alloc( true );
     }
-
+#pragma omp parallel for
     for( int ip = 0; ip < p_outer; ++ ip )
     {
         _p[ ip ] = p_init + ip * p_step;
@@ -95,11 +104,14 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
         int stop  = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _max_shift[ 0       ] ) - _grid->wl;
 
         _reference->flux( iw ) = 0.0;
+#pragma omp parallel for
         for( int ip = 0; ip < p_outer; ++ ip ) 
         {
             if( ip < _p_size )
             {
-                _in[ ip ] = (*_grid->bb)( _output->wl( iw ) * _min_shift[ ip ] ) * pow( _min_shift[ ip ], 3 );
+#pragma omp critical (BLACKBODY)
+               _in[ ip ] = (*_grid->bb)( _output->wl( iw ) * _min_shift[ ip ] ) * pow( _min_shift[ ip ], 3 );
+#pragma omp citical (FLUXUPDATE)
                 _reference->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
             }
             else
@@ -119,7 +131,10 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
                 if( zs > _max_shift[ ip ] ) continue;
                 double z  = ( 1.0 - zs ) * ES::_c;
                 double vv = sqrt( z * z + _p[ ip ] * _p[ ip ] );
-                int    il = int( ( vv - v_phot ) / v_step );
+				if (_grid->v_user)
+                	il = int( ( vv - _grid->v[0] ) / v_step );
+				else
+                	il = int( ( vv - v_phot ) / v_step );
                 int    iu = il + 1;
                 double cl = ( _grid->v[ iu ] - vv ) / v_step;
                 double cu = 1.0 - cl;
@@ -138,7 +153,8 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
 
     // Conversion to F-lambda, application of warp, or flattening.
 
-    for( size_t iw = 0; iw < _output->size(); ++ iw )
+#pragma omp parallel for
+   for( size_t iw = 0; iw < _output->size(); ++ iw )
     {
         if( _flatten )
         {
@@ -159,15 +175,31 @@ void ES::Synow::Spectrum::_alloc( bool const clear )
 {
     if( clear ) _clear();
     _in        = new double [ _p_total ];
+	if (_in == nullptr)
+		std::cerr << "synow: unable to allocate 'in' in spectrum." << std::endl;
     _p         = new double [ _p_total ];
+	if (_p == nullptr)
+		std::cerr << "synow: unable to allocate 'p' in spectrum." << std::endl;
     _min_shift = new double [ _p_total ];
+	if (_min_shift == nullptr)
+		std::cerr << "synow: unable to allocate min_shift in spectrum." << std::endl;
     _max_shift = new double [ _p_total ];
+	if (_max_shift == nullptr)
+		std::cerr << "synow: unable to allocate max_shift in spectrum." << std::endl;
 }
 
 void ES::Synow::Spectrum::_clear()
 {
-    delete [] _in;
-    delete [] _p;
-    delete [] _min_shift;
-    delete [] _max_shift;
+	if (_in != nullptr)
+	    delete [] _in;
+	if (_p != nullptr)
+	    delete [] _p;
+	if (_min_shift != nullptr)
+	    delete [] _min_shift;
+	if (_max_shift != nullptr)
+	    delete [] _max_shift;
+	_in = nullptr;
+	_p = nullptr;
+	_min_shift = nullptr;
+	_max_shift = nullptr;
 }
