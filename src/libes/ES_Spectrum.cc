@@ -27,8 +27,11 @@
 
 #include "ES_Spectrum.hh"
 #include "ES_Exception.hh"
-
+#ifdef FITSIO_CFITSIO
+#include "cfitsio/fitsio.h"
+#else
 #include "fitsio.h"
+#endif
 
 #include <cmath>
 #include <limits>

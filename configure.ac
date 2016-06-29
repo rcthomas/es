@@ -11,6 +11,7 @@ AM_INIT_AUTOMAKE
 
 # Set default optimization to '-O3' instead of the default '-g -O2'
 if test x"${CXXFLAGS}" = x; then
+#   CXXFLAGS="-O3 -Wno-deprecated"
    CXXFLAGS="-O3"
 fi
 
@@ -32,6 +33,7 @@ DX_INIT_DOXYGEN([ES], [doxygen.txt], [doc])
 # Set language
 AC_LANG([C++])
 AC_CANONICAL_HOST
+#AX_CXX_COMPILE_STDCXX_11
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADERS([iostream iostream.h])
@@ -86,6 +88,8 @@ AM_CONDITIONAL([HAVE_AM_OPENMP], [test $ax_have_openmp = yes])
 
 # Check for CFITSIO
 ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
+save_cxx_flag="$CXXFLAGS"
+CXXFLAGS="$save_cxx_flag $CFITSIO_CPPFLAGS"
 
 # Check for LAPACK/BLAS
 acx_have_lapack=no
