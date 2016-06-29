@@ -66,7 +66,7 @@ namespace ES
 
                 static Grid create( double const min_output_wl, double const max_output_wl, double const bin_width, 
                         int const v_size, double const v_outer_max );
-                static Grid create( double const min_output_wl, double const max_output_wl, double const bin_width, 
+                static Grid create( double const &min_output_wl, double const &max_output_wl, double const &bin_width, 
                         int const v_size, double const * velocities_ );
 
                 /// Constructor.

@@ -26,7 +26,7 @@
 //
 
 #include "ES_Synow_Setup.hh"
-ES::Synow::Setup(void)
+ES::Synow::Setup::Setup(void)
 {
 	a0 = 1.0;                       ///< Spectral warping coefficient.
 	a1 = 0.0;                       ///< Spectral warping coefficient.
@@ -36,7 +36,7 @@ ES::Synow::Setup(void)
 	t_phot = 0.0;                   ///< Photosphere blackbody temperature in kK.
 	additive_opacities = false;      ///< opacities for ions of the same type are additive. If this flag is not set the opacity of the last instance is used above the v_min specified for the last instance
 }
-ES::Synow::Setup(unsigned int num_ions)
+ES::Synow::Setup::Setup(unsigned int num_ions)
 {
 	a0 = 1.0;                       ///< Spectral warping coefficient.
 	a1 = 0.0;                       ///< Spectral warping coefficient.

@@ -47,8 +47,8 @@ ES::Synow::Opacity::Opacity( ES::Synow::Grid& grid, const std::string& line_dir,
     _v_ref( v_ref ),
     _log_tau_min( log_tau_min )
 {
-	_e_form = form_invalid;
-	if (form == "exp" || form == "EXP" || form == "Exp" || form == "exponential" || form == "Exponential" || form == "EXPONENTIAL" ||)
+	_e_form = form_default;
+	if (form == "exp" || form == "EXP" || form == "Exp" || form == "exponential" || form == "Exponential" || form == "EXPONENTIAL")
 		_e_form = form_exp;
 	else if (form == "power" || form == "pow" || form == "Power" || form == "POWER" || form == "POW" || form == 
 "Pow")
@@ -85,13 +85,14 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
         if( ! setup.active[ i ] ) continue;
         double lin_tau = pow( 10.0, setup.log_tau[ i ] );
         std::map< int, std::vector< double > >::iterator tau = tau_map.find( setup.ions[ i ] );
+		profile_type eFormLcl = form_exp;
 		if (!setup.form.empty())
 		{
 //#pragma omp atomic read
-			formi = setup.form[i];
-			switch (formi)
+			switch (setup.form[i])
 			{
 			case ES::Synow::Setup::form_exp:
+			default:
 				eFormLcl = form_exp;
 				break;
 			case ES::Synow::Setup::form_power:
@@ -108,14 +109,16 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
 			vmin = setup.v_min[i];
 			vmax = setup.v_max[i];
 		}
+		double taulcl;
 #pragma omp parallel for private(taulcl)
         for( int iv = 0; iv < _grid->v_size; ++ iv )
         {
-            if( _grid->v[iv] >= vphot && (eFormLcl == form_user_profile || (_grid->v[iv] >= vmin && _grid->v[iv] <= vmax)) )
+            if( _grid->v[iv] >= setup.v_phot && (eFormLcl == form_user_profile || (_grid->v[iv] >= vmin && _grid->v[iv] <= vmax)) )
 			{
 				switch (eFormLcl)
 				{
 				case form_exp:
+				default:
 					taulcl = lin_tau * exp( ( _v_ref - _grid->v[iv] ) / aux );
 					break;
 				case form_power:
@@ -132,7 +135,6 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
 				}
 				else
 				{
-#pragma omp atomic
 					tau->second[ iv ] = taulcl;
 				}
 			}

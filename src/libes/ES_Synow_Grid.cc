@@ -32,6 +32,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <cstdlib>
 
 #define B_MARGIN_FACTOR 3
 #define R_MARGIN_FACTOR 1
@@ -223,7 +224,7 @@ ES::Synow::Grid::Grid( double const min_wl_, double const max_wl_, double const 
 		std::cerr << "synow: unable to allocate wl in grid." << std::endl;
 	// allocate v if it is not a user profile
 	v_user = true;
-   	v   = velocities_;
+   	v   = (double *)velocities_;
 	if (v == nullptr)
 		std::cerr << "synow: WARNING: user specified velocity array is null." << std::endl;
 	// allocate tau
@@ -251,7 +252,7 @@ ES::Synow::Grid::Grid( double const min_wl_, double const max_wl_, double const 
 
 ES::Synow::Grid::~Grid()
 {
-	if (wl != nullptr
+	if (wl != nullptr)
 	    delete [] wl;
 	if (v != nullptr && !v_user) // if v_user is set, then is an externally controlled pointer, don't delete
 	    delete [] v;

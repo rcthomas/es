@@ -131,6 +131,7 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
                 if( zs > _max_shift[ ip ] ) continue;
                 double z  = ( 1.0 - zs ) * ES::_c;
                 double vv = sqrt( z * z + _p[ ip ] * _p[ ip ] );
+				int il;
 				if (_grid->v_user)
                 	il = int( ( vv - _grid->v[0] ) / v_step );
 				else
