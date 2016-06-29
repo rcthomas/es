@@ -125,6 +125,9 @@ namespace ES
 
             void zero_out();
 
+			// zero only the flux values in the spectrum
+			void zero_flux(void);
+
             /// Rescale the fluxes and flux errors so that the median is 
             /// set to the desired value.
 
@@ -167,6 +170,8 @@ namespace ES
 
             /// Maximum flux in the spectrum.
             double max_flux() const;
+
+
 
             //@}
 
