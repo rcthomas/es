@@ -33,6 +33,14 @@
 #include <getopt.h>
 #include <cstdlib>
 #include <sstream>
+//#include <stream>
+#include <string>
+#include <wordexp.h>
+#include <stdlib.h>
+
+#if __cplusplus <= 199711L
+#define nullptr NULL
+#endif
 
 void operator >> ( const YAML::Node& node, ES::Synow::Setup& setup )
 {
@@ -54,6 +62,53 @@ void operator >> ( const YAML::Node& node, ES::Synow::Setup& setup )
 void usage( std::ostream& stream )
 {
     stream << "usage: syn++ [--verbose] control.yaml" << std::endl;
+}
+
+std::string resolve_path(const std::string &i_strPath)
+{
+	std::string strTemp = i_strPath;
+	std::string strResult_File;
+	size_t i = 0;
+	while ((i = strTemp.find_first_of ("\\", i)) != std::string::npos)
+	{
+		strTemp.erase(i, 1);
+	}
+	wordexp_t cResults;
+	if (wordexp(strTemp.c_str(),&cResults,WRDE_NOCMD|WRDE_UNDEF) == 0)
+	{
+		strResult_File = cResults.we_wordv[0];
+		wordfree(&cResults);
+	}
+    if( strResult_File.empty() )
+    {
+        std::cerr << "syn++: Unable to resolve " << i_strPath << std::endl;
+        exit( 137 );
+    }
+	return strResult_File;
+}
+
+bool find_node(YAML::Node & i_ynNode, const std::string & i_szTag, YAML::Node & o_ynNode)
+{
+	bool bFound = false;
+	o_ynNode = YAML::Node();
+	for (YAML::Node::iterator iterI = i_ynNode.begin(); iterI != i_ynNode.end() && !bFound; iterI++)
+	{
+		if (iterI->Tag() == i_szTag)
+		{
+			o_ynNode = i_ynNode[i_szTag];
+			bFound = true;
+		}
+	}
+	return bFound;
+}
+bool has_node(YAML::Node & i_ynNode, const std::string & i_szTag)
+{
+	bool bFound = false;
+	for (YAML::Node::iterator iterI = i_ynNode.begin(); iterI != i_ynNode.end() && !bFound; iterI++)
+	{
+		bFound = (iterI->Tag() == i_szTag);
+	}
+	return bFound;
 }
 
 int main( int argc, char* argv[] )
@@ -137,12 +192,64 @@ int main( int argc, char* argv[] )
 
     // Opacity operator.
 
+	std::string strLine_Dir;
+	std::string strRef_File;
+	char * env_line_dir = getenv("SYNXX_LINES_DATA_PATH");
+	char * env_ref_file =  getenv("SYNXX_REF_LINE_DATA_PATH");
+	if (env_line_dir != nullptr)
+		strLine_Dir = resolve_path(env_line_dir);
+	if (env_ref_file != nullptr)
+		strRef_File = resolve_path(env_ref_file);
+	YAML::Node ynOpacity;
+	std::string strForm;
+	double dV_Ref = -1;
+	double dTau_Min = nan("");
+	if (find_node(yaml,"opacity",ynOpacity))
+	{
+		YAML::Node ynLine_Dir;
+		YAML::Node ynRef_File;
+		YAML::Node ynForm;
+		YAML::Node ynV_Ref;
+		YAML::Node ynLog_Tau_Min;
+
+		if (find_node(ynOpacity,"line_dir",ynLine_Dir))
+		{
+			strLine_Dir = resolve_path(ynLine_Dir.as<std::string>());
+		}
+
+		if (find_node(ynOpacity,"ref_file",ynRef_File))
+		{
+			strRef_File = resolve_path(ynRef_File.as<std::string>());
+		}
+		
+		if (find_node(ynOpacity,"form",ynForm))
+			strForm = ynForm.as<std::string>();
+		else
+			std::cerr << "opacity/form not specified in file " << target_file << std::endl;
+		if (find_node(ynOpacity,"v_ref",ynV_Ref))
+			dV_Ref = ynV_Ref.as<double>();
+		else
+			std::cerr << "opacity/v_ref not specified in file " << target_file << std::endl;
+		if (find_node(ynOpacity,"log_tau_min",ynLog_Tau_Min))
+			dTau_Min = ynLog_Tau_Min.as<double>();
+		else
+			std::cerr << "opacity/log_tau_min not specified in file " << target_file << std::endl;
+	}
+	else
+	{
+		std::cerr << "opacity section not specified in file " << target_file << std::endl;
+		exit(132);
+	}
+
+	if (std::isnan(dTau_Min) || dV_Ref == -1 || strForm.empty())
+		exit(132);
+
     ES::Synow::Opacity opacity( grid,
-            yaml[ "opacity" ][ "line_dir"    ].as<std::string>(),
-            yaml[ "opacity" ][ "ref_file"    ].as<std::string>(),
-            yaml[ "opacity" ][ "form"        ].as<std::string>(),
-            yaml[ "opacity" ][ "v_ref"       ].as<double>(),
-            yaml[ "opacity" ][ "log_tau_min" ].as<double>() );
+            strLine_Dir,
+            strRef_File,
+            strForm,
+            dV_Ref,
+            dTau_Min);
 
     // Source operator.
 
@@ -172,3 +279,8 @@ int main( int argc, char* argv[] )
 
     return 0;
 }
+
+#if __cplusplus <= 199711L
+#undef nullptr
+#endif
+
