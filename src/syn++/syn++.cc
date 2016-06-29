@@ -240,6 +240,16 @@ int main( int argc, char* argv[] )
 		std::cerr << "opacity section not specified in file " << target_file << std::endl;
 		exit(132);
 	}
+	if (strLine_Dir.empty())
+	{
+		std::cerr << "line_dir has not been specified. Ensure that it is in the .yaml file under opacity or the environment variable SYNXX_LINES_DATA_PATH has been set." << std::endl;
+		exit(132);
+	}
+	if (strRef_File.empty())
+	{
+		std::cerr << "ref_file has not been specified. Ensure that it is in the .yaml file under opacity or the environment variable SYNXX_REF_LINE_DATA_PATH has been set." << std::endl;
+		exit(132);
+	}
 
 	if (std::isnan(dTau_Min) || dV_Ref == -1 || strForm.empty())
 		exit(132);
