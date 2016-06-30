@@ -32,3 +32,6 @@ compile
 src/libes/snprep
 src/syn++/syn++
 src/synapps/synapps
+test/results
+test/log
+
