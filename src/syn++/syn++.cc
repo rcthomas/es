@@ -29,6 +29,7 @@
 
 #include <yaml-cpp/yaml.h>
 
+
 #include <fstream>
 #include <getopt.h>
 #include <cstdlib>
@@ -37,6 +38,7 @@
 #include <string>
 #include <wordexp.h>
 #include <stdlib.h>
+//#include <utility>
 
 #if __cplusplus <= 199711L
 #define nullptr NULL
@@ -91,24 +93,17 @@ bool find_node(YAML::Node & i_ynNode, const std::string & i_szTag, YAML::Node & 
 {
 	bool bFound = false;
 	o_ynNode = YAML::Node();
-	for (YAML::Node::iterator iterI = i_ynNode.begin(); iterI != i_ynNode.end() && !bFound; iterI++)
+	
+	bFound = i_ynNode[i_szTag].IsDefined();
+	if (bFound)
 	{
-		if (iterI->Tag() == i_szTag)
-		{
-			o_ynNode = i_ynNode[i_szTag];
-			bFound = true;
-		}
+		o_ynNode = i_ynNode[i_szTag];
 	}
 	return bFound;
 }
 bool has_node(YAML::Node & i_ynNode, const std::string & i_szTag)
 {
-	bool bFound = false;
-	for (YAML::Node::iterator iterI = i_ynNode.begin(); iterI != i_ynNode.end() && !bFound; iterI++)
-	{
-		bFound = (iterI->Tag() == i_szTag);
-	}
-	return bFound;
+	return i_ynNode[i_szTag].IsDefined();
 }
 
 int main( int argc, char* argv[] )
@@ -204,6 +199,11 @@ int main( int argc, char* argv[] )
 	std::string strForm;
 	double dV_Ref = -1;
 	double dTau_Min = nan("");
+	YAML::Node ynJunk;
+	if (find_node(yaml,"junt",ynJunk))
+	{
+		std::cerr << "erroneously found junt" << std::endl;
+	}
 	if (find_node(yaml,"opacity",ynOpacity))
 	{
 		YAML::Node ynLine_Dir;
