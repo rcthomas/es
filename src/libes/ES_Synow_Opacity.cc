@@ -103,6 +103,8 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
 				break;
 			}
 		}
+		else
+			eFormLcl = _e_form;
 		if (eFormLcl == form_exp || eFormLcl == form_power)
 		{
 			aux = setup.aux[i];
@@ -110,7 +112,7 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
 			vmax = setup.v_max[i];
 		}
 		double taulcl;
-#pragma omp parallel for private(taulcl)
+//#pragma omp parallel for private(taulcl)
         for( int iv = 0; iv < _grid->v_size; ++ iv )
         {
             if( _grid->v[iv] >= setup.v_phot && (eFormLcl == form_user_profile || (_grid->v[iv] >= vmin && _grid->v[iv] <= vmax)) )
@@ -130,7 +132,7 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
 				}
 				if (setup.additive_opacities)
 				{
-#pragma omp atomic
+//#pragma omp atomic
 					tau->second[ iv ] += taulcl;
 				}
 				else
@@ -169,6 +171,7 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
 					_grid->tau[ offset + iv ] += tau->second[ iv ] * str;
             ++ line;
         }
+
         if( line->wl >= max_wl || line == _lines.end() )
         {
             bool keep = false;
@@ -190,7 +193,6 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
             max_wl *= factor;
         }
     }
-
 }
 
 void ES::Synow::Opacity::_drop_ions( const ES::Synow::Setup& setup )

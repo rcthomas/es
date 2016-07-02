@@ -104,14 +104,11 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
         int stop  = std::upper_bound( _grid->wl, _grid->wl + wl_used, _output->wl( iw ) * _max_shift[ 0       ] ) - _grid->wl;
 
         _reference->flux( iw ) = 0.0;
-#pragma omp parallel for
         for( int ip = 0; ip < p_outer; ++ ip ) 
         {
             if( ip < _p_size )
             {
-#pragma omp critical (BLACKBODY)
                _in[ ip ] = (*_grid->bb)( _output->wl( iw ) * _min_shift[ ip ] ) * pow( _min_shift[ ip ], 3 );
-#pragma omp citical (FLUXUPDATE)
                 _reference->flux( iw ) += _in[ ip ] * _p[ ip ] * p_step;
             }
             else
@@ -154,7 +151,6 @@ void ES::Synow::Spectrum::operator() ( const ES::Synow::Setup& setup )
 
     // Conversion to F-lambda, application of warp, or flattening.
 
-#pragma omp parallel for
    for( size_t iw = 0; iw < _output->size(); ++ iw )
     {
         if( _flatten )

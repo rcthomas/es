@@ -164,7 +164,7 @@ void ES::Synow::Source::operator() ( const ES::Synow::Setup& setup )
 
     for( int iw = 0; iw < wl_used; ++ iw )
     {
-        #pragma omp parallel for private( v, offset, im, i, in, start, ib, d, vd, il, iu, cl, cu, et, ss ) schedule( static, 1 )
+#pragma omp parallel for private( v, offset, im, i, in, start, ib, d, vd, il, iu, cl, cu, et, ss ) schedule( static, 1 )
         for( int iv = 0; iv < v_size; ++ iv )
         {
             v = _grid->v[ iv ];
@@ -172,7 +172,8 @@ void ES::Synow::Source::operator() ( const ES::Synow::Setup& setup )
             for( im = 0; im < _mu_size * 2; ++ im )
             {
                 i  = offset + im;
-                in = im < _mu_size ? (*_grid->bb)( _grid->wl[ iw ] * _shift[ i ] ) * pow( _shift[ i ], 3 ) : 0.0;
+#pragma omp critical (BBCOMP)
+               in = im < _mu_size ? (*_grid->bb)( _grid->wl[ iw ] * _shift[ i ] ) * pow( _shift[ i ], 3 ) : 0.0;
                 start = std::upper_bound( _grid->wl, _grid->wl + wl_used, _grid->wl[ iw ] * _shift[ i ] ) - _grid->wl;
                 for( ib = start; ib < iw; ++ ib )
                 {
