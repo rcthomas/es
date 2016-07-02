@@ -4,15 +4,17 @@
 * Install header files and libes in installation directory
 * Add capability for power law and user controlled opacity profile
 * Add zero_flux function to ES::Spectrum
-* Add pointer safety checking into ES::Synow::Grid
+* Add pointer safety checking into ES::Synow::Grid, ES::Synow::Spectrum, and
+*     ES::Synow::Source
 * Add some checking in syn++ to ensure all components are specified
 * Add capability for user to specify path to line_dir and ref_file 
 *     via environment variables SYNXX_LINES_DATA_PATH and
 *     SYNXX_REF_LINE_DATA_PATH, repsectively
 * line_dir and ref_file, if specified in the .yaml file for syn++
 *     will override the environment variable paths
+* Add critical section to parallel segment to prevent seg fault
 
-2016-XX-XX R.C. Thomas <rthomas@lbl.gov>
+2016-XX-XX R. C. Thomas <rthomas@lbl.gov>
 
 * Version 0.98.1
 

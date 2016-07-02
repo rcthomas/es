@@ -38,23 +38,71 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+//#include <string>
+
+#if __cplusplus <= 199711L
+#define nullptr NULL
+#endif
+
+void ES::Synow::Source::_zeroptr(void)
+{
+	_v_size = 0;
+	_mu_size = 0;
+	_mu = nullptr;
+	_dmu = nullptr;
+	_shift = nullptr;
+}
+
+void ES::Synow::Source::_alloc(int i_iMu_Size, int i_iV_Size)
+{
+    _v_size  = i_iV_Size;
+    _mu_size = i_iMu_Size;
+    _mu    = new double [ _v_size * _mu_size * 2 ];
+	if (_mu == nullptr)
+		std::cerr << "synow: unable to allocate mu in source." << std::endl;
+    _dmu   = new double [ _v_size * _mu_size * 2 ];
+	if (_dmu == nullptr)
+		std::cerr << "synow: unable to allocate dmu in source." << std::endl;
+    _shift = new double [ _v_size * _mu_size * 2 ];
+	if (_shift == nullptr)
+		std::cerr << "synow: unable to allocate shift in source." << std::endl;
+}
 
 ES::Synow::Source::Source( ES::Synow::Grid& grid, int const mu_size ) :
-    ES::Synow::Operator( grid ),
-    _mu_size( mu_size )
+    ES::Synow::Operator( grid )
 {
-    int v_size  = _grid->v_size;
-    _mu    = new double [ v_size * _mu_size * 2 ];
-    _dmu   = new double [ v_size * _mu_size * 2 ];
-    _shift = new double [ v_size * _mu_size * 2 ];
+	_zeroptr();
+	_alloc(mu_size,_grid->v_size);
+}
+ES::Synow::Source::Source( const ES::Synow::Source & i_cRHO ) :
+    ES::Synow::Operator( *i_cRHO._grid )
+{
+	_zeroptr();
+	_alloc(i_cRHO._mu_size,i_cRHO._v_size);
+
+	if (_mu != nullptr)
+		memcpy(_mu,i_cRHO._mu,sizeof(double) * _v_size * _mu_size * 2);
+	if (_dmu != nullptr)
+		memcpy(_dmu,i_cRHO._dmu,sizeof(double) * _v_size * _mu_size * 2);
+	if (_shift != nullptr)
+		memcpy(_shift,i_cRHO._shift,sizeof(double) * _v_size * _mu_size * 2);
 }
 
 ES::Synow::Source::~Source()
 {
-    delete [] _mu;
-    delete [] _dmu;
-    delete [] _shift;
+	if (_mu != nullptr)
+	    delete [] _mu;
+	if (_dmu != nullptr)
+	    delete [] _dmu;
+	if (_shift != nullptr)
+	    delete [] _shift;
+	_zeroptr();
 }
+
+
+#if __cplusplus <= 199711L
+#undef nullptr
+#endif
 
 void ES::Synow::Source::operator() ( const ES::Synow::Setup& setup )
 {

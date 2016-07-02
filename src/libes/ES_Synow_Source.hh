@@ -63,6 +63,10 @@ namespace ES
 
                 Source( ES::Synow::Grid& grid, int const mu_size );
 
+                /// Copy Constructor.
+
+                Source( const ES::Synow::Source& i_cRHO );
+
                 /// Destructor.
 
                 ~Source();
@@ -73,13 +77,19 @@ namespace ES
 
             private :
 
+				/// Set all pointers to null
+				void _zeroptr(void);
+
+				/// allocate arrays
+				void _alloc(int i_iMu_Size, int i_iV_Size);
+
                 // Note that the full compliment of angles at each point is 
                 // 2 * mu_size --- one set is for rays subtending the sky 
                 // and the other set is for rays subtending the photosphere.
                 // This implementation is actually a good compromise of speed
                 // and accuracy, and was first used in the original Synow.
                 // The resolution requirements are pretty lax here.
-
+				int      _v_size;
                 int      _mu_size;      ///< Number of angles subtending either sky or photosphere.
                 double*  _mu;           ///< List of angles as direction-cosines.
                 double*  _dmu;          ///< Step in direction-cosine units for integral.

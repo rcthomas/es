@@ -40,6 +40,30 @@
 #endif
 
 
+ES::Synow::Spectrum::Spectrum( const ES::Synow::Spectrum & i_cRHO) : 
+    ES::Synow::Operator( *i_cRHO._grid ),
+    _output( i_cRHO._output ),
+    _reference( i_cRHO._reference ),
+    _flatten( i_cRHO._flatten ),
+    _p_size( i_cRHO._p_size ), 
+    _p_total( i_cRHO._p_total )
+{
+	_in = nullptr;
+	_p = nullptr;
+	_min_shift = nullptr;
+	_max_shift = nullptr;
+    _alloc( false );
+	if (_p != nullptr && i_cRHO._p != nullptr)
+		memcpy(_p,i_cRHO._p,_p_total * sizeof(double));
+	if (_in != nullptr && i_cRHO._in != nullptr)
+		memcpy(_in,i_cRHO._in,_p_total * sizeof(double));
+	if (_min_shift != nullptr && i_cRHO._min_shift != nullptr)
+		memcpy(_min_shift,i_cRHO._min_shift,_p_total * sizeof(double));
+	if (_max_shift != nullptr && i_cRHO._max_shift != nullptr)
+		memcpy(_max_shift,i_cRHO._max_shift,_p_total * sizeof(double));
+}
+
+
 ES::Synow::Spectrum::Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::Spectrum& reference, 
         int const p_size, bool const flatten ) :
     ES::Synow::Operator( grid ),
