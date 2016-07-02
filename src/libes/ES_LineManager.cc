@@ -29,7 +29,11 @@
 #include "ES_Line.hh"
 #include "ES_LineManager.hh"
 
+#ifdef FITSIO_CFITSIO
+#include "cfitsio/fitsio.h"
+#else
 #include "fitsio.h"
+#endif
 
 #include <fstream>
 #include <sstream>

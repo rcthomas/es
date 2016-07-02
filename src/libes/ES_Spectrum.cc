@@ -27,8 +27,11 @@
 
 #include "ES_Spectrum.hh"
 #include "ES_Exception.hh"
-
+#ifdef FITSIO_CFITSIO
+#include "cfitsio/fitsio.h"
+#else
 #include "fitsio.h"
+#endif
 
 #include <cmath>
 #include <limits>
@@ -177,6 +180,14 @@ void ES::Spectrum::zero_out()
         _flux_error[ i ] = 0.0;
     }
 }
+void ES::Spectrum::zero_flux()
+{
+    for( size_t i = 0; i < size(); ++ i )
+    {
+        _flux[ i ] = 0.0;
+        _flux_error[ i ] = 0.0;
+    }
+}
 
 void ES::Spectrum::rescale_median_flux( double const median )
 {
@@ -249,3 +260,5 @@ namespace ES
     }
 
 }
+
+

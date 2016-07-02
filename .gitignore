@@ -27,3 +27,11 @@ depcomp
 install-sh
 libtool
 ltmain.sh
+compile
+#binary files and the like
+src/libes/snprep
+src/syn++/syn++
+src/synapps/synapps
+test/results
+test/log
+

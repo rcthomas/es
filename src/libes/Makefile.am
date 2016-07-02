@@ -8,9 +8,10 @@ if HAVE_AM_OPENMP
   AM_LIBS += $(OPENMP_CXXFLAGS)
 endif
 
-noinst_HEADERS =        \
+include_HEADERS =        \
 ES_Accelerator.hh       \
 ES_Blackbody.hh         \
+ES_Constants.hh         \
 ES_Exception.hh         \
 ES_Generic_Grid.hh      \
 ES_Generic_Operator.hh  \
@@ -25,10 +26,11 @@ ES_Synow_Setup.hh       \
 ES_Synow_Source.hh      \
 ES_Synow_Spectrum.hh
 
-noinst_LTLIBRARIES = libes.la
+lib_LTLIBRARIES = libes.la
 libes_la_SOURCES =       \
 ES_Accelerator.cc       \
 ES_Blackbody.cc         \
+ES_Constants.cc         \
 ES_LineManager.cc       \
 ES_Spectrum.cc          \
 ES_Synow_Grid.cc        \
