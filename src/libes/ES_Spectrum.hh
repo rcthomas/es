@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <tuple>
 
 namespace ES
 {
@@ -94,6 +95,35 @@ namespace ES
             /// (I hate including this method.)
 
             static Spectrum create_from_fits_file( const char* file );
+
+
+			// Constructor using data in a vector of tuples; The tuple is
+			// assumed to be ordered <wl, flux, flux_error>. This creates a
+			// spectrum with size and wavelength identical to the 
+			// input vector of tuples, with flux and flux error zeroed out
+
+			static Spectrum create_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData );
+
+			// Constructor using data in a vector of tuples; The tuple is
+			// assumed to be ordered <wl, flux, flux_error>. This creates a
+			// spectrum with size and wavelength, flux, and flux error 
+			// identical to the  input vector of tuples.
+
+			static Spectrum create_copy_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData );
+
+
+			// Constructor using wavelength data in a vector. This creates a
+			// spectrum with size and wavelength identical to the 
+			// input vector, with flux and flux error zeroed out
+
+			static Spectrum create_from_wl_vector( const std::vector<double > i_vtdData );
+
+			// Constructor using wavelength data in an array with a user 
+			// specified size. This creates a spectrum with size and wavelength 
+			// identical to the data in the input array, with flux and flux
+			// error zeroed out.
+
+			static Spectrum create_from_array( const double * i_lpdData, size_t i_nNum_Points );
 
             /// Constructor taking another spectrum, from which a zeroed out
             /// spectrum of the same size and wavelength axis is initialized.
