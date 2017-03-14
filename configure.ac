@@ -13,6 +13,7 @@ AM_INIT_AUTOMAKE
 if test x"${CXXFLAGS}" = x; then
 #   CXXFLAGS="-O3 -Wno-deprecated"
    CXXFLAGS="-O3"
+#   CXXFLAGS="-O3 -std=c++11"
 fi
 
 # Checks for programs.
@@ -33,7 +34,7 @@ DX_INIT_DOXYGEN([ES], [doxygen.txt], [doc])
 # Set language
 AC_LANG([C++])
 AC_CANONICAL_HOST
-#AX_CXX_COMPILE_STDCXX_11
+AX_CXX_COMPILE_STDCXX_11
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADERS([iostream iostream.h])
