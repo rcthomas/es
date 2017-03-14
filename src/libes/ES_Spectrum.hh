@@ -97,6 +97,7 @@ namespace ES
             static Spectrum create_from_fits_file( const char* file );
 
 
+#if defined __cplusplus >= 201100
 			// Constructor using data in a vector of tuples; The tuple is
 			// assumed to be ordered <wl, flux, flux_error>. This creates a
 			// spectrum with size and wavelength identical to the 
@@ -110,7 +111,7 @@ namespace ES
 			// identical to the  input vector of tuples.
 
 			static Spectrum create_copy_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData );
-
+#endif
 
 			// Constructor using wavelength data in a vector. This creates a
 			// spectrum with size and wavelength identical to the 

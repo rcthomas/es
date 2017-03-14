@@ -155,13 +155,6 @@ ES::Spectrum ES::Spectrum::create_from_spectrum( const ES::Spectrum& original )
     return spectrum;
 }
 
-ES::Spectrum ES::Spectrum::create_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData )
-{
-    ES::Spectrum spectrum;
-    spectrum.resize( i_vtdData.size() );
-    for( size_t i = 0; i < i_vtdData.size(); ++ i ) spectrum.wl( i ) = std::get<0>(i_vtdData[i]);
-    return spectrum;
-}
 ES::Spectrum ES::Spectrum::create_from_wl_vector( const std::vector<double > i_vtdData )
 {
     ES::Spectrum spectrum;
@@ -176,7 +169,7 @@ ES::Spectrum ES::Spectrum::create_from_array( const double * i_lpdData, size_t i
     for( size_t i = 0; i < i_nNum_Points; ++ i ) spectrum.wl( i ) = i_lpdData[i];
     return spectrum;
 }
-
+#if defined __cplusplus >= 201100
 ES::Spectrum ES::Spectrum::create_copy_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData )
 {
     ES::Spectrum spectrum;
@@ -189,7 +182,14 @@ ES::Spectrum ES::Spectrum::create_copy_from_vector( const std::vector<std::tuple
 	}
     return spectrum;
 }
-
+ES::Spectrum ES::Spectrum::create_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData )
+{
+    ES::Spectrum spectrum;
+    spectrum.resize( i_vtdData.size() );
+    for( size_t i = 0; i < i_vtdData.size(); ++ i ) spectrum.wl( i ) = std::get<0>(i_vtdData[i]);
+    return spectrum;
+}
+#endif
 
 void ES::Spectrum::resize( size_t const size )
 {
