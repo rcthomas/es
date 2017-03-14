@@ -31,8 +31,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#if defined __cplusplus >= 201100
 #include <tuple>
-
+#endif
 namespace ES
 {
 
