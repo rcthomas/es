@@ -169,7 +169,7 @@ ES::Spectrum ES::Spectrum::create_from_array( const double * i_lpdData, size_t i
     for( size_t i = 0; i < i_nNum_Points; ++ i ) spectrum.wl( i ) = i_lpdData[i];
     return spectrum;
 }
-#if defined __cplusplus >= 201100
+#if __cplusplus>=201100L
 ES::Spectrum ES::Spectrum::create_copy_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData )
 {
     ES::Spectrum spectrum;

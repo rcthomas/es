@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#if defined __cplusplus >= 201100
+#if __cplusplus>=201100L
 #include <tuple>
 #endif
 namespace ES
@@ -98,7 +98,7 @@ namespace ES
             static Spectrum create_from_fits_file( const char* file );
 
 
-#if defined __cplusplus >= 201100
+#if __cplusplus>=201100L
 			// Constructor using data in a vector of tuples; The tuple is
 			// assumed to be ordered <wl, flux, flux_error>. This creates a
 			// spectrum with size and wavelength identical to the 
