@@ -1,3 +1,7 @@
+#modulefiles:
+0.*.*
+#pkgconfig
+*.pc
 *~
 *.o
 *.la

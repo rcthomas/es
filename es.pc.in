@@ -1,0 +1,14 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+ 
+ 
+Name: @PACKAGE_NAME@
+Description: es (Mulligan fork) - elementary supernova synthetic spectra generation library
+URL: http://github.com/astrobit/es
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -les -lm
+Cflags: -I${includedir}
+Requires:
+Requires.private: cfitsio yaml-cpp

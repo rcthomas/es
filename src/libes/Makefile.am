@@ -1,6 +1,8 @@
-AM_CPPFLAGS = -I$(top_srcdir)/src/libes -I$(top_srcdir)/external/yaml $(CFITSIO_CPPFLAGS)
-AM_LDFLAGS = -L$(top_builddir)/src/libes -L$(top_builddir)/external/yaml
-AM_LIBS = $(top_builddir)/external/yaml/libyaml-cpp.la $(CFITSIO) -lm
+AUTOMAKE_OPTIONS = foreign
+
+AM_CPPFLAGS = -I$(top_srcdir)/src/libes ${cfitsio_CFLAGS} ${yamlcpp_CFLAGS}
+AM_LDFLAGS = -L$(top_builddir)/src/libes 
+AM_LIBS = ${yamlcpp_LIBS} ${cfitsio_LIBS} -lm
 AM_CXXFLAGS =
 
 if HAVE_AM_OPENMP

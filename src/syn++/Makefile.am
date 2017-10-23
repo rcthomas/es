@@ -1,6 +1,6 @@
-AM_CPPFLAGS = -I$(top_srcdir)/src/libes -I$(top_srcdir)/src/syn++ -I$(top_srcdir)/external/yaml $(CFITSIO_CPPFLAGS) -I/home/brian/boost_inc
-AM_LDFLAGS = -L$(top_builddir)/src/libes -L$(top_builddir)/src/syn++ -L$(top_builddir)/external/yaml
-AM_LIBS = $(top_builddir)/external/yaml/libyaml-cpp.la $(CFITSIO) -lm
+AM_CPPFLAGS = -I$(top_srcdir)/src/libes -I$(top_srcdir)/src/syn++ ${cfitsio_CFLAGS} ${yamlcpp_CFLAGS} 
+AM_LDFLAGS = -L$(top_builddir)/src/libes -L$(top_builddir)/src/syn++
+AM_LIBS = ${cfitsio_LIBS} ${yamlcpp_LIBS}  -lm
 AM_CXXFLAGS =
 
 EXTRA_DIST = syn++.yaml

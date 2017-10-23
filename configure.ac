@@ -1,13 +1,26 @@
+# Release version
+m4_define([package_version_major],[0])
+m4_define([package_version_minor],[100])
+m4_define([package_version_micro],[0])
+ 
+# API version
+m4_define([api_version],package_version_major)
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.64])
-AC_INIT([ES], [0.98.1.1], [rcthomas@lbl.gov])
+AC_INIT([ES], [package_version_major.package_version_minor.package_version_micro], [rcthomas@lbl.gov])
 AC_CONFIG_SRCDIR([src/libes/ES_Accelerator.cc])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 #AM_INIT_AUTOMAKE([-Wall -Werror])
 AM_INIT_AUTOMAKE
+
+PKG_PROG_PKG_CONFIG
+PKG_INSTALLDIR
+
+MOD_PROG_ENVMOD
+MOD_INSTALLDIR
 
 # Set default optimization to '-O3' instead of the default '-g -O2'
 if test x"${CXXFLAGS}" = x; then
@@ -88,9 +101,14 @@ AX_OPENMP([ax_have_openmp=yes;AC_DEFINE([HAVE_OPENMP], [1], [Define if OpenMP is
 AM_CONDITIONAL([HAVE_AM_OPENMP], [test $ax_have_openmp = yes])
 
 # Check for CFITSIO
-ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
-save_cxx_flag="$CXXFLAGS"
-CXXFLAGS="$save_cxx_flag $CFITSIO_CPPFLAGS"
+PKG_CHECK_MODULES([cfitsio],[cfitsio],[],[AC_MSG_ERROR[" Could not find the CFITSIO library!"]])
+
+# Check for CFITSIO
+PKG_CHECK_MODULES([yamlcpp],[yaml-cpp],[],[AC_MSG_ERROR[" Could not find the yaml-cpp library!"]])
+
+#ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
+#save_cxx_flag="$CXXFLAGS"
+#CXXFLAGS+=$cfitsio_CPPFLAGS
 
 # Check for LAPACK/BLAS
 acx_have_lapack=no
@@ -108,14 +126,26 @@ acx_have_appspack=no
 ACX_APPSPACK([acx_have_appspack=yes;AC_DEFINE([HAVE_APPSPACK], [1], [Define if you have the Appspack library.])], [AC_MSG_WARN([Could not find the Appspack tools- synapps disabled])])
 AM_CONDITIONAL([HAVE_AM_APPSPACK], [test $acx_have_appspack = yes])
 
+AC_SUBST([PACKAGE_VERSION_MAJOR],package_version_major)
+AC_SUBST([PACKAGE_VERSION_MINOR],package_version_minor)
+AC_SUBST([PACKAGE_VERSION_MICRO],package_version_micro)
+AC_SUBST([API_VERSION],api_version)
+
+
 # Generate Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/libes/Makefile])
 AC_CONFIG_FILES([src/syn++/Makefile])
 AC_CONFIG_FILES([src/synapps/Makefile])
-AC_CONFIG_FILES([external/Makefile])
-AC_CONFIG_FILES([external/yaml/Makefile])
+#AC_CONFIG_FILES([external/Makefile])
+#AC_CONFIG_FILES([external/yaml/Makefile])
+AC_CONFIG_FILES([es-$API_VERSION.pc:es.pc.in])
+
+AS_IF( [test ${MODTYPE} = "LMOD"],
+	[AC_CONFIG_FILES([$PACKAGE_VERSION.lua:modfile.lua.in])],
+	[AS_IF( [test ${MODTYPE} = "ENVMOD"], [AC_CONFIG_FILES([$PACKAGE_VERSION:modfile.in])], [])])
+
 AC_OUTPUT
 
 # Print out detected build options
@@ -124,19 +154,23 @@ AC_MSG_NOTICE([  ======================== Build Configuration ==================
 AC_MSG_NOTICE([  C++ Compiler      : $CXX])
 AC_MSG_NOTICE([  MPI C++ Compiler  : $MPICXX])
 AC_MSG_NOTICE([  C++ Compile flags : $CXXFLAGS])
-if test x"${ax_have_openmp}" = xyes; then
-  AC_MSG_NOTICE([  OpenMP            : Detected ($OPENMP_CXXFLAGS)])
-else
-  AC_MSG_NOTICE([  OpenMP            : Disabled])
-fi
-AC_MSG_NOTICE([  CFITSIO           : $CFITSIO])
+AS_IF([ test x"${ax_have_openmp}" = xyes],
+  [AC_MSG_NOTICE([  OpenMP            : Detected ($OPENMP_CXXFLAGS)])]
+,
+  [AC_MSG_NOTICE([  OpenMP            : Disabled])]
+)
+AC_MSG_NOTICE([  YAMLCPP           : $yamlcpp_LIBS])
+AC_MSG_NOTICE([  CFITSIO           : $cfitsio_LIBS])
 AC_MSG_NOTICE([  BLAS              : $BLAS_LIBS])
 AC_MSG_NOTICE([  LAPACK            : $LAPACK_LIBS])
-if test x"${acx_have_appspack}" = xyes; then
-  AC_MSG_NOTICE([  APPSPACK          : $APPSPACK])
-else
-  AC_MSG_NOTICE([  APPSPACK          : Disabled (synapps not built)])
-fi
+AS_IF([ test x"${acx_have_appspack}" = xyes], 
+  [AC_MSG_NOTICE([  APPSPACK          : $APPSPACK])]
+,
+  [AC_MSG_NOTICE([  APPSPACK          : Disabled (synapps not built)])]
+)
+AC_MSG_NOTICE([  module type       : $MODTYPE])
+AC_MSG_NOTICE([  module install    : ${modfiledir}])
+
 AC_MSG_NOTICE([  ==========================================================================])
 AC_MSG_NOTICE([                                           ])
 

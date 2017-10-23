@@ -1,0 +1,10 @@
+-- Create environment variables.
+
+
+local datadir = pathJoin(@prefix@,"share/es-data")
+
+setenv ("SYNXX_REF_LINE_DATA_PATH" ,pathJoin(datadir,"refs.dat"))
+setenv ("SYNXX_LINES_DATA_PATH"    ,pathJoin(datadir,"lines"))
+
+append_path( "PKG_CONFIG_PATH",     pathJoin(@prefix@,"lib/pkgconfig"))
+prepend_path( "PATH"           ,  pathJoin(@prefix@,"bin"))
