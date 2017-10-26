@@ -19,5 +19,6 @@ setenv SYNXX_LINES_DATA_PATH    $apppath/share/es-data/lines
 
 append-path	PATH	$apppath/bin
 append-path	PKG_CONFIG_PATH $apppath/lib/pkgconfig
+append-path	LD_LIBRARY_PATH $apppath/lib
 
 

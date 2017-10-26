@@ -8,3 +8,5 @@ setenv ("SYNXX_LINES_DATA_PATH"    ,pathJoin(datadir,"lines"))
 
 append_path( "PKG_CONFIG_PATH",     pathJoin(@prefix@,"lib/pkgconfig"))
 prepend_path( "PATH"           ,  pathJoin(@prefix@,"bin"))
+append_path( "LD_LIBRARY_PATH",   pathJoin(@prefix@,"lib"))
+
