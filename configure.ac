@@ -101,10 +101,10 @@ AX_OPENMP([ax_have_openmp=yes;AC_DEFINE([HAVE_OPENMP], [1], [Define if OpenMP is
 AM_CONDITIONAL([HAVE_AM_OPENMP], [test $ax_have_openmp = yes])
 
 # Check for CFITSIO
-PKG_CHECK_MODULES([cfitsio],[cfitsio],[],[AC_MSG_ERROR[" Could not find the CFITSIO library!"]])
+PKG_CHECK_MODULES([cfitsio],[cfitsio],[],[AC_MSG_ERROR([" Could not find the CFITSIO library!"])])
 
 # Check for CFITSIO
-PKG_CHECK_MODULES([yamlcpp],[yaml-cpp],[],[AC_MSG_ERROR[" Could not find the yaml-cpp library!"]])
+PKG_CHECK_MODULES([yamlcpp],[yaml-cpp],[],[AC_MSG_ERROR([" Could not find the yaml-cpp library!"])])
 
 #ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 #save_cxx_flag="$CXXFLAGS"
