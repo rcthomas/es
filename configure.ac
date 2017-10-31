@@ -106,25 +106,28 @@ PKG_CHECK_MODULES([cfitsio],[cfitsio],[],[AC_MSG_ERROR([" Could not find the CFI
 # Check for CFITSIO
 PKG_CHECK_MODULES([yamlcpp],[yaml-cpp],[],[AC_MSG_ERROR([" Could not find the yaml-cpp library!"])])
 
+PKG_CHECK_MODULES([BLAS],[blas],[AM_CONDITIONAL([HAVE_AM_BLAS],[test "1" = "1"])],[AM_CONDITIONAL([HAVE_AM_BLAS],[test "1" = "2"])])
+PKG_CHECK_MODULES([LAPACK],[lapack],[AM_CONDITIONAL([HAVE_AM_LAPACK],[test "1" = "1"])],[AM_CONDITIONAL([HAVE_AM_LAPACK],[test "1" = "2"])])
+PKG_CHECK_MODULES([APPSPACK],[appspack],[AM_CONDITIONAL([HAVE_AM_APPSPACK],[test "1" = "1"])],[AM_CONDITIONAL([HAVE_AM_APPSPACK],[test "1" = "2"])])
 #ACX_CFITSIO([], [AC_MSG_ERROR([Could not find the CFITSIO library!])])
 #save_cxx_flag="$CXXFLAGS"
 #CXXFLAGS+=$cfitsio_CPPFLAGS
 
 # Check for LAPACK/BLAS
-acx_have_lapack=no
-ACX_BLAS
-ACX_LAPACK([acx_have_lapack=yes;AC_DEFINE([HAVE_LAPACK], [1], [Define if you have the Lapack library.])], [AC_MSG_WARN([Could not find a Lapack library- synapps disabled])])
-AM_CONDITIONAL([HAVE_AM_LAPACK], [test $acx_have_lapack = yes])
+#acx_have_lapack=no
+#ACX_BLAS
+#ACX_LAPACK([acx_have_lapack=yes;AC_DEFINE([HAVE_LAPACK], [1], [Define if you have the Lapack library.])], [AC_MSG_WARN([Could not find a Lapack library- synapps disabled])])
+#AM_CONDITIONAL([HAVE_AM_LAPACK], [test $acx_have_lapack = yes])
 
 # Check for MPI
-acx_have_mpi=no
-ACX_MPI([acx_have_mpi=yes;AC_DEFINE([HAVE_MPI], [1],[Define if you have the MPI library.])])
-AM_CONDITIONAL([HAVE_AM_MPI], [test $acx_have_mpi = yes])
+#acx_have_mpi=no
+#ACX_MPI([acx_have_mpi=yes;AC_DEFINE([HAVE_MPI], [1],[Define if you have the MPI library.])])
+#AM_CONDITIONAL([HAVE_AM_MPI], [test $acx_have_mpi = yes])
 
 # Check for APPSPACK
-acx_have_appspack=no
-ACX_APPSPACK([acx_have_appspack=yes;AC_DEFINE([HAVE_APPSPACK], [1], [Define if you have the Appspack library.])], [AC_MSG_WARN([Could not find the Appspack tools- synapps disabled])])
-AM_CONDITIONAL([HAVE_AM_APPSPACK], [test $acx_have_appspack = yes])
+#acx_have_appspack=no
+#ACX_APPSPACK([acx_have_appspack=yes;AC_DEFINE([HAVE_APPSPACK], [1], [Define if you have the Appspack library.])], [AC_MSG_WARN([Could not find the Appspack tools- synapps disabled])])
+#AM_CONDITIONAL([HAVE_AM_APPSPACK], [test $acx_have_appspack = yes])
 
 AC_SUBST([PACKAGE_VERSION_MAJOR],package_version_major)
 AC_SUBST([PACKAGE_VERSION_MINOR],package_version_minor)
@@ -163,8 +166,8 @@ AC_MSG_NOTICE([  YAMLCPP           : $yamlcpp_LIBS])
 AC_MSG_NOTICE([  CFITSIO           : $cfitsio_LIBS])
 AC_MSG_NOTICE([  BLAS              : $BLAS_LIBS])
 AC_MSG_NOTICE([  LAPACK            : $LAPACK_LIBS])
-AS_IF([ test x"${acx_have_appspack}" = xyes], 
-  [AC_MSG_NOTICE([  APPSPACK          : $APPSPACK])]
+AS_IF([HAVE_AM_APPSPACK],
+  [AC_MSG_NOTICE([  APPSPACK          : $APPSPACK_LIBS])]
 ,
   [AC_MSG_NOTICE([  APPSPACK          : Disabled (synapps not built)])]
 )

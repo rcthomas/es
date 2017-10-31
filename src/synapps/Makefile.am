@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/libes \
 -I$(top_srcdir)/src/synapps \
 -I$(top_srcdir)/external/yaml \
-$(APPSPACK_CPPFLAGS) \
+$(APPSPACK_CFLAGS) \
 ${cfitsio_CFLAGS} \
 ${yamlcpp_CFLAGS}
 
@@ -16,7 +16,7 @@ AM_LDFLAGS = \
 
 AM_LIBS = \
 $(top_builddir)/src/libes/libes.la \
-$(APPSPACK) $(LAPACK_LIBS) $(BLAS_LIBS) ${cfitsio_LIBS} ${yamlcpp_LIBS} -lm $(FLIBS)
+$(APPSPACK_LIBS) $(LAPACK_LIBS) $(BLAS_LIBS) ${cfitsio_LIBS} ${yamlcpp_LIBS} -lm $(FLIBS)
 
 AM_CXXFLAGS =
 
