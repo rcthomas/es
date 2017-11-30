@@ -69,9 +69,11 @@ namespace ES
                 virtual void operator() ( const ES::Synow::Setup& setup );
 
             private :
+				enum profile_type {form_default,form_exp, form_power, form_user_profile};
 
                 std::string                _ref_file;     ///< Path to reference line list file.
                 std::string                _form;         ///< Functional form of reference line opacity profile.
+				profile_type               _e_form;       ///< Functional form of reference line opacity profile (in enum form).
                 double                     _v_ref;        ///< Reference velocity in kkm/s for scaling reference line opacity profiles.
                 double                     _log_tau_min;  ///< Minimum Sobolev opacity to include a bin.
                 std::map< int, ES::Line >  _ref_lines;    ///< Reference lines.

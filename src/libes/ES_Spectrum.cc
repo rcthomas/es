@@ -27,8 +27,11 @@
 
 #include "ES_Spectrum.hh"
 #include "ES_Exception.hh"
-
+#ifdef FITSIO_CFITSIO
+#include "cfitsio/fitsio.h"
+#else
 #include "fitsio.h"
+#endif
 
 #include <cmath>
 #include <limits>
@@ -152,6 +155,42 @@ ES::Spectrum ES::Spectrum::create_from_spectrum( const ES::Spectrum& original )
     return spectrum;
 }
 
+ES::Spectrum ES::Spectrum::create_from_wl_vector( const std::vector<double > i_vtdData )
+{
+    ES::Spectrum spectrum;
+    spectrum.resize( i_vtdData.size() );
+    for( size_t i = 0; i < i_vtdData.size(); ++ i ) spectrum.wl( i ) = i_vtdData[i];
+    return spectrum;
+}
+ES::Spectrum ES::Spectrum::create_from_array( const double * i_lpdData, size_t i_nNum_Points )
+{
+    ES::Spectrum spectrum;
+    spectrum.resize( i_nNum_Points );
+    for( size_t i = 0; i < i_nNum_Points; ++ i ) spectrum.wl( i ) = i_lpdData[i];
+    return spectrum;
+}
+#if __cplusplus>=201100L
+ES::Spectrum ES::Spectrum::create_copy_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData )
+{
+    ES::Spectrum spectrum;
+    spectrum.resize( i_vtdData.size() );
+    for( size_t i = 0; i < i_vtdData.size(); ++ i )
+	{
+		spectrum.wl( i ) = std::get<0>(i_vtdData[i]);
+		spectrum.flux( i ) = std::get<1>(i_vtdData[i]);
+		spectrum.flux_error( i ) = std::get<2>(i_vtdData[i]);
+	}
+    return spectrum;
+}
+ES::Spectrum ES::Spectrum::create_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData )
+{
+    ES::Spectrum spectrum;
+    spectrum.resize( i_vtdData.size() );
+    for( size_t i = 0; i < i_vtdData.size(); ++ i ) spectrum.wl( i ) = std::get<0>(i_vtdData[i]);
+    return spectrum;
+}
+#endif
+
 void ES::Spectrum::resize( size_t const size )
 {
     clear();
@@ -173,6 +212,14 @@ void ES::Spectrum::zero_out()
     for( size_t i = 0; i < size(); ++ i )
     {
         _wl[ i ] = 0.0;
+        _flux[ i ] = 0.0;
+        _flux_error[ i ] = 0.0;
+    }
+}
+void ES::Spectrum::zero_flux()
+{
+    for( size_t i = 0; i < size(); ++ i )
+    {
         _flux[ i ] = 0.0;
         _flux_error[ i ] = 0.0;
     }
@@ -249,3 +296,5 @@ namespace ES
     }
 
 }
+
+

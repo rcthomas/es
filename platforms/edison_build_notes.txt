@@ -1,0 +1,20 @@
+
+	HPCPorts with MKL and libtool
+
+When building on machines that use Intel MKL with static linking
+(like edison), the link line for MKL has duplicate libraries in
+order to meet circular dependencies.  To prevent libtool from
+stripping these from the link line, you need to do:
+
+$> make LIBTOOLFLAGS=${HPCP_LIBTOOLFLAGS}
+
+$> make LIBTOOLFLAGS=${HPCP_LIBTOOLFLAGS} install
+
+etc.
+
+Or you can set this once in your environment:
+
+$> export LIBTOOLFLAGS=${HPCP_LIBTOOLFLAGS}
+
+
+

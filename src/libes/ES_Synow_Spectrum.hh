@@ -60,6 +60,10 @@ namespace ES
 
                 Spectrum( ES::Synow::Grid& grid, ES::Spectrum& output, ES::Spectrum& reference, int const p_size, bool const flatten );
 
+				/// Copy Constructor
+
+                Spectrum( const ES::Synow::Spectrum& i_cRHO);
+
                 /// Destructor.
 
                 ~Spectrum();

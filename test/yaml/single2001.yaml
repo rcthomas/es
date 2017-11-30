@@ -1,0 +1,33 @@
+output :
+    min_wl       : 2500.0
+    max_wl       : 10000.0
+    wl_step      : 0.5
+grid :
+    bin_width    : 0.3
+    v_size       : 100
+    v_outer_max  : 30.0
+opacity :
+    line_dir     : ./es-data/lines
+    ref_file     : ./es-data/refs.dat
+    form         : exp
+    v_ref        : 10.0
+    log_tau_min  : -2.0
+source :
+    mu_size      : 10
+spectrum :
+    p_size       : 60
+    flatten      : No
+setups :
+    -   a0       : 1.00  
+        a1       : 0.00  
+        a2       : 0.00  
+        v_phot   : 15.50 
+        v_outer  : 40.00 
+        t_phot   : 17.00 
+        ions     : [   2001 ]
+        active   : [   Yes, ]
+        log_tau  : [   2.85 ]
+        v_min    : [  15.50 ]
+        v_max    : [  40.00 ]
+        aux      : [   1.38 ]
+        temp     : [  14.20 ]

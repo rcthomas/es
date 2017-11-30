@@ -64,6 +64,8 @@ AC_PREREQ(2.50)
 
 acx_cfitsio_ok=no
 acx_cfitsio_default="-lcfitsio"
+acx_fitsio_inc=no
+acx_cfitsio_inc=no
 
 CFITSIO_CPPFLAGS=""
 CFITSIO=""
@@ -104,7 +106,11 @@ else
    CPPFLAGS="$CPPFLAGS $CFITSIO_CPPFLAGS"
    LIBS="$CFITSIO $acx_cfitsio_save_LIBS -lm"
 
-   AC_CHECK_HEADERS([fitsio.h])
+   AC_CHECK_HEADERS([fitsio.h],[acx_fitsio_inc="yes"],[])
+
+   if test $acx_fitsio_inc = no; then
+      AC_CHECK_HEADERS([cfitsio/fitsio.h],[acx_cfitsio_inc="yes"],[])
+   fi
 
    AC_MSG_CHECKING([for ffopen in user specified location])
    AC_TRY_LINK_FUNC(ffopen, [acx_cfitsio_ok=yes;AC_DEFINE(HAVE_CFITSIO,1,[Define if you have the CFITSIO library.])], [])
@@ -125,12 +131,18 @@ else
    LIBS="$acx_cfitsio_save_LIBS"
    CPPFLAGS="$acx_cfitsio_save_CPPFLAGS"
 
+
 fi
 
 # Define exported variables
+if test $acx_cfitsio_inc = yes; then
+  echo "setting CFITSIO define"
+  CFITSIO_CPPFLAGS="-DFITSIO_CFITSIO=1"
+fi
 
 AC_SUBST(CFITSIO_CPPFLAGS)
 AC_SUBST(CFITSIO)
+
 
 # Execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
    

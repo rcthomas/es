@@ -1,6 +1,8 @@
-AM_CPPFLAGS = -I$(top_srcdir)/src/libes -I$(top_srcdir)/external/yaml $(CFITSIO_CPPFLAGS)
-AM_LDFLAGS = -L$(top_builddir)/src/libes -L$(top_builddir)/external/yaml
-AM_LIBS = $(top_builddir)/external/yaml/libyaml-cpp.la $(CFITSIO) -lm
+AUTOMAKE_OPTIONS = foreign
+
+AM_CPPFLAGS = -I$(top_srcdir)/src/libes ${cfitsio_CFLAGS} ${yamlcpp_CFLAGS}
+AM_LDFLAGS = -L$(top_builddir)/src/libes 
+AM_LIBS = ${yamlcpp_LIBS} ${cfitsio_LIBS} -lm
 AM_CXXFLAGS =
 
 if HAVE_AM_OPENMP
@@ -8,9 +10,10 @@ if HAVE_AM_OPENMP
   AM_LIBS += $(OPENMP_CXXFLAGS)
 endif
 
-noinst_HEADERS =        \
+include_HEADERS =        \
 ES_Accelerator.hh       \
 ES_Blackbody.hh         \
+ES_Constants.hh         \
 ES_Exception.hh         \
 ES_Generic_Grid.hh      \
 ES_Generic_Operator.hh  \
@@ -25,10 +28,11 @@ ES_Synow_Setup.hh       \
 ES_Synow_Source.hh      \
 ES_Synow_Spectrum.hh
 
-noinst_LTLIBRARIES = libes.la
+lib_LTLIBRARIES = libes.la
 libes_la_SOURCES =       \
 ES_Accelerator.cc       \
 ES_Blackbody.cc         \
+ES_Constants.cc         \
 ES_LineManager.cc       \
 ES_Spectrum.cc          \
 ES_Synow_Grid.cc        \

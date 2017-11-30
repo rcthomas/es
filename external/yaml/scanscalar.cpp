@@ -1,8 +1,7 @@
-#include "crt.h"
 #include "scanscalar.h"
 #include "scanner.h"
 #include "exp.h"
-#include "exceptions.h"
+#include "yaml-cpp/exceptions.h"
 #include "token.h"
 
 namespace YAML
@@ -24,6 +23,7 @@ namespace YAML
 		bool emptyLine = false, moreIndented = false;
 		int foldedNewlineCount = 0;
 		bool foldedNewlineStartedMoreIndented = false;
+        std::size_t lastEscapedChar = std::string::npos;
 		std::string scalar;
 		params.leadingSpaces = false;
 
@@ -32,12 +32,13 @@ namespace YAML
 			// Phase #1: scan until line ending
 			
 			std::size_t lastNonWhitespaceChar = scalar.size();
-			while(!params.end.Matches(INPUT) && !Exp::Break.Matches(INPUT)) {
+			bool escapedNewline = false;
+			while(!params.end.Matches(INPUT) && !Exp::Break().Matches(INPUT)) {
 				if(!INPUT)
 					break;
 
 				// document indicator?
-				if(INPUT.column() == 0 && Exp::DocIndicator.Matches(INPUT)) {
+				if(INPUT.column() == 0 && Exp::DocIndicator().Matches(INPUT)) {
 					if(params.onDocIndicator == BREAK)
 						break;
 					else if(params.onDocIndicator == THROW)
@@ -48,17 +49,20 @@ namespace YAML
 				pastOpeningBreak = true;
 
 				// escaped newline? (only if we're escaping on slash)
-				if(params.escape == '\\' && Exp::EscBreak.Matches(INPUT)) {
-					int n = Exp::EscBreak.Match(INPUT);
-					INPUT.eat(n);
+				if(params.escape == '\\' && Exp::EscBreak().Matches(INPUT)) {
+					// eat escape character and get out (but preserve trailing whitespace!)
+					INPUT.get();
 					lastNonWhitespaceChar = scalar.size();
-					continue;
+                    lastEscapedChar = scalar.size();
+					escapedNewline = true;
+					break;
 				}
 
 				// escape this?
 				if(INPUT.peek() == params.escape) {
 					scalar += Exp::Escape(INPUT);
 					lastNonWhitespaceChar = scalar.size();
+                    lastEscapedChar = scalar.size();
 					continue;
 				}
 
@@ -77,7 +81,7 @@ namespace YAML
 			}
 
 			// doc indicator?
-			if(params.onDocIndicator == BREAK && INPUT.column() == 0 && Exp::DocIndicator.Matches(INPUT))
+			if(params.onDocIndicator == BREAK && INPUT.column() == 0 && Exp::DocIndicator().Matches(INPUT))
 				break;
 
 			// are we done via character match?
@@ -94,7 +98,7 @@ namespace YAML
 			
 			// ********************************
 			// Phase #2: eat line ending
-			n = Exp::Break.Match(INPUT);
+			n = Exp::Break().Match(INPUT);
 			INPUT.eat(n);
 
 			// ********************************
@@ -109,7 +113,7 @@ namespace YAML
 				params.indent = std::max(params.indent, INPUT.column());
 
 			// and then the rest of the whitespace
-			while(Exp::Blank.Matches(INPUT)) {
+			while(Exp::Blank().Matches(INPUT)) {
 				// we check for tabs that masquerade as indentation
 				if(INPUT.peek() == '\t'&& INPUT.column() < params.indent && params.onTabInIndentation == THROW)
 					throw ParserException(INPUT.mark(), ErrorMsg::TAB_IN_INDENTATION);
@@ -121,8 +125,8 @@ namespace YAML
 			}
 
 			// was this an empty line?
-			bool nextEmptyLine = Exp::Break.Matches(INPUT);
-			bool nextMoreIndented = Exp::Blank.Matches(INPUT);
+			bool nextEmptyLine = Exp::Break().Matches(INPUT);
+			bool nextMoreIndented = Exp::Blank().Matches(INPUT);
 			if(params.fold == FOLD_BLOCK && foldedNewlineCount == 0 && nextEmptyLine)
 				foldedNewlineStartedMoreIndented = moreIndented;
 
@@ -142,7 +146,7 @@ namespace YAML
 						
 						if(!nextEmptyLine && foldedNewlineCount > 0) {
 							scalar += std::string(foldedNewlineCount - 1, '\n');
-							if(foldedNewlineStartedMoreIndented || nextMoreIndented)
+							if(foldedNewlineStartedMoreIndented || nextMoreIndented | !foundNonEmptyLine)
 								scalar += "\n";
 							foldedNewlineCount = 0;
 						}
@@ -150,7 +154,7 @@ namespace YAML
 					case FOLD_FLOW:
 						if(nextEmptyLine)
 							scalar += "\n";
-						else if(!emptyLine && !nextEmptyLine)
+						else if(!emptyLine && !nextEmptyLine && !escapedNewline)
 							scalar += " ";
 						break;
 				}
@@ -170,16 +174,39 @@ namespace YAML
 		// post-processing
 		if(params.trimTrailingSpaces) {
 			std::size_t pos = scalar.find_last_not_of(' ');
+            if(lastEscapedChar != std::string::npos) {
+                if(pos < lastEscapedChar || pos == std::string::npos)
+                    pos = lastEscapedChar;
+            }
 			if(pos < scalar.size())
 				scalar.erase(pos + 1);
 		}
 
-		if(params.chomp == STRIP || params.chomp == CLIP) {
-			std::size_t pos = scalar.find_last_not_of('\n');
-			if(params.chomp == CLIP && pos + 1 < scalar.size())
-				scalar.erase(pos + 2);
-			else if(params.chomp == STRIP && pos < scalar.size())
-				scalar.erase(pos + 1);
+		switch(params.chomp) {
+			case CLIP: {
+				std::size_t pos = scalar.find_last_not_of('\n');
+                if(lastEscapedChar != std::string::npos) {
+                    if(pos < lastEscapedChar || pos == std::string::npos)
+                        pos = lastEscapedChar;
+                }
+				if(pos == std::string::npos)
+					scalar.erase();
+				else if(pos + 1 < scalar.size())
+					scalar.erase(pos + 2);
+			} break;
+			case STRIP: {
+				std::size_t pos = scalar.find_last_not_of('\n');
+                if(lastEscapedChar != std::string::npos) {
+                    if(pos < lastEscapedChar || pos == std::string::npos)
+                        pos = lastEscapedChar;
+                }
+				if(pos == std::string::npos)
+					scalar.erase();
+				else if(pos < scalar.size())
+					scalar.erase(pos + 1);
+			} break;
+			default:
+				break;
 		}
 
 		return scalar;

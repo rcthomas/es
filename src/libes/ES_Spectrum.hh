@@ -31,7 +31,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
-
+#if __cplusplus>=201100L
+#include <tuple>
+#endif
 namespace ES
 {
 
@@ -95,6 +97,36 @@ namespace ES
 
             static Spectrum create_from_fits_file( const char* file );
 
+
+#if __cplusplus>=201100L
+			// Constructor using data in a vector of tuples; The tuple is
+			// assumed to be ordered <wl, flux, flux_error>. This creates a
+			// spectrum with size and wavelength identical to the 
+			// input vector of tuples, with flux and flux error zeroed out
+
+			static Spectrum create_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData );
+
+			// Constructor using data in a vector of tuples; The tuple is
+			// assumed to be ordered <wl, flux, flux_error>. This creates a
+			// spectrum with size and wavelength, flux, and flux error 
+			// identical to the  input vector of tuples.
+
+			static Spectrum create_copy_from_vector( const std::vector<std::tuple<double, double, double> > i_vtdData );
+#endif
+
+			// Constructor using wavelength data in a vector. This creates a
+			// spectrum with size and wavelength identical to the 
+			// input vector, with flux and flux error zeroed out
+
+			static Spectrum create_from_wl_vector( const std::vector<double > i_vtdData );
+
+			// Constructor using wavelength data in an array with a user 
+			// specified size. This creates a spectrum with size and wavelength 
+			// identical to the data in the input array, with flux and flux
+			// error zeroed out.
+
+			static Spectrum create_from_array( const double * i_lpdData, size_t i_nNum_Points );
+
             /// Constructor taking another spectrum, from which a zeroed out
             /// spectrum of the same size and wavelength axis is initialized.
 
@@ -124,6 +156,9 @@ namespace ES
             /// equivalent to resizing the spectrum to its current size.
 
             void zero_out();
+
+			// zero only the flux values in the spectrum
+			void zero_flux(void);
 
             /// Rescale the fluxes and flux errors so that the median is 
             /// set to the desired value.
@@ -167,6 +202,8 @@ namespace ES
 
             /// Maximum flux in the spectrum.
             double max_flux() const;
+
+
 
             //@}
 

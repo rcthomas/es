@@ -30,6 +30,7 @@
 #include "ES_Synow_Grid.hh"
 #include "ES_Synow_Setup.hh"
 #include "ES_Line.hh"
+#include "ES_Constants.hh"
 
 #include <cmath>
 #include <fstream>
@@ -45,7 +46,16 @@ ES::Synow::Opacity::Opacity( ES::Synow::Grid& grid, const std::string& line_dir,
     _ref_file( ref_file ),
     _v_ref( v_ref ),
     _log_tau_min( log_tau_min )
-{}
+{
+	_e_form = form_default;
+	if (form == "exp" || form == "EXP" || form == "Exp" || form == "exponential" || form == "Exponential" || form == "EXPONENTIAL")
+		_e_form = form_exp;
+	else if (form == "power" || form == "pow" || form == "Power" || form == "POWER" || form == "POW" || form == 
+"Pow")
+		_e_form = form_power;
+	else if (form == "user_profile" || form == "user" || form == "User" || form == "USER" || form == "User_profile" || form == "User_Profile")
+		_e_form = form_user_profile;
+}
 
 void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
 {
@@ -55,42 +65,88 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
     _drop_ions( setup );
     _load_ions( setup );
 
-    // Resolve per-ion excitation temperatures.  Sweep ions, assigning
-    // a unique temperature to each --- precedence given to last listed.
 
     std::map< int, double > temp_map;
-    for( size_t i = 0; i < setup.ions.size(); ++ i )
-    {
-        if( ! setup.active[ i ] ) continue;
-        temp_map[ setup.ions[ i ] ] = setup.temp[ i ];
-    }
-
-    // Resolve per-ion Sobolev reference opacity profiles.
-
     std::map< int, std::vector< double > > tau_map;
     for( size_t i = 0; i < setup.ions.size(); ++ i )
     {
         if( ! setup.active[ i ] ) continue;
+    // Resolve per-ion excitation temperatures.  Sweep ions, assigning
+    // a unique temperature to each --- precedence given to last listed.
+        temp_map[ setup.ions[ i ] ] = setup.temp[ i ];
+    // Resolve per-ion Sobolev reference opacity profiles.
         tau_map[ setup.ions[ i ] ].resize( _grid->v_size, 0.0 );
     }
 
+	double tau_lcl;
+	double aux,vmin,vmax;
     for( size_t i = 0; i < setup.ions.size(); ++ i )
     {
         if( ! setup.active[ i ] ) continue;
         double lin_tau = pow( 10.0, setup.log_tau[ i ] );
         std::map< int, std::vector< double > >::iterator tau = tau_map.find( setup.ions[ i ] );
+		profile_type eFormLcl = form_exp;
+		if (!setup.form.empty())
+		{
+//#pragma omp atomic read
+			switch (setup.form[i])
+			{
+			case ES::Synow::Setup::form_exp:
+			default:
+				eFormLcl = form_exp;
+				break;
+			case ES::Synow::Setup::form_power:
+				eFormLcl = form_power;
+				break;
+			case ES::Synow::Setup::form_user_profile:
+				eFormLcl = form_user_profile;
+				break;
+			}
+		}
+		else
+			eFormLcl = _e_form;
+		if (eFormLcl == form_exp || eFormLcl == form_power)
+		{
+			aux = setup.aux[i];
+			vmin = setup.v_min[i];
+			vmax = setup.v_max[i];
+		}
+		double taulcl;
+//#pragma omp parallel for private(taulcl)
         for( int iv = 0; iv < _grid->v_size; ++ iv )
         {
-            if( _grid->v[ iv ] < setup.v_min[ i ] ) continue;
-            if( _grid->v[ iv ] > setup.v_max[ i ] ) break;
-            tau->second[ iv ] = lin_tau * exp( ( _v_ref - _grid->v[ iv ] ) / setup.aux[ i ] );
+            if( _grid->v[iv] >= setup.v_phot && (eFormLcl == form_user_profile || (_grid->v[iv] >= vmin && _grid->v[iv] <= vmax)) )
+			{
+				switch (eFormLcl)
+				{
+				case form_exp:
+				default:
+					taulcl = lin_tau * exp( ( _v_ref - _grid->v[iv] ) / aux );
+					break;
+				case form_power:
+			        taulcl = lin_tau * pow( _grid->v[iv] / _v_ref, aux );
+					break;
+				case form_user_profile:
+			        taulcl = lin_tau * setup.user_profile[i][iv];
+					break;
+				}
+				if (setup.additive_opacities)
+				{
+//#pragma omp atomic
+					tau->second[ iv ] += taulcl;
+				}
+				else
+				{
+					tau->second[ iv ] = taulcl;
+				}
+			}
         }
-    }
+   }
 
     // Initialize the first bin limits, and step the line 
     // iterator up to the first line in the bin.
 
-    double factor = 1.0 + _grid->bin_width / 299.792;
+    double factor = 1.0 + _grid->bin_width * ES::_inv_c;
     double min_wl = _grid->min_wl;
     double max_wl = min_wl * factor;
     int    offset = 0;
@@ -110,17 +166,18 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
             double str = line->wl * line->gf * exp( 11.604506 * ( ref_line.el - line->el ) / temp_map[ line->ion ] ) / 
                 ref_line.wl / ref_line.gf;
             std::map< int, std::vector< double > >::iterator tau = tau_map.find( line->ion );
-            for( int iv = 0; iv < _grid->v_size; ++ iv ) _grid->tau[ offset + iv ] += tau->second[ iv ] * str;
+            for( int iv = 0; iv < _grid->v_size; ++ iv ) 
+				if (_grid->v[iv] >= setup.v_phot) 
+					_grid->tau[ offset + iv ] += tau->second[ iv ] * str;
             ++ line;
         }
+
         if( line->wl >= max_wl || line == _lines.end() )
         {
             bool keep = false;
-            for( int iv = 0; iv < _grid->v_size; ++ iv ) 
+            for( int iv = 0; iv < _grid->v_size && !keep; ++ iv ) 
             {
-                if( _grid->tau[ offset + iv ] < tau_min ) continue;
-                keep = true;
-                break;
+                keep = ( _grid->tau[ offset + iv ] >= tau_min );
             }
             if( keep )
             {
@@ -136,7 +193,6 @@ void ES::Synow::Opacity::operator() ( const ES::Synow::Setup& setup )
             max_wl *= factor;
         }
     }
-
 }
 
 void ES::Synow::Opacity::_drop_ions( const ES::Synow::Setup& setup )
@@ -150,12 +206,9 @@ void ES::Synow::Opacity::_drop_ions( const ES::Synow::Setup& setup )
     for( std::map< int, ES::Line >::iterator ref_line = _ref_lines.begin(); ref_line != _ref_lines.end(); ++ ref_line )
     {
         bool found = false;
-        for( size_t i = 0; i < setup.ions.size(); ++ i )
+        for( size_t i = 0; i < setup.ions.size() && !found; ++ i )
         {
-            if( ! setup.active[ i ] ) continue;
-            if( setup.ions[ i ] != ref_line->first ) continue;
-            found = true;
-            break;
+			found = (setup.active[ i ] && setup.ions[ i ] == ref_line->first);
         }
         if( found ) continue;
         ions.push_back( ref_line->first );
